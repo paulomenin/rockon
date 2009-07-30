@@ -13,4 +13,4 @@ void cmd_stop_cb (void *data, Evas_Object *eo, const char *emission, const char 
 void cmd_next_cb (void *data, Evas_Object *eo, const char *emission, const char *source);
 void cmd_prev_cb (void *data, Evas_Object *eo, const char *emission, const char *source);
 
-#endif
+#endif /* PLAYBACK_CB_H */

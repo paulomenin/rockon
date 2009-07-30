@@ -2,9 +2,9 @@
 CC = gcc
 CFLAGS = -Wall
 
-LIBS = ecore ecore-evas edje esmart_trans_x11 xmms2-client xmms2-client-ecore
-HDR = playback_cb.h
-SRC = main.c playback_cb.c
+LIBS = ecore ecore-config ecore-evas edje esmart_trans_x11 xmms2-client xmms2-client-ecore
+HDR = error.h libs_setup.h gui.h config.h xmms_conn.h playback_cb.h
+SRC = main.c error.c gui.c libs_setup.c config.c xmms_conn.c playback_cb.c
 
 .PHONY: clean
 
