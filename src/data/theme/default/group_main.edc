@@ -1,0 +1,135 @@
+group {
+	name: "main";
+	min: 200 100 ;
+	//max: w h;
+	
+	parts {
+		part {
+			name: "background";
+			type: RECT;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color: 125 255 8 255;
+				rel1 { relative: 0.0 0.0; }
+				rel2 { relative: 0.8 0.8; offset: 0 0; }
+			}
+		}
+		
+		part {
+			name: "playback_bar";
+			type: RECT;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 0;
+				rel1 { relative: 0.05 0.05 ; }
+				rel2 { relative: 0.8 0.4; }
+			}
+		}
+
+		part {
+			name: "btn_close";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.9 0.0; }
+				rel2 { relative: 1.0 0.1; }
+				image { normal: "images/close.png"; }
+			}
+		}
+
+		part {
+			name: "btn_prev";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.0 0.0; to: "playback_bar"; }
+				rel2 { relative: 0.2 1.0; to: "playback_bar"; }
+				image { normal: "images/prev.png"; }
+			}
+		}
+		part {
+			name: "btn_play";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.2 0.0; to: "playback_bar"; }
+				rel2 { relative: 0.4 1.0; to: "playback_bar"; }
+				image { normal: "images/play.png"; }
+			}
+		}
+		part {
+			name: "btn_pause";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.4 0.0; to: "playback_bar"; }
+				rel2 { relative: 0.6 1.0; to: "playback_bar"; }
+				image { normal: "images/pause.png"; }
+			}
+		}
+		part {
+			name: "btn_stop";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.6 0.0; to: "playback_bar"; }
+				rel2 { relative: 0.8 1.0; to: "playback_bar"; }
+				image { normal: "images/stop.png"; }
+			}
+		}
+		part {
+			name: "btn_next";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.8 0.0; to: "playback_bar"; }
+				rel2 { relative: 1.0 1.0; to: "playback_bar"; }
+				image { normal: "images/next.png"; }
+			}
+		}
+		
+	}
+
+	programs {
+		program {
+			name: "close";
+			signal: "mouse,clicked,1";
+			source: "btn_close";
+			action: SIGNAL_EMIT "app_close" "main";
+		}
+
+		program {
+			name: "play";
+			signal: "mouse,clicked,1";
+			source: "btn_play";
+			action: SIGNAL_EMIT "cmd_play" "main";
+		}
+		program {
+			name: "pause";
+			signal: "mouse,clicked,1";
+			source: "btn_pause";
+			action: SIGNAL_EMIT "cmd_pause" "main";
+		}
+		program {
+			name: "stop";
+			signal: "mouse,clicked,1";
+			source: "btn_stop";
+			action: SIGNAL_EMIT "cmd_stop" "main";
+		}
+		program {
+			name: "next";
+			signal: "mouse,clicked,1";
+			source: "btn_next";
+			action: SIGNAL_EMIT "cmd_next" "main";
+		}
+		program {
+			name: "prev";
+			signal: "mouse,clicked,1";
+			source: "btn_prev";
+			action: SIGNAL_EMIT "cmd_prev" "main";
+		}
+	}
+}
+

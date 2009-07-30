@@ -1,0 +1,12 @@
+Rockon TODO list (this list is not complete)
+
+> autotools integration
+> add license message on files
+> error handling
+  > more tests
+  > messages, dialogs for the user
+> debug helpers
+> better theme, oops a default theme
+  > document on theming
+> better handling of xmms2 connection
+> support for plugins

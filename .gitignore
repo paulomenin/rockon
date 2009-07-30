@@ -1,0 +1,6 @@
+# The executable file
+rockon
+
+# VIM backup files
+*~
+*.swp

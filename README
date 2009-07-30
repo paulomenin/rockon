@@ -1,0 +1,22 @@
+Rockon a XMMS2 client
+
+This is a development version.
+
+It's far, far away from release.
+
+Don't be scared by the default theme! Now it's only for test.
+
+-- DEPENDENCIES
+
+ > libxmmsclient
+ > ecore
+ > evas
+ > ecore_evas
+ > edje
+ > esmart
+
+-- INSTALL
+
+For now use the very simple makefile on /src
+It don't install anything, just compile.
+

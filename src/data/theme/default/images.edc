@@ -1,0 +1,8 @@
+images {
+	image: "images/play.png" COMP;
+	image: "images/pause.png" COMP;
+	image: "images/stop.png" COMP;
+	image: "images/next.png" COMP;
+	image: "images/prev.png" COMP;
+	image: "images/close.png" COMP;
+}
