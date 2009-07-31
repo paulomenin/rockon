@@ -1,4 +1,5 @@
 images {
+	image: "images/icon.png" COMP;
 	image: "images/play.png" COMP;
 	image: "images/pause.png" COMP;
 	image: "images/stop.png" COMP;

@@ -21,7 +21,7 @@ int gui_setup () {
 
 	/* load .edj */
 	edje_o = edje_object_add (ecore_evas_get(ee));
-	if (! edje_object_file_set (edje_o, "data/theme/default/gui.edj", "main"))
+	if (! edje_object_file_set (edje_o, "../data/theme/default/gui.edj", "main"))
 		print_error("Cannot load theme.", ERR_CRITICAL);
 
 	evas_object_name_set (edje_o, "main");

@@ -10,12 +10,23 @@ group {
 			mouse_events: 0;
 			description {
 				state: "default" 0.0;
-				color: 125 255 8 255;
+				color: 125 125 125 255;
 				rel1 { relative: 0.0 0.0; }
 				rel2 { relative: 0.8 0.8; offset: 0 0; }
 			}
 		}
-		
+
+		part {
+			name: "icon";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.0 0.0; offset: 3 3; }
+				rel2 { relative: 0.20 0.25; }
+				image { normal: "images/icon.png"; }
+			}
+		}
+
 		part {
 			name: "playback_bar";
 			type: RECT;
@@ -23,8 +34,8 @@ group {
 			description {
 				state: "default" 0.0;
 				color: 0 0 0 0;
-				rel1 { relative: 0.05 0.05 ; }
-				rel2 { relative: 0.8 0.4; }
+				rel1 { relative: 0.05 0.5; }
+				rel2 { relative: 0.8 0.9; }
 			}
 		}
 
