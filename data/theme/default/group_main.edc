@@ -1,4 +1,93 @@
 group {
+	name: "Toggler";
+	script {
+	    public button_toggle_state;
+	}
+	parts {
+		part {
+			name: "toggle";
+			type: RECT;
+			mouse_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 255;
+				rel1 { relative: 0.0 0.0;  }
+				rel2 { relative: 1.0 1.0;  }
+			}
+			description {
+				state: "on" 0.0;
+				color: 0 0 255 255;
+				rel1 { relative: 0.0 0.0;  }
+				rel2 { relative: 1.0 1.0;  }
+			}
+			description {
+				state: "on2" 0.0;
+				color: 0 255 0 255;
+				rel1 { relative: 0.0 0.0;  }
+				rel2 { relative: 1.0 1.0;  }
+			}
+		}
+	}
+	programs {
+		program {
+			name: "group_loaded";
+			signal: "load";
+			source: "";
+			script {
+				set_int(button_toggle_state, 0);
+			}
+		}
+		program {
+			name: "toggle_icon_mouse_clicked";
+			signal: "mouse,clicked,1";
+			source: "toggle";
+			script {
+				if(get_int(button_toggle_state) == 0) {
+					set_int(button_toggle_state, 1);
+					emit("toggle,on", "");
+				} else {
+					if(get_int(button_toggle_state) == 1) {
+						set_int(button_toggle_state, 2);
+						emit("toggle,on2", "");
+					} else {
+						set_int(button_toggle_state, 0);
+						emit("toggle,off", "");
+					}
+				}
+			}
+		}
+		program {
+			name: "toggle_on";
+			signal: "toggle,on";
+			source: "";
+			action: STATE_SET "on" 0.0;
+			target: "toggle";
+			transition: SINUSOIDAL 0.5;
+			after: "toggle_on2";
+		}
+		program {
+			name: "toggle_on2";
+			signal: "toggle,on2";
+			source: "";
+			action: STATE_SET "on2" 0.0;
+			target: "toggle";
+			transition: SINUSOIDAL 0.5;
+			after: "toggle_off";
+		}
+		program {
+			name: "toggle_off";
+			signal: "toggle,off";
+			source: "";
+			action: STATE_SET "default" 0.0;
+			target: "toggle";
+			transition: SINUSOIDAL 0.5;
+			after: "toggle_on";
+		}
+	}
+}
+
+
+group {
 	name: "main";
 	min: 200 100 ;
 	//max: w h;
@@ -24,6 +113,17 @@ group {
 				rel1 { relative: 0.0 0.0; offset: 3 3; }
 				rel2 { relative: 0.20 0.25; }
 				image { normal: "images/icon.png"; }
+			}
+		}
+
+		part {
+			name: "botao";
+			type: GROUP;
+			source: "Toggler";
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.5 0.1; }
+				rel2 { relative: 0.7 0.4; }
 			}
 		}
 

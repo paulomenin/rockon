@@ -2,36 +2,39 @@
 #include "error.h"
 #include "config.h"
 #include "xmms_conn.h"
+#include "status.h"
 #include "gui.h"
 
 /* Globals */
-Rockon_config app_config;
+rockon_config app_config;
+xmms_status app_status;
 xmmsc_connection_t *xmms_conn_async = NULL;
 
 int main (int argc, char** argv) {
 
 	efl_init ();
 
-	/* load config */
+	if ( ! config_load (&app_config))
+		print_error ("Couldn't load config. Loaded default values.", ERR_WARNING);
 
-	if (!config_load (&app_config)) {
-        print_error("Failed to load config", ERR_CRITICAL);
-	}
+	app_status.connected = 0;
 
 	/* Set xmms2 connection */
 
 	if (! xmms2_connect (&xmms_conn_async)) {
-		fprintf(stderr,"Exiting");
-		return -2;
+		fprintf(stderr,"CONN XMMS MAIN ERROR");
+		//return -2;
 	}
-
-	/* set gui */
 
 	gui_setup();
 
-	/* clean resources */
+	if ( ! config_save (&app_config))
+		print_error ("Couldn't save config.", ERR_WARNING);
+
 	xmms2_shutdown ();
 	efl_shutdown ();
+
+	printf("\nDEBUG: exit main\n");
 
 	return EXIT_SUCCESS;
 }

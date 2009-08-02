@@ -7,6 +7,7 @@
 #include <Ecore_Evas.h>
 #include <Edje.h>
 #include <xmmsclient/xmmsclient.h>
+#include "status.h"
 
 int efl_init ();
 void efl_shutdown ();
