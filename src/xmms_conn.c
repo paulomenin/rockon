@@ -51,25 +51,35 @@ int check_error (xmmsv_t *value, void *data) {
 int broadcast_playback_id_cb (xmmsv_t *value, void *data) {
 	if (! check_error(value, NULL)) {
 		if (!xmmsv_get_int (value, &(app_status.playback_id)))
-			app_status.playlist_pos = 0; /* nothing is playing */
-		return TRUE; /* keep broadcast alive */
+			app_status.playlist_pos = 0; // nothing is playing
+		return TRUE; // keep broadcast alive
 	}
 	return FALSE;
 }
 
 int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
+	const char *pls_name;
 	xmmsv_t *dict_entry;
 
 	if (! check_error(value, NULL)) {
 		if (!xmmsv_dict_get (value, "name", &dict_entry) ||
-			!xmmsv_get_string (dict_entry, &app_status.playlist_name)) {
-			app_status.playlist_name = NULL;
+			!xmmsv_get_string (dict_entry, &pls_name)) {
+			pls_name = "No Name";
 		}
 		if (!xmmsv_dict_get (value, "position", &dict_entry) ||
 			!xmmsv_get_int (dict_entry, &app_status.playlist_pos)) {
 			app_status.playlist_pos = -1;
 		}
-		printf("PLS: %s POS: %d\n", app_status.playlist_name, app_status.playlist_pos);
+
+		if (app_status.playlist_name) {
+			free (app_status.playlist_name);
+			app_status.playlist_name = NULL;
+		}
+		app_status.playlist_name = (char*) malloc (sizeof(char)*(strlen(pls_name) + 1));
+		if (app_status.playlist_name)
+			strcpy(app_status.playlist_name, pls_name);
+		else
+			print_error("Memory allocation error.", ERR_CRITICAL);
 
 		return TRUE;
 	}
@@ -88,7 +98,7 @@ int broadcast_playback_volume_cb (xmmsv_t *value, void *data) {
 			!xmmsv_get_int (dict_entry, &app_status.volume_right)) {
 			app_status.volume_right = 0;
 		}
-		return TRUE; /* keep broadcast alive */
+		return TRUE; // keep broadcast alive
 	}
 	return FALSE;
 }

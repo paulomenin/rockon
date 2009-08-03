@@ -18,6 +18,11 @@ void efl_shutdown () {
 	evas_shutdown ();
 	ecore_config_shutdown ();
 	ecore_shutdown ();
+
+	if (app_status.playlist_name)
+		free (app_status.playlist_name);
+
+	printf ("DEBUG: shutdown\n");
 }
 
 /* FIXME maybe move to xmms_conn.c ? */

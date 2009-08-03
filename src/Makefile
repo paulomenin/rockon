@@ -1,6 +1,6 @@
 
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -O0
 
 LIBS = ecore ecore-config ecore-evas edje esmart_trans_x11 xmms2-client xmms2-client-ecore
 HDR = error.h libs_setup.h config.h xmms_conn.h status.h gui.h playback_cb.h

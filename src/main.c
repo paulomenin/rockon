@@ -35,7 +35,6 @@ int main (int argc, char** argv) {
 	efl_shutdown ();
 
 	printf("\nDEBUG: exit main\n");
-
 	return EXIT_SUCCESS;
 }
 

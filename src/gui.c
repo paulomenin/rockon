@@ -55,6 +55,7 @@ int gui_setup () {
 	edje_object_signal_callback_add (edje_o, "cmd_prev", "main", cmd_prev_cb, NULL);
 
 	ecore_main_loop_begin ();
+
 	return TRUE;
 }
 
@@ -93,7 +94,7 @@ void app_close_cb (void *data, Evas_Object *eo, const char *emission, const char
 
 static void _refresh_trans (Ecore_Evas *ee) {
 	int x, y, w, h;
-	Evas_Object *o;
+	Evas_Object *o = NULL;
 
 	if (!ee) return;
 

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <xmmsclient/xmmsclient.h>
 #include <xmmsclient/xmmsclient-ecore.h>
+#include <string.h>
 #include "error.h"
 #include "status.h"
 
