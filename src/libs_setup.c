@@ -9,7 +9,7 @@ int efl_init () {
 	evas_init ();
 	ecore_evas_init ();
 	edje_init();
-	return 1;
+	return TRUE;
 }
 
 void efl_shutdown () {

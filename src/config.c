@@ -15,12 +15,12 @@ int config_load (rockon_config *config) {
 				config->theme = ecore_config_string_get ("/gui/theme");
 
 				free (file);
-				return 1;
+				return TRUE;
 			}
 		}
 		free (file);
 	}
-	return 0;
+	return FALSE;
 }
 
 int config_save (rockon_config *config) {
@@ -33,12 +33,12 @@ int config_save (rockon_config *config) {
 		if ((file = _get_config_filename ("rockon.cfg"))) {
 			if (ecore_config_file_save (file) == ECORE_CONFIG_ERR_SUCC) {
 				free (file);
-				return 1;
+				return TRUE;
 			}
 			free (file);
 		}
 	}
-	return 0;
+	return FALSE;
 }
 
 char* _get_config_filename(const char* filename) {

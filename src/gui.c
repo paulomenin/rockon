@@ -55,7 +55,7 @@ int gui_setup () {
 	edje_object_signal_callback_add (edje_o, "cmd_prev", "main", cmd_prev_cb, NULL);
 
 	ecore_main_loop_begin ();
-	return 0;
+	return TRUE;
 }
 
 void win_resize_cb (Ecore_Evas *ee) {
