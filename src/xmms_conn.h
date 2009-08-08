@@ -4,11 +4,12 @@
 #include <stdlib.h>
 #include <xmmsclient/xmmsclient.h>
 #include <xmmsclient/xmmsclient-ecore.h>
+#include <Edje.h>
 #include <string.h>
 #include "error.h"
 #include "status.h"
 
-int xmms2_connect (xmmsc_connection_t **xmms_conn);
+int xmms2_connect (xmms_status *status);
 int check_error (xmmsv_t *value, void *data);
 
 int broadcast_playlist_pos_cb (xmmsv_t *value, void *data);

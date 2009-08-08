@@ -7,8 +7,6 @@
 #include "xmms_conn.h"
 #include "status.h"
 
-extern xmmsc_connection_t *xmms_conn_async;
-
 void cmd_play_cb (void *data, Evas_Object *eo, const char *emission, const char *source);
 void cmd_pause_cb (void *data, Evas_Object *eo, const char *emission, const char *source);
 void cmd_stop_cb (void *data, Evas_Object *eo, const char *emission, const char *source);
@@ -19,8 +17,8 @@ void cmd_prev_cb (void *data, Evas_Object *eo, const char *emission, const char 
 /* Macros */
 
 #define XMMS_CONN_IS_VALID() { \
-	if (! app_status.connected) \
-		if (! xmms2_connect (&xmms_conn_async)) \
+	if (! ((xmms_status*)data)->connected) \
+		if (! xmms2_connect ((xmms_status*)data)) \
 			return; \
 }
 

@@ -2,7 +2,7 @@
 
 static void _refresh_trans (Ecore_Evas *ee);
 
-int gui_setup () {
+int gui_setup (xmms_status *status) {
 	Ecore_Evas *ee = NULL;
 	Evas_Object *edje_o = NULL;
 	Evas *evas_trans = NULL;
@@ -14,6 +14,12 @@ int gui_setup () {
 		print_error("Cannot get canvas.", ERR_CRITICAL);
 
 	ecore_evas_title_set (ee, "Rockon");
+	ecore_evas_name_class_set(ee, "rockon", "Rockon");
+
+	ecore_evas_shaped_set(ee, 1);
+	ecore_evas_alpha_set(ee, 1);
+	//ecore_evas_borderless_set(ee, 1);
+
 
 	ecore_evas_callback_delete_request_set (ee, win_del_cb);
 	ecore_evas_callback_resize_set (ee, win_resize_cb);
@@ -24,35 +30,33 @@ int gui_setup () {
 	if (! edje_object_file_set (edje_o, "../data/theme/default/gui.edj", "main"))
 		print_error("Cannot load theme.", ERR_CRITICAL);
 
+	status->edje_gui = edje_o;
 	evas_object_name_set (edje_o, "main");
 	evas_object_resize (edje_o, 320, 240);
 	evas_object_show (edje_o);
 
 	/* create transparency */
-
+	
 	evas_trans = ecore_evas_get (ee);
-
 	trans = esmart_trans_x11_new (evas_trans);
 	evas_object_move (trans, 0, 0);
 	evas_object_layer_set (trans, -5);
 	evas_object_name_set (trans, "trans_bg");
-
 	ecore_evas_geometry_get (ee, &x, &y, &w, &h);
 	evas_object_resize (trans, w, h);
-
-	evas_object_show (trans);
+	//evas_object_show (trans);
+	//esmart_trans_x11_freshen (trans, x, y, w, h);
+	
 	ecore_evas_show (ee);
-
-	esmart_trans_x11_freshen (trans, x, y, w, h);
-
+	
 	/* set callbacks */
 
-	edje_object_signal_callback_add (edje_o, "app_close", "main", app_close_cb, NULL);
-	edje_object_signal_callback_add (edje_o, "cmd_play", "main", cmd_play_cb, NULL);
-	edje_object_signal_callback_add (edje_o, "cmd_pause", "main", cmd_pause_cb, NULL);
-	edje_object_signal_callback_add (edje_o, "cmd_stop", "main", cmd_stop_cb, NULL);
-	edje_object_signal_callback_add (edje_o, "cmd_next", "main", cmd_next_cb, NULL);
-	edje_object_signal_callback_add (edje_o, "cmd_prev", "main", cmd_prev_cb, NULL);
+	edje_object_signal_callback_add (edje_o, "app_close", "main", app_close_cb, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_play", "main", cmd_play_cb, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_pause", "main", cmd_pause_cb, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_stop", "main", cmd_stop_cb, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_next", "main", cmd_next_cb, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_prev", "main", cmd_prev_cb, (void*)status);
 
 	ecore_main_loop_begin ();
 
@@ -105,6 +109,6 @@ static void _refresh_trans (Ecore_Evas *ee) {
 		print_error ("Trans object not found. Exiting...\n", ERR_NORMAL);
 		ecore_main_loop_quit ();
 	}
-	esmart_trans_x11_freshen (o, x, y, w, h);
+	//esmart_trans_x11_freshen (o, x, y, w, h);
 }
 

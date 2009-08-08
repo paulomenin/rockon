@@ -7,8 +7,6 @@ void print_error (const char *msg, Error_type type) {
 				break;
 		case ERR_CRITICAL:
 				fprintf (stderr, "CRITICAL ERROR: %s\nExiting...\n", msg);
-				efl_shutdown ();
-				xmms2_shutdown ();
 				exit (EXIT_FAILURE);
 				break;
 		case ERR_WARNING:

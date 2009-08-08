@@ -5,12 +5,9 @@
 #include "status.h"
 #include "gui.h"
 
-/* Globals */
-rockon_config app_config;
-xmms_status app_status;
-xmmsc_connection_t *xmms_conn_async = NULL;
-
 int main (int argc, char** argv) {
+	rockon_config app_config;
+	xmms_status app_status;
 
 	efl_init ();
 
@@ -18,21 +15,24 @@ int main (int argc, char** argv) {
 		print_error ("Couldn't load config. Loaded default values.", ERR_WARNING);
 
 	app_status.connected = 0;
+	app_status.connection = NULL;
+	app_status.edje_gui = NULL;
+	app_status.playlist_name = NULL;
 
-	/* Set xmms2 connection */
+	xmms2_connect (&app_status);
 
-	if (! xmms2_connect (&xmms_conn_async)) {
-		fprintf(stderr,"CONN XMMS MAIN ERROR");
-		//return -2;
-	}
-
-	gui_setup();
+	gui_setup(&app_status);
 
 	if ( ! config_save (&app_config))
 		print_error ("Couldn't save config.", ERR_WARNING);
 
-	xmms2_shutdown ();
+	/* Clean resources */
+	xmms2_shutdown (&app_status);
 	efl_shutdown ();
+
+	printf("DEBUG: PLS: %s END: %p",app_status.playlist_name,&(app_status.playlist_name) );
+	if (app_status.playlist_name)
+		free (app_status.playlist_name);
 
 	printf("\nDEBUG: exit main\n");
 	return EXIT_SUCCESS;

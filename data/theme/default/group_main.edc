@@ -1,3 +1,9 @@
+fonts {
+
+    font: "Vera.ttf" "vera";
+    //more fonts
+}
+
 group {
 	name: "Toggler";
 	script {
@@ -62,8 +68,7 @@ group {
 			source: "";
 			action: STATE_SET "on" 0.0;
 			target: "toggle";
-			transition: SINUSOIDAL 0.5;
-			after: "toggle_on2";
+			transition: SINUSOIDAL 1.0;
 		}
 		program {
 			name: "toggle_on2";
@@ -71,8 +76,7 @@ group {
 			source: "";
 			action: STATE_SET "on2" 0.0;
 			target: "toggle";
-			transition: SINUSOIDAL 0.5;
-			after: "toggle_off";
+			transition: SINUSOIDAL 1.0;
 		}
 		program {
 			name: "toggle_off";
@@ -80,8 +84,7 @@ group {
 			source: "";
 			action: STATE_SET "default" 0.0;
 			target: "toggle";
-			transition: SINUSOIDAL 0.5;
-			after: "toggle_on";
+			transition: SINUSOIDAL 1.0;
 		}
 	}
 }
@@ -92,6 +95,14 @@ group {
 	min: 200 100 ;
 	//max: w h;
 	
+	script {
+	    public pb_id;
+	}
+	
+	data {
+		item: "playback_id" "11";
+	}
+
 	parts {
 		part {
 			name: "background";
@@ -117,12 +128,34 @@ group {
 		}
 
 		part {
+			name: "text_id";
+			type: TEXT;
+			effect: OUTLINE_SHADOW;
+			description {
+				state: "default" 0.0;
+				
+				color:  0   0   0   255;
+				color2: 255 255 255 255;
+				color3: 255 255 0   255;
+
+				rel1 { relative: 0.21 0.01; }
+				rel2 { relative: 0.60 0.30; }
+
+				text {
+					text: "Nothing playing.";
+					font: "Vera";
+					size: 20;
+				}
+			}
+		}
+
+		part {
 			name: "botao";
 			type: GROUP;
 			source: "Toggler";
 			description {
 				state: "default" 0.0;
-				rel1 { relative: 0.5 0.1; }
+				rel1 { relative: 0.5 0.2; }
 				rel2 { relative: 0.7 0.4; }
 			}
 		}
@@ -210,7 +243,6 @@ group {
 			source: "btn_close";
 			action: SIGNAL_EMIT "app_close" "main";
 		}
-
 		program {
 			name: "play";
 			signal: "mouse,clicked,1";
@@ -240,6 +272,42 @@ group {
 			signal: "mouse,clicked,1";
 			source: "btn_prev";
 			action: SIGNAL_EMIT "cmd_prev" "main";
+		}
+		program {
+			name: "updt_id";
+			signal: "mouse,clicked,1";
+			source: "icon";
+			action: SIGNAL_EMIT "update_id" "main";
+		}
+		program {
+			name: "group_loaded";
+			signal: "load";
+			source: "";
+			script {
+				set_int(pb_id, 65);
+			}
+		}
+		program {
+			name: "updt_id_script2";
+			signal: "*";
+			source: "rockon_playback_id";
+			script {
+				//new id[5];
+				new par[80];
+				getsarg(0, par, 80);
+				//snprintf(id, 5, "%i", getsarg(pb_id));
+				set_text(PART:"text_id", par);
+			}
+		}
+		program {
+			name: "updt_id_script";
+			signal: "update_id";
+			source: "main";
+			script {
+				new id[4];
+				//snprintf(id, 4, "%i", get_int(pb_id));
+				set_text(PART:"text_id", id);
+			}
 		}
 	}
 }

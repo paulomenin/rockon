@@ -19,17 +19,14 @@ void efl_shutdown () {
 	ecore_config_shutdown ();
 	ecore_shutdown ();
 
-	if (app_status.playlist_name)
-		free (app_status.playlist_name);
-
 	printf ("DEBUG: shutdown\n");
 }
 
 /* FIXME maybe move to xmms_conn.c ? */
-void xmms2_shutdown () {
-	if (xmms_conn_async) {
-		xmmsc_unref (xmms_conn_async);
-		xmms_conn_async = NULL;
-		app_status.connected = 0;
+void xmms2_shutdown (xmms_status* status) {
+	if ((status) && (status->connection)) {
+		xmmsc_unref (status->connection);
+		status->connection = NULL;
+		status->connected = 0;
 	}
 }
