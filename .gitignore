@@ -1,5 +1,7 @@
-# The executable file
-rockon
+# Waf files
+.lock-wscript
+.waf-1.5.8-*
+build
 
 # VIM backup files
 *~

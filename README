@@ -8,15 +8,17 @@ Don't be scared by the default theme! Now it's only for test.
 
 -- DEPENDENCIES
 
- > libxmmsclient
- > ecore
- > evas
- > ecore_evas
- > edje
- > esmart
+ - xmms2
+ - ecore
+ - evas
+ - ecore_evas
+ - edje
+ - esmart_trans_x11
 
 -- INSTALL
 
-For now use the very simple makefile on /src
-It don't install anything, just compile.
+Rockon uses the Waf build system.
+Just run:
+$ ./waf configure build
 
+If successful the executable will be at: build/default/rockon
