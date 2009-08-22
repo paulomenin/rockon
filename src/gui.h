@@ -5,7 +5,6 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
-#include <Esmart/Esmart_Trans_X11.h>
 
 #include "libs_setup.h"
 #include "error.h"

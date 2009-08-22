@@ -15,7 +15,6 @@ libs = """
 	ecore-file
 	ecore-evas
 	edje
-	esmart_trans_x11
 	xmms2-client
 	xmms2-client-ecore
 """

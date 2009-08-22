@@ -10,10 +10,9 @@ Don't be scared by the default theme! Now it's only for test.
 
  - xmms2
  - ecore
- - evas
- - ecore_evas
+ - ecore-evas
+ - ecore-file
  - edje
- - esmart_trans_x11
 
 -- INSTALL
 

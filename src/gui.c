@@ -1,12 +1,8 @@
 #include "gui.h"
 
-static void _refresh_trans (Ecore_Evas *ee);
-
 int gui_setup (rockon_config *config, xmms_status *status) {
 	Ecore_Evas *ee = NULL;
 	Evas_Object *edje_o = NULL;
-	Evas *evas_trans = NULL;
-	Evas_Object *trans = NULL;
 	int x, y, w, h;
 
 	ee = ecore_evas_new (NULL, 0, 0, 320, 240, NULL);
@@ -35,18 +31,6 @@ int gui_setup (rockon_config *config, xmms_status *status) {
 	evas_object_resize (edje_o, 320, 240);
 	evas_object_show (edje_o);
 
-	/* create transparency */
-	
-	evas_trans = ecore_evas_get (ee);
-	trans = esmart_trans_x11_new (evas_trans);
-	evas_object_move (trans, 0, 0);
-	evas_object_layer_set (trans, -5);
-	evas_object_name_set (trans, "trans_bg");
-	ecore_evas_geometry_get (ee, &x, &y, &w, &h);
-	evas_object_resize (trans, w, h);
-	//evas_object_show (trans);
-	//esmart_trans_x11_freshen (trans, x, y, w, h);
-	
 	ecore_evas_show (ee);
 	
 	/* set callbacks */
@@ -75,18 +59,13 @@ void win_resize_cb (Ecore_Evas *ee) {
 		ecore_evas_size_max_get (ee, &maxw, &maxh);
 
 		if ((w >= minw) && (h >= minh) && (h <= maxh) && (w <= maxw)) {
-			if ((o = evas_object_name_find (ecore_evas_get (ee), "trans_bg")))
-				evas_object_resize (o, w, h);
 			if ((o = evas_object_name_find (ecore_evas_get (ee), "main")))
 				evas_object_resize (o, w, h);
 		}
 	}
-	_refresh_trans (ee);
 }
 
-void win_move_cb (Ecore_Evas *ee) {
-	_refresh_trans (ee);
-}
+void win_move_cb (Ecore_Evas *ee) {}
 
 void win_del_cb (Ecore_Evas *ee) {
 	ecore_main_loop_quit();
@@ -95,20 +74,3 @@ void win_del_cb (Ecore_Evas *ee) {
 void app_close_cb (void *data, Evas_Object *eo, const char *emission, const char *source) {
 	win_del_cb (NULL);
 }
-
-static void _refresh_trans (Ecore_Evas *ee) {
-	int x, y, w, h;
-	Evas_Object *o = NULL;
-
-	if (!ee) return;
-
-	ecore_evas_geometry_get (ee, &x, &y, &w, &h);
-	o = evas_object_name_find (ecore_evas_get (ee), "trans_bg");
-
-	if (!o) {
-		print_error ("Trans object not found. Exiting...\n", ERR_NORMAL);
-		ecore_main_loop_quit ();
-	}
-	//esmart_trans_x11_freshen (o, x, y, w, h);
-}
-
