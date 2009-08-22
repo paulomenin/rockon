@@ -9,6 +9,7 @@ int efl_init () {
 	evas_init ();
 	ecore_evas_init ();
 	edje_init();
+	ecore_file_init();
 	return TRUE;
 }
 
@@ -18,6 +19,7 @@ void efl_shutdown () {
 	evas_shutdown ();
 	ecore_config_shutdown ();
 	ecore_shutdown ();
+	ecore_file_shutdown();
 
 	printf ("DEBUG: shutdown\n");
 }

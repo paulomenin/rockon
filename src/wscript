@@ -12,12 +12,13 @@ sources = """
 libs = """
 	ecore
 	ecore-config
+	ecore-file
 	ecore-evas
 	edje
 	esmart_trans_x11
 	xmms2-client
 	xmms2-client-ecore
-""".upper().split()
+"""
 
 def configure(conf):
 	conf.env.append_value('CFLAGS', '-Wall')
@@ -26,23 +27,18 @@ def configure(conf):
 
 	conf.check_tool('gcc')
 	conf.find_program('edje_cc', var='EDJE_CC')
-
-	conf.check_cfg(package='ecore',              args='--cflags --libs')
-	conf.check_cfg(package='ecore-config',       args='--cflags --libs')
-	conf.check_cfg(package='ecore-evas',         args='--cflags --libs')
-	conf.check_cfg(package='edje',               args='--cflags --libs')
-	conf.check_cfg(package='esmart_trans_x11',   args='--cflags --libs')
-	conf.check_cfg(package='xmms2-client',       args='--cflags --libs')
-	conf.check_cfg(package='xmms2-client-ecore', args='--cflags --libs')
-
+	
+	for lib in libs.split():
+		conf.check_cfg(package=lib, args='--cflags --libs')
 
 def build(bld):
+	
 	task = bld.new_task_gen(
 		features     = 'cc cprogram',
 		source       = sources,
 		target       = 'rockon',
 		includes     = '.',
 		install_path = None,
-		uselib       = libs
+		uselib       = libs.upper().split()
 	)
 

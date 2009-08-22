@@ -21,7 +21,7 @@ int main (int argc, char** argv) {
 
 	xmms2_connect (&app_status);
 
-	gui_setup(&app_status);
+	gui_setup(&app_config, &app_status);
 
 	if ( ! config_save (&app_config))
 		print_error ("Couldn't save config.", ERR_WARNING);

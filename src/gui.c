@@ -2,7 +2,7 @@
 
 static void _refresh_trans (Ecore_Evas *ee);
 
-int gui_setup (xmms_status *status) {
+int gui_setup (rockon_config *config, xmms_status *status) {
 	Ecore_Evas *ee = NULL;
 	Evas_Object *edje_o = NULL;
 	Evas *evas_trans = NULL;
@@ -27,7 +27,7 @@ int gui_setup (xmms_status *status) {
 
 	/* load .edj */
 	edje_o = edje_object_add (ecore_evas_get(ee));
-	if (! edje_object_file_set (edje_o, "../data/theme/default/gui.edj", "main"))
+	if (! edje_object_file_set (edje_o, (const char*)config->theme, "main"))
 		print_error("Cannot load theme.", ERR_CRITICAL);
 
 	status->edje_gui = edje_o;

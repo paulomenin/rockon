@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <Ecore_Config.h>
+#include <Ecore_File.h>
 #include <xmmsclient/xmmsclient.h>
 #include "error.h"
 

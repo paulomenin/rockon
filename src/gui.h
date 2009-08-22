@@ -10,8 +10,9 @@
 #include "libs_setup.h"
 #include "error.h"
 #include "playback_cb.h"
+#include "config.h"
 
-int gui_setup(xmms_status *status);
+int gui_setup(rockon_config *config, xmms_status *status);
 
 void win_del_cb (Ecore_Evas *ee);
 void win_resize_cb (Ecore_Evas *ee);
