@@ -3,6 +3,8 @@
 .waf-1.5.8-*
 build
 
+*.pyc
+
 # VIM backup files
 *~
 *.swp
