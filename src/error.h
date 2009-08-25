@@ -18,7 +18,7 @@
 #define ERROR_H
 
 #include <stdio.h>
-#include "libs_setup.h"
+#include <stdlib.h>
 
 typedef enum {
 	ERR_NORMAL,

@@ -29,7 +29,7 @@ void print_error (const char *msg, Error_type type) {
 				break;
 		case ERR_CRITICAL:
 				fprintf (stderr, "CRITICAL ERROR: %s\nExiting...\n", msg);
-				exit (EXIT_FAILURE);
+				exit (1);
 				break;
 		case ERR_WARNING:
 				fprintf (stdout, "WARNING: %s\n", msg);

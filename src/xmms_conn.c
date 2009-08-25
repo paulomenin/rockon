@@ -49,6 +49,14 @@ int xmms2_connect (xmms_status *status) {
 	return TRUE;
 }
 
+void xmms2_shutdown (xmms_status* status) {
+	if ((status) && (status->connection)) {
+		xmmsc_unref (status->connection);
+		status->connection = NULL;
+		status->connected = 0;
+	}
+}
+
 void xmms2_disconnect_cb (void *data) {
 	xmms2_shutdown ((xmms_status*)data);
 	print_error ("xmms2 connection lost.", ERR_WARNING);

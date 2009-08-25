@@ -14,18 +14,22 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libs_setup.h"
+
+#include <Elementary.h>
+
 #include "error.h"
 #include "config.h"
 #include "xmms_conn.h"
 #include "status.h"
 #include "gui.h"
 
-int main (int argc, char** argv) {
+
+EAPI int elm_main (int argc, char** argv) {
 	rockon_config app_config;
 	xmms_status app_status;
 
-	efl_init ();
+	ecore_config_init ("Rockon");
+	ecore_file_init();
 
 	if ( ! config_load (&app_config))
 		print_error ("Couldn't load config. Loaded default values.", ERR_WARNING);
@@ -44,13 +48,13 @@ int main (int argc, char** argv) {
 
 	/* Clean resources */
 	xmms2_shutdown (&app_status);
-	efl_shutdown ();
+	//efl_shutdown ();
 
-	printf("DEBUG: PLS: %s END: %p",app_status.playlist_name,&(app_status.playlist_name) );
+	printf("DEBUG: PLS: %s END: %p\n",app_status.playlist_name,&(app_status.playlist_name) );
 	if (app_status.playlist_name)
 		free (app_status.playlist_name);
 
 	printf("\nDEBUG: exit main\n");
 	return EXIT_SUCCESS;
 }
-
+ELM_MAIN()

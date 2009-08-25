@@ -98,6 +98,7 @@ char* _get_theme_filename(const char* themename) {
 	}
 
 	pg = ecore_path_group_new();
+	ecore_path_group_add (pg, "data/theme/default"); // FIXME remove this line
 	ecore_path_group_add (pg, (const char*)home_path);
 	ecore_path_group_add (pg, "/usr/local/share/rockon/themes");
 	ecore_path_group_add (pg, "/usr/share/rockon/themes");

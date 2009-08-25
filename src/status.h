@@ -17,6 +17,7 @@
 #ifndef STATUS_H
 #define STATUS_H
 
+#include <Evas.h>
 #include <xmmsclient/xmmsclient.h>
 
 typedef struct {

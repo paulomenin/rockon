@@ -17,76 +17,45 @@
 #include "gui.h"
 
 int gui_setup (rockon_config *config, xmms_status *status) {
-	Ecore_Evas *ee = NULL;
-	Evas_Object *edje_o = NULL;
+	Evas_Object *main_window, *edje_o;
+	Evas_Object *ly = NULL;
 	int x, y, w, h;
+	
+	main_window = elm_win_add(NULL, "main_win", ELM_WIN_BASIC);
+	elm_win_title_set(main_window, "Rockon");
+	evas_object_smart_callback_add(main_window, "delete-request", win_del_cb, NULL);
+	elm_win_shaped_set(main_window, 1);
+    elm_win_alpha_set(main_window, 1);
 
-	ee = ecore_evas_new (NULL, 0, 0, 320, 240, NULL);
-	if (!ee)
-		print_error("Cannot get canvas.", ERR_CRITICAL);
-
-	ecore_evas_title_set (ee, "Rockon");
-	ecore_evas_name_class_set(ee, "rockon", "Rockon");
-
-	ecore_evas_shaped_set(ee, 1);
-	ecore_evas_alpha_set(ee, 1);
-	//ecore_evas_borderless_set(ee, 1);
-
-
-	ecore_evas_callback_delete_request_set (ee, win_del_cb);
-	ecore_evas_callback_resize_set (ee, win_resize_cb);
-	ecore_evas_callback_move_set (ee, win_move_cb);
-
-	/* load .edj */
-	edje_o = edje_object_add (ecore_evas_get(ee));
-	if (! edje_object_file_set (edje_o, (const char*)config->theme, "main"))
-		print_error("Cannot load theme.", ERR_CRITICAL);
-
+	ly = elm_layout_add(main_window);
+	elm_layout_file_set(ly, (const char*)config->theme, "main");
+	evas_object_size_hint_weight_set(ly, 1.0, 1.0);
+	elm_win_resize_object_add(main_window, ly);
+	evas_object_show(ly);
+	edje_o = elm_layout_edje_get(ly);
+	
 	status->edje_gui = edje_o;
-	evas_object_name_set (edje_o, "main");
-	evas_object_resize (edje_o, 320, 240);
-	evas_object_show (edje_o);
-
-	ecore_evas_show (ee);
 	
 	/* set callbacks */
 
-	edje_object_signal_callback_add (edje_o, "app_close", "main", app_close_cb, (void*)status);
-	edje_object_signal_callback_add (edje_o, "cmd_play", "main", cmd_play_cb, (void*)status);
-	edje_object_signal_callback_add (edje_o, "cmd_pause", "main", cmd_pause_cb, (void*)status);
-	edje_object_signal_callback_add (edje_o, "cmd_stop", "main", cmd_stop_cb, (void*)status);
-	edje_object_signal_callback_add (edje_o, "cmd_next", "main", cmd_next_cb, (void*)status);
-	edje_object_signal_callback_add (edje_o, "cmd_prev", "main", cmd_prev_cb, (void*)status);
+	edje_object_signal_callback_add (edje_o, "app_close", "*", app_close_cb, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_play", "*", cmd_play_cb, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_pause", "*", cmd_pause_cb, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_stop", "*", cmd_stop_cb, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_next", "*", cmd_next_cb, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_prev", "*", cmd_prev_cb, (void*)status);
 
-	ecore_main_loop_begin ();
+	evas_object_show(main_window);
 
+	elm_run();
+	elm_shutdown();
 	return TRUE;
 }
 
-void win_resize_cb (Ecore_Evas *ee) {
-	int w, h;
-	int minw, minh;
-	int maxw, maxh;
-	Evas_Object *o = NULL;
-
-	if (ee) {
-		ecore_evas_geometry_get (ee, NULL, NULL, &w, &h);
-		ecore_evas_size_min_get (ee, &minw, &minh);
-		ecore_evas_size_max_get (ee, &maxw, &maxh);
-
-		if ((w >= minw) && (h >= minh) && (h <= maxh) && (w <= maxw)) {
-			if ((o = evas_object_name_find (ecore_evas_get (ee), "main")))
-				evas_object_resize (o, w, h);
-		}
-	}
-}
-
-void win_move_cb (Ecore_Evas *ee) {}
-
-void win_del_cb (Ecore_Evas *ee) {
-	ecore_main_loop_quit();
+void win_del_cb (void *data, Evas_Object *obj, void *event_info) {
+	elm_exit();
 }
 
 void app_close_cb (void *data, Evas_Object *eo, const char *emission, const char *source) {
-	win_del_cb (NULL);
+	win_del_cb (NULL, NULL, NULL);
 }

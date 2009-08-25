@@ -89,12 +89,9 @@ group {
 	}
 }
 
-
 group {
-	name: "main";
-	min: 200 100 ;
-	//max: w h;
-	
+	name: "main2";
+	min: 400 300;
 	script {
 	    public pb_id;
 	}
@@ -312,3 +309,20 @@ group {
 	}
 }
 
+group {
+	name: "main";
+	parts{
+		part {
+			name: "";
+			type: GROUP;
+			source: "main2";
+			description {
+				min: 400 300 ;
+				//max: 400 300;
+				state: "default" 0.0;
+				rel1 { relative: 0.0 0.0; }
+				rel2 { relative: 1.0 1.0;  }
+			}
+		}
+	}
+}

@@ -4,7 +4,6 @@
 sources = """
 	main.c
 	error.c
-	libs_setup.c
 	config.c
 	xmms_conn.c
 	gui.c
@@ -12,11 +11,8 @@ sources = """
 """.split()
 
 libs = """
-	ecore
 	ecore-config
-	ecore-file
-	ecore-evas
-	edje
+	elementary
 	xmms2-client
 	xmms2-client-ecore
 """

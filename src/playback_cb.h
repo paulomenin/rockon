@@ -17,8 +17,6 @@
 #ifndef PLAYBACK_CB_H
 #define PLAYBACK_CB_H
 
-#include <stdio.h>
-#include <Evas.h>
 #include <xmmsclient/xmmsclient.h>
 #include "xmms_conn.h"
 #include "status.h"
