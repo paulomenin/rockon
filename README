@@ -8,16 +8,14 @@ Don't be scared by the default theme! Now it's only for test.
 
 -- DEPENDENCIES
 
- - xmms2
- - ecore
- - ecore-evas
- - ecore-file
- - edje
+ - XMMS2
+ - EFL
+ - Elementary
 
 -- INSTALL
 
 Rockon uses the Waf build system.
 Just run:
-$ ./waf configure build
+$ ./waf configure build --doc
 
-If successful the executable will be at: build/default/rockon
+If successful the executable will be at: build/default/src/rockon

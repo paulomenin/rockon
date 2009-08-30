@@ -24,14 +24,11 @@ def configure(conf):
 	conf.env.append_value('CFLAGS', '-g')
 
 	conf.check_tool('gcc')
-	conf.check_tool('doxygen', tooldir='waf_tools')
-	conf.find_program('edje_cc', var='EDJE_CC')
-	
+
 	for lib in libs.split():
 		conf.check_cfg(package=lib, args='--cflags --libs')
 
 def build(bld):
-	
 	bld.new_task_gen(
 		features     = 'cc cprogram',
 		source       = sources,
@@ -39,11 +36,5 @@ def build(bld):
 		includes     = '.',
 		install_path = None,
 		uselib       = libs.upper().split()
-	)
-
-	bld.new_task_gen(
-		features = 'doxygen',
-		doxyfile = '../Doxyfile',
-		install_to = None
 	)
 
