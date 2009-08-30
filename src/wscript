@@ -5,13 +5,14 @@ sources = """
 	main.c
 	error.c
 	config.c
+	lcfg_static.c
 	xmms_conn.c
 	gui.c
 	playback_cb.c
 """.split()
 
 libs = """
-	ecore-config
+	ecore-evas
 	elementary
 	xmms2-client
 	xmms2-client-ecore

@@ -28,7 +28,6 @@ EAPI int elm_main (int argc, char** argv) {
 	rockon_config app_config;
 	xmms_status app_status;
 
-	ecore_config_init ("Rockon");
 	ecore_file_init();
 
 	if ( ! config_load (&app_config))
@@ -48,13 +47,15 @@ EAPI int elm_main (int argc, char** argv) {
 
 	/* Clean resources */
 	xmms2_shutdown (&app_status);
-	//efl_shutdown ();
+	config_free(&app_config);
 
-	printf("DEBUG: PLS: %s END: %p\n",app_status.playlist_name,&(app_status.playlist_name) );
+	printf("DEBUG: PLS: %s\n",app_status.playlist_name);
+	
+	/* FIXME create status_free function to free resources */
 	if (app_status.playlist_name)
 		free (app_status.playlist_name);
 
 	printf("\nDEBUG: exit main\n");
-	return EXIT_SUCCESS;
+	return 0;
 }
 ELM_MAIN()

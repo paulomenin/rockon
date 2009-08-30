@@ -18,46 +18,59 @@
 
 char* _get_config_filename(const char* filename);
 char* _get_theme_filename(const char* themename);
+enum lcfg_status _config_visitor_load(const char *key, void *data, size_t len, void *user_data);
+enum lcfg_status _config_visitor_save(const char *key, void *data, size_t len, void *user_data);
 
 int config_load (rockon_config *config) {
 	char *file;
 
-	ecore_config_int_default ("/server/launch", 0);
-	ecore_config_string_default ("/gui/theme", "gui.edj");
+	/* default values */
+	config->launch_server = 0;
+	config->theme = (char*) malloc(sizeof(char) * 8);
+	if (!config->theme) return 0;
+	strcpy(config->theme, "gui.edj");
 
-	if ((file = _get_config_filename ("rockon.cfg"))) {
-		ecore_config_file_load (file);
-		if (config) {
-			config->launch_server = ecore_config_int_get ("/server/launch");
-			config->theme = _get_theme_filename(ecore_config_string_get("/gui/theme"));
 
-			free (file);
-			return TRUE;
+	if (file = _get_config_filename ("rockon.conf")) {
+		config->lcfg_obj = lcfg_new(file);
+		if (lcfg_parse(config->lcfg_obj) != lcfg_status_ok) {
+			free(file);
+			return 0;
 		}
+		lcfg_accept(config->lcfg_obj, _config_visitor_load, config);
+
+		config->theme = _get_theme_filename(config->theme);
+
 		free (file);
+		return 1;
 	}
-	return FALSE;
+	return 0;
+}
+
+void config_free(rockon_config *config) {
+	if (config->lcfg_obj) lcfg_delete(config->lcfg_obj);
+	if (config->theme)    free(config->theme);
 }
 
 int config_save (rockon_config *config) {
+	FILE *fd;
 	char *file;
 	char *theme;
 
 	if (config) {
-		theme = ecore_file_file_get((const char*)config->theme);
-
-		ecore_config_int_set("/server/launch", config->launch_server);
-		ecore_config_string_set ("/gui/theme", theme);
-
-		if ((file = _get_config_filename ("rockon.cfg"))) {
-			if (ecore_config_file_save (file) == ECORE_CONFIG_ERR_SUCC) {
-				free (file);
-				return TRUE;
+		if ((file = _get_config_filename ("rockon.conf"))) {
+			fd = fopen(file, "w");
+			if (fd) {
+				lcfg_accept(config->lcfg_obj, _config_visitor_save, fd);
+				fclose(fd);
+				free(file);
+				return 1;
 			}
-			free (file);
+			free(file);
+			return 0;
 		}
 	}
-	return FALSE;
+	return 0;
 }
 
 char* _get_config_filename(const char* filename) {
@@ -95,6 +108,8 @@ char* _get_theme_filename(const char* themename) {
 	if (home_path) {
 		strcpy (home_path, conf_path);
 		strcat (home_path, "themes");
+	} else {
+		return NULL;
 	}
 
 	pg = ecore_path_group_new();
@@ -108,4 +123,31 @@ char* _get_theme_filename(const char* themename) {
 	ecore_path_group_del(pg);
 	printf("DEBUG: theme: %s\n", theme);
 	return theme;
+}
+
+enum lcfg_status _config_visitor_load(const char *key, void *data, size_t len, void *user_data) {
+	rockon_config *config = (rockon_config*) user_data;
+
+	if (strcmp(key, "launch_server") == 0) {
+		config->launch_server = atoi((const char*)data);
+	} else
+	if (strcmp(key, "theme") == 0) {
+		config->theme = (char*)data;
+	}
+
+	return lcfg_status_ok;
+}
+
+enum lcfg_status _config_visitor_save(const char *key, void *data, size_t len, void *user_data) {
+	FILE *fd = (FILE*) user_data;
+	const char* theme;
+
+	if (strcmp(key, "theme") == 0) {
+		theme = ecore_file_file_get((char*)data);
+		fprintf(fd, "theme = \"%s\"\n", theme);
+	} else {
+		fprintf(fd, "%s = \"%s\"\n", key, (char*)data);
+	}
+
+	return lcfg_status_ok;
 }
