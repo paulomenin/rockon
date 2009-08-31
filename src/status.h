@@ -25,6 +25,9 @@ typedef struct {
 	xmmsc_connection_t *connection;
 
 	Evas_Object *edje_gui;
+	Evas_Object *elm_win;
+	Evas_Object *ly;
+	Evas_Object *bt;
 
 	char *playlist_name;
 	int playlist_pos;

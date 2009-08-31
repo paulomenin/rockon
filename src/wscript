@@ -8,7 +8,9 @@ sources = """
 	lcfg_static.c
 	xmms_conn.c
 	gui.c
-	playback_cb.c
+	commands.c
+	edje_bridge.c
+	elm_bridge.c
 """.split()
 
 libs = """

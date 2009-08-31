@@ -41,6 +41,7 @@ group {
 			source: "";
 			script {
 				set_int(button_toggle_state, 0);
+				emit("set_elm_widgets","rockon");
 			}
 		}
 		program {
@@ -118,7 +119,7 @@ group {
 			type: IMAGE;
 			description {
 				state: "default" 0.0;
-				rel1 { relative: 0.0 0.0; offset: 3 3; }
+				rel1 { relative: 0.10 0.10; offset: 3 3; }
 				rel2 { relative: 0.20 0.25; }
 				image { normal: "images/icon.png"; }
 			}
@@ -230,6 +231,15 @@ group {
 				image { normal: "images/next.png"; }
 			}
 		}
+		part {
+			name: "element1";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.3 0.4; }
+				rel2 { relative: 0.7 0.6; }
+			}
+		}
 		
 	}
 
@@ -285,6 +295,14 @@ group {
 			}
 		}
 		program {
+			name: "set_widgets";
+			signal: "set_elm_widgets";
+			source: "*";
+			script {
+				emit("elm_set.btn_play", "element1");
+			}
+		}
+		program {
 			name: "updt_id_script2";
 			signal: "*";
 			source: "rockon_playback_id";
@@ -302,7 +320,7 @@ group {
 			source: "main";
 			script {
 				new id[4];
-				//snprintf(id, 4, "%i", get_int(pb_id));
+				snprintf(id, 4, "%i", get_int(pb_id));
 				set_text(PART:"text_id", id);
 			}
 		}

@@ -14,26 +14,25 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLAYBACK_CB_H
-#define PLAYBACK_CB_H
+#ifndef COMMANDS_H
+#define COMMANDS_H
 
 #include <xmmsclient/xmmsclient.h>
 #include "xmms_conn.h"
 #include "status.h"
 
-void cmd_play_cb (void *data, Evas_Object *eo, const char *emission, const char *source);
-void cmd_pause_cb (void *data, Evas_Object *eo, const char *emission, const char *source);
-void cmd_stop_cb (void *data, Evas_Object *eo, const char *emission, const char *source);
-void cmd_next_cb (void *data, Evas_Object *eo, const char *emission, const char *source);
-void cmd_prev_cb (void *data, Evas_Object *eo, const char *emission, const char *source);
+void cmd_play  (xmms_status *status, void *data);
+void cmd_pause (xmms_status *status, void *data);
+void cmd_stop  (xmms_status *status, void *data);
+void cmd_next  (xmms_status *status, void *data);
+void cmd_prev  (xmms_status *status, void *data);
 
 
 /* Macros */
-
 #define XMMS_CONN_IS_VALID() { \
-	if (! ((xmms_status*)data)->connected) \
-		if (! xmms2_connect ((xmms_status*)data)) \
+	if (! status->connected) \
+		if (! xmms2_connect (status)) \
 			return; \
 }
 
-#endif /* PLAYBACK_CB_H */
+#endif /* COMMANDS_H */

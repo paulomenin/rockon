@@ -16,6 +16,9 @@
 
 #include "gui.h"
 
+/* FIXME remove when finish debuging */
+void _p_signal(void *data, Evas_Object *eo, const char *emission, const char *source);
+
 int gui_setup (rockon_config *config, xmms_status *status) {
 	Evas_Object *main_window, *edje_o;
 	Evas_Object *ly = NULL;
@@ -35,15 +38,23 @@ int gui_setup (rockon_config *config, xmms_status *status) {
 	edje_o = elm_layout_edje_get(ly);
 	
 	status->edje_gui = edje_o;
+	status->elm_win = main_window;
+	status->ly = ly;
 	
 	/* set callbacks */
 
+	/* FIXME remove this function call when finish debuging */
+	edje_object_signal_callback_add (edje_o, "*", "*", _p_signal, (void*)status);
+	
+	edje_object_signal_callback_add (edje_o, "elm_set.*", "*", elm_cb_set, (void*)status);
+
 	edje_object_signal_callback_add (edje_o, "app_close", "*", app_close_cb, (void*)status);
-	edje_object_signal_callback_add (edje_o, "cmd_play", "*", cmd_play_cb, (void*)status);
-	edje_object_signal_callback_add (edje_o, "cmd_pause", "*", cmd_pause_cb, (void*)status);
-	edje_object_signal_callback_add (edje_o, "cmd_stop", "*", cmd_stop_cb, (void*)status);
-	edje_object_signal_callback_add (edje_o, "cmd_next", "*", cmd_next_cb, (void*)status);
-	edje_object_signal_callback_add (edje_o, "cmd_prev", "*", cmd_prev_cb, (void*)status);
+
+	edje_object_signal_callback_add (edje_o, "cmd_play", "*", edje_cb_play, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_pause", "*",edje_cb_pause, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_stop", "*", edje_cb_stop, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_next", "*", edje_cb_next, (void*)status);
+	edje_object_signal_callback_add (edje_o, "cmd_prev", "*", edje_cb_prev, (void*)status);
 
 	evas_object_show(main_window);
 
@@ -59,3 +70,9 @@ void win_del_cb (void *data, Evas_Object *obj, void *event_info) {
 void app_close_cb (void *data, Evas_Object *eo, const char *emission, const char *source) {
 	win_del_cb (NULL, NULL, NULL);
 }
+
+/* FIXME remove this function when finish debuging */
+void _p_signal(void *data, Evas_Object *eo, const char *emission, const char *source) {
+	printf("SIG: \"%s\" | \"%s\"\n", emission, source);
+}
+

@@ -14,18 +14,16 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GUI_H
-#define GUI_H
+#ifndef EDJE_BRIDGE_H
+#define EDJE_BRIDGE_H
 
-#include <Elementary.h>
-#include "error.h"
-#include "config.h"
-#include "edje_bridge.h"
-#include "elm_bridge.h"
+#include "commands.h"
 
-int gui_setup(rockon_config *config, xmms_status *status);
+void edje_cb_play  (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_pause (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_stop  (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_next  (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_prev  (void *data, Evas_Object *eo, const char *emission, const char *source);
 
-void win_del_cb (void *data, Evas_Object *obj, void *event_info);
-void app_close_cb (void *data, Evas_Object *eo, const char *emission, const char *source);
 
-#endif /* GUI_H */
+#endif /* EDJE_BRIDGE_H */
