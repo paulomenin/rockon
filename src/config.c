@@ -19,7 +19,6 @@
 char* _get_config_filename(const char* filename);
 char* _get_theme_filename(const char* themename);
 enum lcfg_status _config_visitor_load(const char *key, void *data, size_t len, void *user_data);
-enum lcfg_status _config_visitor_save(const char *key, void *data, size_t len, void *user_data);
 
 int config_load (rockon_config *config) {
 	char *file;
@@ -30,17 +29,15 @@ int config_load (rockon_config *config) {
 	if (!config->theme) return 0;
 	strcpy(config->theme, "default.edj");
 
-
 	if (file = _get_config_filename ("rockon.conf")) {
 		config->lcfg_obj = lcfg_new(file);
 		if (lcfg_parse(config->lcfg_obj) != lcfg_status_ok) {
+			config->theme = _get_theme_filename(config->theme);
 			free(file);
 			return 0;
 		}
 		lcfg_accept(config->lcfg_obj, _config_visitor_load, config);
-
 		config->theme = _get_theme_filename(config->theme);
-
 		free (file);
 		return 1;
 	}
@@ -55,13 +52,22 @@ void config_free(rockon_config *config) {
 int config_save (rockon_config *config) {
 	FILE *fd;
 	char *file;
+	char *dir;
 	char *theme;
 
 	if (config) {
 		if ((file = _get_config_filename ("rockon.conf"))) {
+			dir = ecore_file_dir_get(file);
+			if (! ecore_file_is_dir(dir)) {
+				if (! ecore_file_mkpath(dir))
+					return 0;
+			}
+
 			fd = fopen(file, "w");
 			if (fd) {
-				lcfg_accept(config->lcfg_obj, _config_visitor_save, fd);
+				fprintf(fd,"launch_server = \"%d\"\n", config->launch_server);
+				fprintf(fd,"theme = \"%s\"\n", ecore_file_file_get(config->theme));
+
 				fclose(fd);
 				free(file);
 				return 1;
@@ -133,20 +139,6 @@ enum lcfg_status _config_visitor_load(const char *key, void *data, size_t len, v
 	} else
 	if (strcmp(key, "theme") == 0) {
 		config->theme = (char*)data;
-	}
-
-	return lcfg_status_ok;
-}
-
-enum lcfg_status _config_visitor_save(const char *key, void *data, size_t len, void *user_data) {
-	FILE *fd = (FILE*) user_data;
-	const char* theme;
-
-	if (strcmp(key, "theme") == 0) {
-		theme = ecore_file_file_get((char*)data);
-		fprintf(fd, "theme = \"%s\"\n", theme);
-	} else {
-		fprintf(fd, "%s = \"%s\"\n", key, (char*)data);
 	}
 
 	return lcfg_status_ok;

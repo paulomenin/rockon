@@ -31,7 +31,8 @@ int gui_setup (rockon_config *config, xmms_status *status) {
     elm_win_alpha_set(main_window, 1);
 
 	ly = elm_layout_add(main_window);
-	elm_layout_file_set(ly, (const char*)config->theme, "main");
+	if (!elm_layout_file_set(ly, (const char*)config->theme, "main"))
+		print_error("Cannot load theme.", ERR_CRITICAL);
 	evas_object_size_hint_weight_set(ly, 1.0, 1.0);
 	elm_win_resize_object_add(main_window, ly);
 	evas_object_show(ly);
