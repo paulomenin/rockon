@@ -25,9 +25,9 @@ int config_load (rockon_config *config) {
 
 	/* default values */
 	config->launch_server = 0;
-	config->theme = (char*) malloc(sizeof(char) * 8);
+	config->theme = (char*) malloc(sizeof(char) * 12);
 	if (!config->theme) return 0;
-	strcpy(config->theme, "default/default.edj");
+	strcpy(config->theme, "default.edj");
 
 	if ((file = _get_config_filename ("rockon.conf"))) {
 		config->lcfg_obj = lcfg_new(file);
@@ -107,6 +107,8 @@ char* _get_theme_filename(const char* themename) {
 	char *theme = NULL;
 	int conf_path_len;
 	
+	printf("DEBUG themename: %s", themename);
+	
 	conf_path = _get_config_filename("");
 	conf_path_len = strlen(conf_path);
 	home_path = (char*) malloc (sizeof(char)*(conf_path_len + 7 ));
@@ -118,7 +120,7 @@ char* _get_theme_filename(const char* themename) {
 	}
 
 	pg = ecore_path_group_new();
-	ecore_path_group_add (pg, "build/default/themes"); // FIXME remove this line
+	ecore_path_group_add (pg, "build/default/themes/default"); // FIXME remove this line
 	ecore_path_group_add (pg, (const char*)home_path);
 	ecore_path_group_add (pg, "/usr/local/share/rockon/themes");
 	ecore_path_group_add (pg, "/usr/share/rockon/themes");
@@ -126,7 +128,7 @@ char* _get_theme_filename(const char* themename) {
 	theme = ecore_path_group_find(pg, themename);
 
 	ecore_path_group_del(pg);
-	printf("DEBUG: theme: %s\n", theme);
+	printf(" theme: %s\n", theme);
 	return theme;
 }
 

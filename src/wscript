@@ -4,8 +4,9 @@
 sources = """
 	main.c
 	error.c
-	config.c
 	lcfg_static.c
+	config.c
+	status.c
 	xmms_conn.c
 	gui.c
 	commands.c

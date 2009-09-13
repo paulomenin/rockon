@@ -39,6 +39,7 @@ EAPI int elm_main (int argc, char** argv) {
 	app_status.playlist_name = NULL;
 
 	xmms2_connect (&app_status);
+	status_fetch (&app_status);
 
 	gui_setup(&app_config, &app_status);
 
@@ -48,12 +49,7 @@ EAPI int elm_main (int argc, char** argv) {
 	/* Clean resources */
 	xmms2_shutdown (&app_status);
 	config_free(&app_config);
-
-	printf("DEBUG: PLS: %s\n",app_status.playlist_name);
-	
-	/* FIXME create status_free function to free resources */
-	if (app_status.playlist_name)
-		free (app_status.playlist_name);
+	status_free(&app_status);
 
 	printf("\nDEBUG: exit main\n");
 	return 0;

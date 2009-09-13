@@ -39,6 +39,12 @@ int xmms2_connect (xmms_status *status) {
 					xmmsc_broadcast_playback_volume_changed,
 					broadcast_playback_volume_cb, status);
 	XMMS_CALLBACK_SET (status->connection,
+					xmmsc_broadcast_playback_status,
+					broadcast_playback_status_cb, status);
+	XMMS_CALLBACK_SET (status->connection,
+					xmmsc_signal_playback_playtime,
+					signal_playback_playtime_cb, status);
+	XMMS_CALLBACK_SET (status->connection,
 					xmmsc_broadcast_playlist_current_pos,
 					broadcast_playlist_pos_cb, status);
 
@@ -79,7 +85,7 @@ int broadcast_playback_id_cb (xmmsv_t *value, void *data) {
 	if (! check_error(value, NULL)) {
 		if (!xmmsv_get_int (value, &(s->playback_id)))
 			s->playback_id = 0; // nothing is playing
-		//status_gui_update((xmms_status*)data);
+		status_gui_update(s);
 		return TRUE; // keep broadcast alive
 	}
 	return FALSE;
@@ -100,7 +106,6 @@ int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
 			s->playlist_pos = -1;
 		}
 
-		printf("DEBUG: S: %s END: %p",s->playlist_name,&(s->playlist_name) );
 		if (s->playlist_name) {
 			free (s->playlist_name);
 			s->playlist_name = NULL;
@@ -112,7 +117,7 @@ int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
 		else
 			print_error("Memory allocation error.", ERR_CRITICAL);
 
-		printf("PLS: %s POS: %d\n", s->playlist_name, s->playlist_pos);
+		status_gui_update(s);
 		return TRUE;
 	}
 	return FALSE;
@@ -131,12 +136,39 @@ int broadcast_playback_volume_cb (xmmsv_t *value, void *data) {
 			!xmmsv_get_int (dict_entry, &(s->volume_right))) {
 			s->volume_right = 0;
 		}
+		status_gui_update(s);
 		return TRUE; // keep broadcast alive
 	}
 	return FALSE;
 }
+int broadcast_playback_status_cb (xmmsv_t *value, void *data) {
+	xmms_status *s = (xmms_status*)data;
+	if (! check_error(value, NULL)) {
+		xmmsv_get_int (value, &s->playback_status);
+		status_gui_update(s);
+		return TRUE;
+	}
+	return FALSE;
+}
 
-//int signal_playback_playtime_cb (xmmsv_t *value, void *data);
+int signal_playback_playtime_cb (xmmsv_t *value, void *data) {
+	static int time = 0;
+	int new_time;
+	xmms_status *s = (xmms_status*)data;
+	if (! check_error(value, NULL)) {
+		xmmsv_get_int (value, &new_time);
+
+		if (((new_time - time) > 333) ||
+			(time > new_time)) {
+			s->playtime = new_time;
+			time = new_time;
+			status_gui_update(s);
+		}
+
+		return TRUE;
+	}
+	return FALSE;
+}
 
 
 /**********************************************************************/

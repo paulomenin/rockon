@@ -32,6 +32,7 @@ typedef struct {
 	char *playlist_name;
 	int playlist_pos;
 
+	int playback_status;
 	int playback_id;
 	int volume_left;
 	int volume_right;
@@ -40,11 +41,8 @@ typedef struct {
 
 } xmms_status;
 
+void status_free(xmms_status *status);
+void status_fetch(xmms_status *status);
 void status_gui_update(xmms_status *status);
 
 #endif /* STATUS_H */
-/*
-char pos[5];
-snprintf(pos, 5, "%d", app_status.playback_id);
-edje_object_signal_emit(edje_o , pos, "rockon_playback_id");
-*/
