@@ -21,9 +21,9 @@ libs = """
 """
 
 def configure(conf):
-	conf.env.append_value('CFLAGS', '-Wall')
-	conf.env.append_value('CFLAGS', '-O0')
-	conf.env.append_value('CFLAGS', '-g')
+	conf.env.append_value('CCFLAGS', '-Wall')
+	conf.env.append_value('CCFLAGS', '-O0')
+	conf.env.append_value('CCFLAGS', '-g')
 
 	conf.check_tool('gcc')
 
