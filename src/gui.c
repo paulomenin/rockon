@@ -22,7 +22,6 @@ void _p_signal(void *data, Evas_Object *eo, const char *emission, const char *so
 int gui_setup (rockon_config *config, xmms_status *status) {
 	Evas_Object *main_window, *edje_o;
 	Evas_Object *ly = NULL;
-	int x, y, w, h;
 	
 	main_window = elm_win_add(NULL, "main_win", ELM_WIN_BASIC);
 	elm_win_title_set(main_window, "Rockon");
@@ -74,6 +73,6 @@ void app_close_cb (void *data, Evas_Object *eo, const char *emission, const char
 
 /* FIXME remove this function when finish debuging */
 void _p_signal(void *data, Evas_Object *eo, const char *emission, const char *source) {
-	printf("SIG: \"%s\" | \"%s\"\n", emission, source);
+	//printf("SIG: \"%s\" | \"%s\"\n", emission, source);
 }
 
