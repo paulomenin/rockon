@@ -16,6 +16,35 @@ fonts {
 collections {
 
 group {
+	name: "win_playlist";
+
+	parts {
+		part {
+			name: "background";
+			type: RECT;
+			//mouse_events: 0;
+			description {
+				min: 400 600;
+				state: "default" 0.0;
+				color: 50 50 255 255;
+				rel1 { relative: 0.0 0.0; }
+				rel2 { relative: 1.0 1.0; }
+			}
+		}
+
+		part {
+			name: "playlist1";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.0 0.0; offset: 3 3;}
+				rel2 { relative: 1.0 1.0; offset: -3 -3; }
+			}
+		}
+	}
+}
+
+group {
 	name: "main2";
 	min: 400 300;
 
@@ -38,7 +67,7 @@ group {
 			description {
 				state: "default" 0.0;
 				rel1 { relative: 0.00 0.00; offset: 5 5;   }
-				rel2 { relative: 0.20 0.20; offset: -5 -5; }
+				rel2 { relative: 0.00 0.00; offset: 50 50; }
 				image { normal: "images/icon.png"; }
 			}
 		}
@@ -72,8 +101,8 @@ group {
 			description {
 				state: "default" 0.0;
 				color: 0 0 0 0;
-				rel1 { relative: 0.0 0.2; offset: 5 5; }
-				rel2 { relative: 0.0 0.2; offset: 250 50; }
+				rel1 { relative: 0.0 1.0; to: "icon"; offset: 5 5; }
+				rel2 { relative: 0.0 1.0; to: "icon"; offset: 250 50; }
 			}
 		}
 
@@ -139,6 +168,7 @@ group {
 			}
 		}
 
+
 	programs {
 		program {
 			name: "close";
@@ -181,7 +211,7 @@ group {
 }
 
 group {
-	name: "main";
+	name: "rockon";
 	parts{
 		part {
 			name: "";
@@ -193,6 +223,16 @@ group {
 				state: "default" 0.0;
 				rel1 { relative: 0.0 0.0; }
 				rel2 { relative: 1.0 1.0;  }
+			}
+		}
+	}
+	programs {
+		program {
+			name: "group_loaded";
+			signal: "load";
+			source: "";
+			script {
+				emit("win_playlist","elmo_set.win");
 			}
 		}
 	}

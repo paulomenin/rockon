@@ -21,7 +21,7 @@
 #include "config.h"
 #include "xmms_conn.h"
 #include "status.h"
-#include "gui.h"
+#include "elm_bridge.h"
 
 
 EAPI int elm_main (int argc, char** argv) {
@@ -35,18 +35,22 @@ EAPI int elm_main (int argc, char** argv) {
 
 	app_status.connected = 0;
 	app_status.connection = NULL;
-	app_status.edje_gui = NULL;
 	app_status.playlist_name = NULL;
+	app_status.windows = NULL;
+	app_status.config = &app_config;
 
 	xmms2_connect (&app_status);
 	status_fetch (&app_status);
 
-	gui_setup(&app_config, &app_status);
+	elm_cb_set (&app_status, NULL, "rockon", "elm_set.win");
+
+	elm_run();
 
 	if ( ! config_save (&app_config))
 		print_error ("Couldn't save config.", ERR_WARNING);
 
 	/* Clean resources */
+	elm_shutdown();
 	xmms2_shutdown (&app_status);
 	config_free(&app_config);
 	status_free(&app_status);

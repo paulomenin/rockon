@@ -19,15 +19,20 @@
 
 #include <Evas.h>
 #include <xmmsclient/xmmsclient.h>
+#include "config.h"
+
+typedef struct {
+	Evas_Object *elm_win;
+	Evas_Object *elm_layout;
+	Evas_Object *edje_obj;
+} rockon_window;
 
 typedef struct {
 	int connected;
 	xmmsc_connection_t *connection;
+	rockon_config *config;
 
-	Evas_Object *edje_gui;
-	Evas_Object *elm_win;
-	Evas_Object *ly;
-	Evas_Object *bt;
+	Eina_List *windows;
 
 	char *playlist_name;
 	int playlist_pos;
@@ -44,5 +49,7 @@ typedef struct {
 void status_free(xmms_status *status);
 void status_fetch(xmms_status *status);
 void status_gui_update(xmms_status *status);
+void* status_find_window_by_win(const Eina_List *list, const void *data);
+void* status_find_window_by_edje(const Eina_List *list, const void *data);
 
 #endif /* STATUS_H */

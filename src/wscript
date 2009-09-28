@@ -8,7 +8,6 @@ sources = """
 	config.c
 	status.c
 	xmms_conn.c
-	gui.c
 	commands.c
 	edje_bridge.c
 	elm_bridge.c

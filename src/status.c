@@ -20,8 +20,13 @@
 void _print_status(xmms_status *status);
 
 void status_free(xmms_status *status) {
+
 	if (status->playlist_name)
 		free (status->playlist_name);
+
+	//if (status->windows)
+	//	eina_list_free(status->windows);
+
 }
 
 void status_fetch(xmms_status *status) {
@@ -29,7 +34,7 @@ void status_fetch(xmms_status *status) {
 
 	if ( ! status->connected)
 		return;
-	
+
 	XMMS_CALLBACK_SET (status->connection,
 					xmmsc_playback_current_id,
 					broadcast_playback_id_cb, status);
@@ -49,12 +54,40 @@ void status_fetch(xmms_status *status) {
 
 }
 
+void* status_find_window_by_win(const Eina_List *list, const void *data) {
+	const Eina_List *l;
+	void *list_data;
+
+	if (list == NULL) return NULL;
+
+	EINA_LIST_FOREACH(list, l, list_data) {
+		if (((rockon_window*)list_data)->elm_win == data)
+			return (Eina_List *)list_data;
+	}
+
+	return NULL;
+}
+
+void* status_find_window_by_edje(const Eina_List *list, const void *data) {
+	const Eina_List *l;
+	void *list_data;
+
+	if (list == NULL) return NULL;
+
+	EINA_LIST_FOREACH(list, l, list_data) {
+		if (((rockon_window*)list_data)->edje_obj == data)
+			return (Eina_List *)list_data;
+	}
+
+	return NULL;
+}
+
 void status_gui_update(xmms_status *status) {
 	_print_status(status);
 }
 
 void _print_status(xmms_status *status) {
-
+/*
 	printf("======== STATUS ========\n");
 	printf("Playback Status: %d\n", status->playback_status);
 	printf("Volume: L %d R %d\n",status->volume_left,status->volume_right);
@@ -62,5 +95,5 @@ void _print_status(xmms_status *status) {
 	printf("Playtime: %d:%02d\n", status->playtime/60000, (status->playtime%60000)/1000);
 	printf("Playlist: %s POS: %d\n",status->playlist_name,status->playlist_pos);
 	printf("====== STATUS END ======\n");
-	fflush(stdout);
+*/
 }
