@@ -22,6 +22,7 @@
 #include "config.h"
 
 typedef struct {
+	char 	    *name;
 	Evas_Object *elm_win;
 	Evas_Object *elm_layout;
 	Evas_Object *edje_obj;

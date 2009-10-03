@@ -20,12 +20,18 @@
 void _print_status(xmms_status *status);
 
 void status_free(xmms_status *status) {
+	rockon_window *data;
+	Eina_List *l;
 
 	if (status->playlist_name)
 		free (status->playlist_name);
 
-	//if (status->windows)
-	//	eina_list_free(status->windows);
+	if (status->windows) {
+		EINA_LIST_FOREACH(status->windows, l, data)
+			free(data->name);
+
+		//eina_list_free(status->windows);
+	}
 
 }
 

@@ -46,22 +46,32 @@ void win_del_cb (void *data, Evas_Object *obj, void *event_info) {
 	Eina_List *win;
 
 	win = status_find_window_by_win(s->windows, obj);
-	if (win == NULL) {
-printf("by obj\n");
-		win = status_find_window_by_edje(s->windows, obj);
-	}
+
 	if (win != NULL) {
+		free(((rockon_window*)win)->name);
 		s->windows = eina_list_remove(s->windows, win);
 	}
+
 printf("COUNT %d\n", eina_list_count(s->windows));
 	if (eina_list_count(s->windows) == 0)
 		elm_exit();
 
 }
 
+void win_close_cb (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	xmms_status *s = (xmms_status*)data;
+	Eina_List *win;
+
+	win = status_find_window_by_edje(s->windows, eo);
+
+	if (win != NULL) {
+		evas_object_del(((rockon_window*)win)->elm_win);
+		win_del_cb(s, ((rockon_window*)win)->elm_win, NULL);
+	}
+}
+
 void app_close_cb (void *data, Evas_Object *eo, const char *emission, const char *source) {
-printf("CLOSE: %p\n", eo);
-	win_del_cb (data, eo, NULL);
+	elm_exit();
 }
 
 
@@ -86,6 +96,8 @@ void _set_window(xmms_status *s, const char *emission) {
 	evas_object_show(win->elm_layout);
 	win->edje_obj = elm_layout_edje_get(win->elm_layout);
 
+	win->name = strdup(emission);
+
 	s->windows = eina_list_append(s->windows, win);
 
 printf("SET_WIN: win: %p elm_win: %p edje_obj: %p \n", win, win->elm_win, win->edje_obj);
@@ -95,6 +107,7 @@ printf("SET_WIN: win: %p elm_win: %p edje_obj: %p \n", win, win->elm_win, win->e
 	//edje_object_signal_callback_add (main_window->edje_obj, "*", "*", _p_signal, (void*)status);
 
 	edje_object_signal_callback_add (win->edje_obj, "*", "elm_set.*", elm_cb_set, (void*)s);
+	edje_object_signal_callback_add (win->edje_obj, "win_close", "*", win_close_cb, (void*)s);
 	edje_object_signal_callback_add (win->edje_obj, "app_close", "*", app_close_cb, (void*)s);
 	edje_object_signal_callback_add (win->edje_obj, "cmd_play", "*", edje_cb_play, (void*)s);
 	edje_object_signal_callback_add (win->edje_obj, "cmd_pause", "*",edje_cb_pause, (void*)s);

@@ -232,7 +232,7 @@ group {
 			signal: "load";
 			source: "";
 			script {
-				emit("win_playlist","elmo_set.win");
+				emit("win_playlist","elm_set.win");
 			}
 		}
 	}
