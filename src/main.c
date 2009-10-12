@@ -35,14 +35,18 @@ EAPI int elm_main (int argc, char** argv) {
 
 	app_status.connected = 0;
 	app_status.connection = NULL;
-	app_status.playlist_name = NULL;
-	app_status.windows = NULL;
 	app_status.config = &app_config;
+	app_status.windows = NULL;
+	app_status.changed_playback = 0;
+	app_status.changed_playback_volume = 0;
+	app_status.changed_playtime = 0;
+	app_status.changed_mediainfo = 0;
+	app_status.changed_playlist = 0;
+	app_status.playlist_name = NULL;
 
 	xmms2_connect (&app_status);
-	status_fetch (&app_status);
 
-	elm_cb_set (&app_status, NULL, "rockon", "elm_set.win");
+	elm_cb_set (&app_status, NULL, "Rockon", "elm_set.win");
 
 	elm_run();
 

@@ -18,6 +18,7 @@
 #define STATUS_H
 
 #include <Evas.h>
+#include <Edje.h>
 #include <xmmsclient/xmmsclient.h>
 #include "config.h"
 
@@ -32,18 +33,33 @@ typedef struct {
 	int connected;
 	xmmsc_connection_t *connection;
 	rockon_config *config;
-
 	Eina_List *windows;
 
-	char *playlist_name;
-	int playlist_pos;
+	int changed_playback;
+	int changed_playback_volume;
+	int changed_playtime;
+	int changed_mediainfo;
+	int changed_playlist;
 
+	char *playlist_name;
+
+	int playlist_pos;
 	int playback_status;
-	int playback_id;
 	int volume_left;
 	int volume_right;
-	
 	int playtime;
+	int playback_id;
+	
+	/* Be careful these pointers are not valid all the time */
+	const char *media_artist;
+	const char *media_album;
+	const char *media_title;
+	const char *media_url;
+	const char *media_comment;
+	const char *media_genre;
+	const char *media_date;
+	int  media_bitrate;
+	int  media_duration;
 
 } xmms_status;
 

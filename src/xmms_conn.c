@@ -16,8 +16,16 @@
 
 #include "xmms_conn.h"
 
-/* helper function: print all values from a dict */
+int _get_media_info(xmmsv_t *value, void *data);
+
+/* helper functions: print all values from a dict 
+ * FIXME remove these functions after debbuging
+ */
 void _my_dict_foreach (const char *key, xmmsv_t *value, void *user_data);
+void _my_propdict_foreach (const char *key, xmmsv_t *src_val_dict,void *user_data);
+void _my_propdict_inner_foreach (const char *source, xmmsv_t *value,void *user_data);
+
+
 
 int xmms2_connect (xmms_status *status) {
 
@@ -81,13 +89,21 @@ int check_error (xmmsv_t *value, void *data) {
 
 int broadcast_playback_id_cb (xmmsv_t *value, void *data) {
 	xmms_status *s = (xmms_status*)data;
+	xmmsc_result_t *result;
 
 	if (! check_error(value, NULL)) {
 		if (!xmmsv_get_int (value, &(s->playback_id)))
 			s->playback_id = 0; // nothing is playing
-		status_gui_update(s);
+
+		if (s->playback_id != 0) {
+			result = xmmsc_medialib_get_info(s->connection, s->playback_id);
+			xmmsc_result_notifier_set (result, _get_media_info, s);
+			xmmsc_result_unref(result);
+		}
+
 		return TRUE; // keep broadcast alive
 	}
+
 	return FALSE;
 }
 
@@ -117,6 +133,7 @@ int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
 		else
 			print_error("Memory allocation error.", ERR_CRITICAL);
 
+		s->changed_playlist = 1;
 		status_gui_update(s);
 		return TRUE;
 	}
@@ -136,15 +153,22 @@ int broadcast_playback_volume_cb (xmmsv_t *value, void *data) {
 			!xmmsv_get_int (dict_entry, &(s->volume_right))) {
 			s->volume_right = 0;
 		}
+
+		s->changed_playback_volume = 1;
 		status_gui_update(s);
 		return TRUE; // keep broadcast alive
 	}
+	s->volume_left = 0;
+	s->volume_right = 0;
 	return FALSE;
 }
+
 int broadcast_playback_status_cb (xmmsv_t *value, void *data) {
 	xmms_status *s = (xmms_status*)data;
 	if (! check_error(value, NULL)) {
 		xmmsv_get_int (value, &s->playback_status);
+
+		s->changed_playback = 1;
 		status_gui_update(s);
 		return TRUE;
 	}
@@ -158,13 +182,76 @@ int signal_playback_playtime_cb (xmmsv_t *value, void *data) {
 	if (! check_error(value, NULL)) {
 		xmmsv_get_int (value, &new_time);
 
-		if (((new_time - time) > 333) ||
+		if (((new_time - time) > 999) ||
 			(time > new_time)) {
 			s->playtime = new_time;
 			time = new_time;
+			
+			s->changed_playtime = 1;
 			status_gui_update(s);
 		}
 
+		return TRUE;
+	}
+	return FALSE;
+}
+
+int _get_media_info(xmmsv_t *value, void *data) {
+	xmms_status *s = (xmms_status*)data;
+	xmmsv_t *infos, *dict_entry;
+	const char *artist, *album, *title, *url, *comment, *genre, *date;
+
+	if (! check_error(value, NULL)) {
+
+//xmmsv_dict_foreach (value, _my_propdict_foreach, NULL);
+
+		infos = xmmsv_propdict_to_dict(value, NULL);
+
+		if (!xmmsv_dict_get (infos, "artist", &dict_entry) ||
+		    !xmmsv_get_string (dict_entry, &artist)) {
+			artist = "[Unknown Artist]";
+		}
+		if (!xmmsv_dict_get (infos, "album", &dict_entry) ||
+		    !xmmsv_get_string (dict_entry, &album)) {
+			album = "[Unknown Album]";
+		}
+		if (!xmmsv_dict_get (infos, "title", &dict_entry) ||
+		    !xmmsv_get_string (dict_entry, &title)) {
+			title = "[Unknown Title]";
+		}
+		if (!xmmsv_dict_get (infos, "url", &dict_entry) ||
+		    !xmmsv_get_string (dict_entry, &url)) {
+			url = "[Unknown URL]";
+		}
+		if (!xmmsv_dict_get (infos, "comment", &dict_entry) ||
+		    !xmmsv_get_string (dict_entry, &comment)) {
+			comment = "";
+		}
+		if (!xmmsv_dict_get (infos, "genre", &dict_entry) ||
+		    !xmmsv_get_string (dict_entry, &genre)) {
+			genre = "[Unknown genre]";
+		}
+		if (!xmmsv_dict_get (infos, "date", &dict_entry) ||
+		    !xmmsv_get_string (dict_entry, &date)) {
+			date = "";
+		}
+		
+		if (!xmmsv_dict_get (infos, "duration", &dict_entry) ||
+		    !xmmsv_get_int (dict_entry, &s->media_duration)) {
+			s->media_duration = 0;
+		}
+
+		s->media_artist = artist;
+		s->media_album = album;
+		s->media_title = title;
+		s->media_url = url;
+		s->media_comment = comment;
+		s->media_genre = genre;
+		s->media_date = date;
+
+		s->changed_mediainfo = 1;
+		status_gui_update(s);
+		xmmsv_unref(infos);
 		return TRUE;
 	}
 	return FALSE;
@@ -201,17 +288,56 @@ void _my_dict_foreach (const char *key, xmmsv_t *value, void *user_data) {
 			{
 				int val;
 				xmmsv_get_int (value, &val);
-				printf ("%s = %d\n", key, val);
+				printf ("(int) %s = %d\n", key, val);
 				break;
 			}
 		case XMMSV_TYPE_STRING:
 			{
 				const char *val;
 				xmmsv_get_string (value, &val);
-				printf ("%s = %s\n", key, val);
+				printf ("(str) %s = %s\n", key, val);
 				break;
 			}
 		default:
 			break;
 	}
 }
+
+void
+_my_propdict_foreach (const char *key, xmmsv_t *src_val_dict,
+                     void *user_data)
+{
+	xmmsv_dict_foreach (src_val_dict, _my_propdict_inner_foreach,
+	                    (void *) key);
+}
+
+void
+_my_propdict_inner_foreach (const char *source, xmmsv_t *value,
+                           void *user_data)
+{
+	const char *key = (const char *) user_data;
+
+	switch (xmmsv_get_type (value)) {
+		case XMMSV_TYPE_NONE:
+			/* nothing to do, empty value */
+			break;
+		case XMMSV_TYPE_INT32:
+			{
+				int val;
+				xmmsv_get_int (value, &val);
+				printf ("(int) %s:%s = %d\n", source, key, val);
+				break;
+			}
+		case XMMSV_TYPE_STRING:
+			{
+				const char *val;
+				xmmsv_get_string (value, &val);
+				printf ("(str) %s:%s = %s\n", source, key, val);
+				break;
+			}
+		default:
+			break;
+	}
+
+}
+

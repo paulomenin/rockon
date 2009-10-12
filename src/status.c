@@ -17,8 +17,6 @@
 #include "status.h"
 #include "xmms_conn.h"
 
-void _print_status(xmms_status *status);
-
 void status_free(xmms_status *status) {
 	rockon_window *data;
 	Eina_List *l;
@@ -89,17 +87,66 @@ void* status_find_window_by_edje(const Eina_List *list, const void *data) {
 }
 
 void status_gui_update(xmms_status *status) {
-	_print_status(status);
+	const Eina_List *l;
+	void *win;
+	//const Evas_Object *obj = NULL;
+	
+	EINA_LIST_FOREACH (status->windows, l, win) {
+
+	if (status->changed_playtime) {
+		//printf("Playtime: %d:%02d\n", status->playtime/60000, (status->playtime%60000)/1000);
+		Edje_Message_Int msg;
+		msg.val = status->playtime;
+		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 1, &msg);
+	}
+
+	if (status->changed_playback) {
+		Edje_Message_Int msg;
+		msg.val = status->playback_status;
+		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 2, &msg);
+		//printf("Playback Status: %d\n", status->playback_status);
+	}
+
+	if (status->changed_playback_volume) {
+		printf("Volume: L %d R %d\n", status->volume_left, status->volume_right);
+	}
+
+	if (status->changed_mediainfo) {
+		Edje_Message_String_Set *msg;
+		Edje_Message_Int msg_dur;
+		Edje_Message_Int msg_id;
+		
+		msg = calloc(1, sizeof(Edje_Message_String_Set) - sizeof(char*) + (7 * sizeof(char*)));
+		msg->count = 7;
+		msg->str[0] = (char*) status->media_artist;
+		msg->str[1] = (char*) status->media_album;
+		msg->str[2] = (char*) status->media_title;
+		msg->str[3] = (char*) status->media_url;
+		msg->str[4] = (char*) status->media_comment;
+		msg->str[5] = (char*) status->media_genre;
+		msg->str[6] = (char*) status->media_date;
+		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_STRING_SET, 4, msg);
+		free(msg);
+		
+		msg_dur.val = status->media_duration;
+		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 5, &msg_dur);
+		
+		msg_id.val = status->playback_id;
+		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 6, &msg_id);
+	}
+
+
+	if (status->changed_playlist) {
+		printf("Playlist: %s POS: %d\n",status->playlist_name,status->playlist_pos);
+	}
+
+	} // end EINA_LIST_FOREACH
+
+	if (status->changed_playtime) status->changed_playtime = 0;
+	if (status->changed_playback) status->changed_playback = 0;
+	if (status->changed_playback_volume) status->changed_playback_volume = 0;
+	if (status->changed_mediainfo) status->changed_mediainfo = 0;
+	if (status->changed_playlist) status->changed_playlist = 0;
+
 }
 
-void _print_status(xmms_status *status) {
-/*
-	printf("======== STATUS ========\n");
-	printf("Playback Status: %d\n", status->playback_status);
-	printf("Volume: L %d R %d\n",status->volume_left,status->volume_right);
-	printf("Playback ID: %d\n", status->playback_id);
-	printf("Playtime: %d:%02d\n", status->playtime/60000, (status->playtime%60000)/1000);
-	printf("Playlist: %s POS: %d\n",status->playlist_name,status->playlist_pos);
-	printf("====== STATUS END ======\n");
-*/
-}

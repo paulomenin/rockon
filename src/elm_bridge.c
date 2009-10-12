@@ -52,7 +52,6 @@ void win_del_cb (void *data, Evas_Object *obj, void *event_info) {
 		s->windows = eina_list_remove(s->windows, win);
 	}
 
-printf("COUNT %d\n", eina_list_count(s->windows));
 	if (eina_list_count(s->windows) == 0)
 		elm_exit();
 
@@ -81,17 +80,19 @@ void _set_window(xmms_status *s, const char *emission) {
 	win = (rockon_window*) malloc(sizeof(rockon_window));
 	if (win == NULL)
 		print_error("Memory allocation error.", ERR_CRITICAL);
+
 	win->elm_win = elm_win_add(NULL, emission, ELM_WIN_BASIC);
 	elm_win_title_set(win->elm_win, emission);
-	evas_object_smart_callback_add(win->elm_win, "delete-request", win_del_cb, s);
-	elm_win_shaped_set(win->elm_win, 1);
-	elm_win_alpha_set(win->elm_win, 1);
 	elm_win_autodel_set(win->elm_win, 1);
+	//elm_win_shaped_set(win->elm_win, 1);
+	//elm_win_alpha_set(win->elm_win, 1);
+
+	evas_object_smart_callback_add(win->elm_win, "delete-request", win_del_cb, s);
 
 	win->elm_layout = elm_layout_add(win->elm_win);
 	if (!elm_layout_file_set(win->elm_layout, (const char*)s->config->theme, emission))
 		print_error("Cannot load theme.", ERR_CRITICAL);
-	evas_object_size_hint_weight_set(win->elm_layout, 1.0, 1.0);
+	evas_object_size_hint_weight_set(win->elm_layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_win_resize_object_add(win->elm_win, win->elm_layout);
 	evas_object_show(win->elm_layout);
 	win->edje_obj = elm_layout_edje_get(win->elm_layout);
@@ -100,7 +101,7 @@ void _set_window(xmms_status *s, const char *emission) {
 
 	s->windows = eina_list_append(s->windows, win);
 
-printf("SET_WIN: win: %p elm_win: %p edje_obj: %p \n", win, win->elm_win, win->edje_obj);
+	//printf("SET_WIN: win: %p elm_win: %p edje_obj: %p \n", win, win->elm_win, win->edje_obj);
 	/* set callbacks */
 
 	/* FIXME remove this function call when finish debuging */
@@ -114,6 +115,8 @@ printf("SET_WIN: win: %p elm_win: %p edje_obj: %p \n", win, win->elm_win, win->e
 	edje_object_signal_callback_add (win->edje_obj, "cmd_stop", "*", edje_cb_stop, (void*)s);
 	edje_object_signal_callback_add (win->edje_obj, "cmd_next", "*", edje_cb_next, (void*)s);
 	edje_object_signal_callback_add (win->edje_obj, "cmd_prev", "*", edje_cb_prev, (void*)s);
+
+	status_fetch(s);
 
 	evas_object_show(win->elm_win);
 }
