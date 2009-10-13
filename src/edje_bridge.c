@@ -17,22 +17,22 @@
 #include "edje_bridge.h"
 
 void edje_cb_play  (void *data, Evas_Object *eo, const char *emission, const char *source) {
-	cmd_play((xmms_status*)data, NULL);
+	cmd_play((rockon_status*)data, NULL);
 }
 
 void edje_cb_pause (void *data, Evas_Object *eo, const char *emission, const char *source) {
-	cmd_pause((xmms_status*)data, NULL);
+	cmd_pause((rockon_status*)data, NULL);
 }
 
 void edje_cb_stop (void *data, Evas_Object *eo, const char *emission, const char *source) {
-	cmd_stop((xmms_status*)data, NULL);
+	cmd_stop((rockon_status*)data, NULL);
 }
 
 void edje_cb_next (void *data, Evas_Object *eo, const char *emission, const char *source) {
-	cmd_next((xmms_status*)data, NULL);
+	cmd_next((rockon_status*)data, NULL);
 }
 
 void edje_cb_prev (void *data, Evas_Object *eo, const char *emission, const char *source) {
-	cmd_prev((xmms_status*)data, NULL);
+	cmd_prev((rockon_status*)data, NULL);
 }
 

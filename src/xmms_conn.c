@@ -27,14 +27,14 @@ void _my_propdict_inner_foreach (const char *source, xmmsv_t *value,void *user_d
 
 
 
-int xmms2_connect (xmms_status *status) {
+int xmms2_connect (rockon_status *status) {
 
 	status->connection = xmmsc_init ("rockon");
 	if (! status->connection) {
 		print_error ("Couldn't create XMMS2 connection.", ERR_NORMAL);
 		return FALSE;
 	}
-	if (!xmmsc_connect (status->connection, getenv ("XMMS_PATH"))) {
+	if (!xmmsc_connect (status->connection, getenv ("rockon_PATH"))) {
 		print_error ("Connection to XMMS2 failed.", ERR_NORMAL);
 		print_error (xmmsc_get_last_error (status->connection), ERR_NORMAL);
 		return FALSE;
@@ -63,7 +63,7 @@ int xmms2_connect (xmms_status *status) {
 	return TRUE;
 }
 
-void xmms2_shutdown (xmms_status* status) {
+void xmms2_shutdown (rockon_status* status) {
 	if ((status) && (status->connection)) {
 		xmmsc_unref (status->connection);
 		status->connection = NULL;
@@ -72,7 +72,7 @@ void xmms2_shutdown (xmms_status* status) {
 }
 
 void xmms2_disconnect_cb (void *data) {
-	xmms2_shutdown ((xmms_status*)data);
+	xmms2_shutdown ((rockon_status*)data);
 	print_error ("xmms2 connection lost.", ERR_WARNING);
 }
 
@@ -88,7 +88,7 @@ int check_error (xmmsv_t *value, void *data) {
 }
 
 int broadcast_playback_id_cb (xmmsv_t *value, void *data) {
-	xmms_status *s = (xmms_status*)data;
+	rockon_status *s = (rockon_status*)data;
 	xmmsc_result_t *result;
 
 	if (! check_error(value, NULL)) {
@@ -108,7 +108,7 @@ int broadcast_playback_id_cb (xmmsv_t *value, void *data) {
 }
 
 int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
-	xmms_status *s = (xmms_status*)data;
+	rockon_status *s = (rockon_status*)data;
 	const char *pls_name;
 	xmmsv_t *dict_entry;
 
@@ -142,7 +142,7 @@ int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
 
 int broadcast_playback_volume_cb (xmmsv_t *value, void *data) {
 	xmmsv_t *dict_entry;
-	xmms_status *s = (xmms_status*)data;
+	rockon_status *s = (rockon_status*)data;
 
 	if (! check_error(value, NULL)) {
 		if (!xmmsv_dict_get (value, "left", &dict_entry) ||
@@ -164,7 +164,7 @@ int broadcast_playback_volume_cb (xmmsv_t *value, void *data) {
 }
 
 int broadcast_playback_status_cb (xmmsv_t *value, void *data) {
-	xmms_status *s = (xmms_status*)data;
+	rockon_status *s = (rockon_status*)data;
 	if (! check_error(value, NULL)) {
 		xmmsv_get_int (value, &s->playback_status);
 
@@ -178,7 +178,7 @@ int broadcast_playback_status_cb (xmmsv_t *value, void *data) {
 int signal_playback_playtime_cb (xmmsv_t *value, void *data) {
 	static int time = 0;
 	int new_time;
-	xmms_status *s = (xmms_status*)data;
+	rockon_status *s = (rockon_status*)data;
 	if (! check_error(value, NULL)) {
 		xmmsv_get_int (value, &new_time);
 
@@ -197,13 +197,13 @@ int signal_playback_playtime_cb (xmmsv_t *value, void *data) {
 }
 
 int _get_media_info(xmmsv_t *value, void *data) {
-	xmms_status *s = (xmms_status*)data;
+	rockon_status *s = (rockon_status*)data;
 	xmmsv_t *infos, *dict_entry;
 	const char *artist, *album, *title, *url, *comment, *genre, *date;
 
 	if (! check_error(value, NULL)) {
 
-//xmmsv_dict_foreach (value, _my_propdict_foreach, NULL);
+xmmsv_dict_foreach (value, _my_propdict_foreach, NULL);
 
 		infos = xmmsv_propdict_to_dict(value, NULL);
 

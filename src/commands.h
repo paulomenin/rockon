@@ -21,11 +21,11 @@
 #include "xmms_conn.h"
 #include "status.h"
 
-void cmd_play  (xmms_status *status, void *data);
-void cmd_pause (xmms_status *status, void *data);
-void cmd_stop  (xmms_status *status, void *data);
-void cmd_next  (xmms_status *status, void *data);
-void cmd_prev  (xmms_status *status, void *data);
+void cmd_play  (rockon_status *status, void *data);
+void cmd_pause (rockon_status *status, void *data);
+void cmd_stop  (rockon_status *status, void *data);
+void cmd_next  (rockon_status *status, void *data);
+void cmd_prev  (rockon_status *status, void *data);
 
 
 /* Macros */

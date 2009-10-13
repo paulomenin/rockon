@@ -26,7 +26,7 @@
 
 EAPI int elm_main (int argc, char** argv) {
 	rockon_config app_config;
-	xmms_status app_status;
+	rockon_status app_status;
 
 	ecore_file_init();
 

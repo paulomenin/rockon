@@ -17,10 +17,10 @@
 #include <Elementary.h>
 #include "elm_bridge.h"
 
-void _set_window(xmms_status *s, const char *emission);
+void _set_window(rockon_status *s, const char *emission);
 
 void elm_cb_set (void *data, Evas_Object *eo, const char *emission, const char *source) {
-	xmms_status *s = (xmms_status*)data;
+	rockon_status *s = (rockon_status*)data;
 
 printf("ELM_CALLBACK: emmission: %s source: %s\n", emission, source);
 	
@@ -37,12 +37,12 @@ printf("ELM_CALLBACK: emmission: %s source: %s\n", emission, source);
 }
 
 void elm_cb_play(void *data, Evas_Object *obj, void *event_info) {
-	cmd_play ((xmms_status*)data, NULL);
+	cmd_play ((rockon_status*)data, NULL);
 }
 
 
 void win_del_cb (void *data, Evas_Object *obj, void *event_info) {
-	xmms_status *s = (xmms_status*)data;
+	rockon_status *s = (rockon_status*)data;
 	Eina_List *win;
 
 	win = status_find_window_by_win(s->windows, obj);
@@ -58,7 +58,7 @@ void win_del_cb (void *data, Evas_Object *obj, void *event_info) {
 }
 
 void win_close_cb (void *data, Evas_Object *eo, const char *emission, const char *source) {
-	xmms_status *s = (xmms_status*)data;
+	rockon_status *s = (rockon_status*)data;
 	Eina_List *win;
 
 	win = status_find_window_by_edje(s->windows, eo);
@@ -74,7 +74,7 @@ void app_close_cb (void *data, Evas_Object *eo, const char *emission, const char
 }
 
 
-void _set_window(xmms_status *s, const char *emission) {
+void _set_window(rockon_status *s, const char *emission) {
 	rockon_window *win = NULL;
 
 	win = (rockon_window*) malloc(sizeof(rockon_window));

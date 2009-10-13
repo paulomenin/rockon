@@ -61,11 +61,11 @@ typedef struct {
 	int  media_bitrate;
 	int  media_duration;
 
-} xmms_status;
+} rockon_status;
 
-void status_free(xmms_status *status);
-void status_fetch(xmms_status *status);
-void status_gui_update(xmms_status *status);
+void status_free(rockon_status *status);
+void status_fetch(rockon_status *status);
+void status_gui_update(rockon_status *status);
 void* status_find_window_by_win(const Eina_List *list, const void *data);
 void* status_find_window_by_edje(const Eina_List *list, const void *data);
 

@@ -17,7 +17,7 @@
 #include "status.h"
 #include "xmms_conn.h"
 
-void status_free(xmms_status *status) {
+void status_free(rockon_status *status) {
 	rockon_window *data;
 	Eina_List *l;
 
@@ -33,7 +33,7 @@ void status_free(xmms_status *status) {
 
 }
 
-void status_fetch(xmms_status *status) {
+void status_fetch(rockon_status *status) {
 	xmmsc_result_t *res;
 
 	if ( ! status->connected)
@@ -86,7 +86,7 @@ void* status_find_window_by_edje(const Eina_List *list, const void *data) {
 	return NULL;
 }
 
-void status_gui_update(xmms_status *status) {
+void status_gui_update(rockon_status *status) {
 	const Eina_List *l;
 	void *win;
 	//const Evas_Object *obj = NULL;

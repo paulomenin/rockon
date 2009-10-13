@@ -23,7 +23,7 @@
 #include "error.h"
 #include "status.h"
 
-int  xmms2_connect (xmms_status *status);
+int  xmms2_connect (rockon_status *status);
 void xmms2_shutdown ();
 
 int  check_error (xmmsv_t *value, void *data);
