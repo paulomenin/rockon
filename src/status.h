@@ -45,8 +45,7 @@ typedef struct {
 
 	int playlist_pos;
 	int playback_status;
-	int volume_left;
-	int volume_right;
+	int volume;
 	int playtime;
 	int playback_id;
 	

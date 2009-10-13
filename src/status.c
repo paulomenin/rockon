@@ -108,7 +108,7 @@ void status_gui_update(rockon_status *status) {
 	}
 
 	if (status->changed_playback_volume) {
-		printf("Volume: L %d R %d\n", status->volume_left, status->volume_right);
+		printf("Volume: %d\n", status->volume);
 	}
 
 	if (status->changed_mediainfo) {

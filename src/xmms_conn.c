@@ -16,7 +16,8 @@
 
 #include "xmms_conn.h"
 
-int _get_media_info(xmmsv_t *value, void *data);
+int  _get_media_info(xmmsv_t *value, void *data);
+void _dict_volume_foreach (const char *key, xmmsv_t *value, void *data);
 
 /* helper functions: print all values from a dict 
  * FIXME remove these functions after debbuging
@@ -141,25 +142,16 @@ int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
 }
 
 int broadcast_playback_volume_cb (xmmsv_t *value, void *data) {
-	xmmsv_t *dict_entry;
 	rockon_status *s = (rockon_status*)data;
 
 	if (! check_error(value, NULL)) {
-		if (!xmmsv_dict_get (value, "left", &dict_entry) ||
-			!xmmsv_get_int (dict_entry, &(s->volume_left))) {
-			s->volume_left = 0;
-		}
-		if (!xmmsv_dict_get (value, "right", &dict_entry) ||
-			!xmmsv_get_int (dict_entry, &(s->volume_right))) {
-			s->volume_right = 0;
-		}
+		xmmsv_dict_foreach (value, _dict_volume_foreach, s);
 
 		s->changed_playback_volume = 1;
 		status_gui_update(s);
 		return TRUE; // keep broadcast alive
 	}
-	s->volume_left = 0;
-	s->volume_right = 0;
+	s->volume = 0;
 	return FALSE;
 }
 
@@ -203,7 +195,7 @@ int _get_media_info(xmmsv_t *value, void *data) {
 
 	if (! check_error(value, NULL)) {
 
-xmmsv_dict_foreach (value, _my_propdict_foreach, NULL);
+//xmmsv_dict_foreach (value, _my_propdict_foreach, NULL);
 
 		infos = xmmsv_propdict_to_dict(value, NULL);
 
@@ -257,6 +249,11 @@ xmmsv_dict_foreach (value, _my_propdict_foreach, NULL);
 	return FALSE;
 }
 
+void _dict_volume_foreach (const char *key, xmmsv_t *value, void *data) {
+	if (xmmsv_get_type (value) == XMMSV_TYPE_INT32) {
+		xmmsv_get_int (value, &(((rockon_status*)data)->volume));
+	}
+}
 
 /**********************************************************************/
 /* PASTEBIN  */
