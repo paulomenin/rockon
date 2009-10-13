@@ -1,21 +1,25 @@
-Rockon a XMMS2 client
+About
+======
 
-This is a development version.
+Rockon is a XMMS2 client based on EFL libraries.
+It's fully skinnable.
 
-It's far, far away from release.
+DEPENDENCIES
+============
 
-Don't be scared by the default theme! Now it's only for test.
+ * XMMS2 (0.6 DrMattDestruction) http://wiki.xmms2.xmms.se
+   - with support for xmms2-client-ecore
+ * EFL http://www.enlightenment.org
+   - Ecore
+   - Evas
+   - Edje
+   - Elementary
 
--- DEPENDENCIES
-
- - XMMS2
- - EFL
- - Elementary
-
--- INSTALL
+INSTALL
+=======
 
 Rockon uses the Waf build system.
 Just run:
-$ ./waf configure build --doc
+$ ./waf configure build
 
 If successful the executable will be at: build/default/src/rockon
