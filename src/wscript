@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 sources = """
-	main.c
+	rockon.c
 	error.c
 	lcfg_static.c
 	config.c
