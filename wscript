@@ -17,7 +17,7 @@ def set_options(opt):
 def configure(conf):
 	conf.sub_config('src')
 	conf.sub_config('themes')
-	conf.check_tool('doxygen', tooldir='waf_tools')
+	#conf.check_tool('doxygen', tooldir='waf_tools')
 
 def build(bld):
 	import Options
@@ -25,12 +25,12 @@ def build(bld):
 	bld.add_subdirs('src')
 	bld.add_subdirs('themes')
 
-	if Options.options.doc:
-		bld.new_task_gen(
-			features = 'doxygen',
-			doxyfile = 'Doxyfile',
-			install_to = None
-		)
+	#if Options.options.doc:
+	#	bld.new_task_gen(
+	#		features = 'doxygen',
+	#		doxyfile = 'Doxyfile',
+	#		install_to = None
+	#	)
 
 def shutdown():
 	pass
