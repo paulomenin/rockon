@@ -25,8 +25,10 @@ void status_free(rockon_status *status) {
 		free (status->playlist_name);
 
 	if (status->windows) {
-		EINA_LIST_FOREACH(status->windows, l, data)
+		EINA_LIST_FOREACH(status->windows, l, data) {
 			free(data->name);
+			free(data);
+		}	
 
 		//eina_list_free(status->windows);
 	}

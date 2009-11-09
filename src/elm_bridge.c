@@ -49,6 +49,7 @@ void win_del_cb (void *data, Evas_Object *obj, void *event_info) {
 
 	if (win != NULL) {
 		free(((rockon_window*)win)->name);
+		free((rockon_window*)win);
 		s->windows = eina_list_remove(s->windows, win);
 	}
 

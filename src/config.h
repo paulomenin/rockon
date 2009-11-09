@@ -24,6 +24,7 @@
 #include "error.h"
 
 typedef struct _rockon_config {
+	char *config_filename;
 	struct lcfg *lcfg_obj;
 	int launch_server;
 	char *theme;

@@ -19,7 +19,7 @@
 int  _get_media_info(xmmsv_t *value, void *data);
 void _dict_volume_foreach (const char *key, xmmsv_t *value, void *data);
 
-/* helper functions: print all values from a dict 
+/* helper functions: print all values from a dict
  * FIXME remove these functions after debbuging
  */
 void _my_dict_foreach (const char *key, xmmsv_t *value, void *user_data);
@@ -29,7 +29,6 @@ void _my_propdict_inner_foreach (const char *source, xmmsv_t *value,void *user_d
 
 
 int xmms2_connect (rockon_status *status) {
-
 	status->connection = xmmsc_init ("rockon");
 	if (! status->connection) {
 		print_error ("Couldn't create XMMS2 connection.", ERR_NORMAL);

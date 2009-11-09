@@ -54,12 +54,12 @@ EAPI int elm_main (int argc, char** argv) {
 		print_error ("Couldn't save config.", ERR_WARNING);
 
 	/* Clean resources */
-	elm_shutdown();
 	xmms2_shutdown (&app_status);
 	config_free(&app_config);
 	status_free(&app_status);
+	ecore_file_shutdown();
+	elm_shutdown();
 
-	printf("\nDEBUG: exit main\n");
 	return 0;
 }
 ELM_MAIN()
