@@ -14,7 +14,8 @@ fonts {
 
 collections {
 
-#include "media_info.edc"
 #include "rockon.edc"
+#include "media_info.edc"
+#include "playlist.edc"
 
 }

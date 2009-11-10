@@ -14,7 +14,9 @@ group {
 				sec = (getarg(2)%60000)/1000;
 				dmin = get_int(global_media_duration)/60000;
 				dsec = (get_int(global_media_duration)%60000)/1000;
+				if (get_int(global_media_duration) != 0) {
 				porc = (getarg(2)*100)/get_int(global_media_duration);
+				} else { porc = 0; }
 				if (dsec < 10) {
 					snprintf(dur, 10, "%d:0%d", dmin, dsec);
 				} else {
@@ -52,7 +54,7 @@ group {
 			type: RECT;
 			mouse_events: 0;
 			description {
-				min: 400 300;
+				min: 500 110;
 				//max: 400 300;
 				state: "default" 0.0;
 				color: 125 125 125 255;
@@ -245,16 +247,21 @@ group {
 			name: "mediainfo_show";
 			signal: "mouse,clicked,1";
 			source: "icon";
-			action: SIGNAL_EMIT "Media Info" "elm_set.win";
+			script {
+				emit("Media Info","elm_set.win");
+				emit("Playlist","elm_set.win");
+			}
 		}
 		program {
 			name: "group_loaded";
 			signal: "load";
 			source: "";
 			script {
-				emit("Media Info","elm_set.win");
+			//	emit("Media Info","elm_set.win");
+				emit("Playlist","elm_set.win");
 			}
 		}
 
 		}
 	}
+}
