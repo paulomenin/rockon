@@ -16,6 +16,7 @@
 
 #include "status.h"
 #include "xmms_conn.h"
+#include "playlist.h"
 
 void status_free(rockon_status *status) {
 	rockon_window *data;
@@ -33,6 +34,9 @@ void status_free(rockon_status *status) {
 		//eina_list_free(status->windows);
 	}
 
+	if (status->playlist) {
+		pls_free(status);
+	}
 }
 
 void status_fetch(rockon_status *status) {
@@ -137,8 +141,12 @@ void status_gui_update(rockon_status *status) {
 		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 6, &msg_id);
 	}
 
-
 	if (status->changed_playlist) {
+		if (((rockon_window*)win)->playlist)
+			pls_populate( ((rockon_window*)win)->playlist, status );
+	}
+
+	if (status->changed_playlist_pos) {
 		printf("Playlist: %s POS: %d\n",status->playlist_name,status->playlist_pos);
 	}
 
@@ -149,6 +157,7 @@ void status_gui_update(rockon_status *status) {
 	if (status->changed_playback_volume) status->changed_playback_volume = 0;
 	if (status->changed_mediainfo) status->changed_mediainfo = 0;
 	if (status->changed_playlist) status->changed_playlist = 0;
+	if (status->changed_playlist_pos) status->changed_playlist_pos = 0;
 
 }
 

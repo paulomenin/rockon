@@ -22,6 +22,7 @@
 #include "xmms_conn.h"
 #include "status.h"
 #include "elm_bridge.h"
+#include "playlist.h"
 
 
 EAPI int elm_main (int argc, char** argv) {
@@ -42,7 +43,11 @@ EAPI int elm_main (int argc, char** argv) {
 	app_status.changed_playtime = 0;
 	app_status.changed_mediainfo = 0;
 	app_status.changed_playlist = 0;
+	app_status.changed_playlist_pos = 0;
+	app_status.playlist = NULL;
 	app_status.playlist_name = NULL;
+
+	pls_item_class_set(&app_status);
 
 	xmms2_connect (&app_status);
 

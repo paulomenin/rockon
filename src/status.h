@@ -19,6 +19,7 @@
 
 #include <Evas.h>
 #include <Edje.h>
+#include <Elementary.h>
 #include <xmmsclient/xmmsclient.h>
 #include "config.h"
 
@@ -27,23 +28,27 @@ typedef struct {
 	Evas_Object *elm_win;
 	Evas_Object *elm_layout;
 	Evas_Object *edje_obj;
+	Evas_Object *playlist;
 } rockon_window;
 
 typedef struct {
 	int connected;
 	xmmsc_connection_t *connection;
 	rockon_config *config;
-	Eina_List *windows;
-
+	Eina_List *windows;	
+	
 	int changed_playback;
 	int changed_playback_volume;
 	int changed_playtime;
 	int changed_mediainfo;
 	int changed_playlist;
+	int changed_playlist_pos;
 
+	Eina_List *playlist;
 	char *playlist_name;
-
 	int playlist_pos;
+	Elm_Genlist_Item_Class pls_item_class;
+
 	int playback_status;
 	int volume;
 	int playtime;

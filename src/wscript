@@ -11,6 +11,7 @@ sources = """
 	commands.c
 	edje_bridge.c
 	elm_bridge.c
+	playlist.c
 """.split()
 
 libs = """

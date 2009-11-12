@@ -19,6 +19,7 @@
 
 #include "commands.h"
 #include "edje_bridge.h"
+#include "playlist.h"
 
 void elm_cb_set (void *data, Evas_Object *eo, const char *emission, const char *source);
 

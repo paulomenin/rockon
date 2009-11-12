@@ -18,4 +18,20 @@ collections {
 #include "media_info.edc"
 #include "playlist.edc"
 
+group {
+	name: "icon.pls_play";
+	parts {
+		part {
+			name: "icon";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.00 0.00; }
+				rel2 { relative: 1.00 1.00; offset: -1 -1; }
+				image { normal: "images/play.png"; }
+			}
+		}
+	}
+}
+
 }

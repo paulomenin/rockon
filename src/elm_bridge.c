@@ -27,12 +27,8 @@ printf("ELM_CALLBACK: emmission: %s source: %s\n", emission, source);
 	if (strcmp(source, "elm_set.win") == 0) {
 		_set_window(s, emission);
 	} else
-	if (strcmp(source, "elm_set.play") == 0) {
-		/*s->bt = elm_button_add(s->elm_win);
-		elm_button_label_set(s->bt, "Play");
-		elm_layout_content_set(s->ly, ":element1", s->bt);
-		evas_object_show(s->bt);
-		evas_object_smart_callback_add(s->bt, "clicked", elm_cb_play, data);*/
+	if (strcmp(source, "elm_set.playlist") == 0) {
+		set_playlist(s, emission, eo);
 	}
 }
 
@@ -118,6 +114,8 @@ void _set_window(rockon_status *s, const char *emission) {
 	edje_object_signal_callback_add (win->edje_obj, "cmd_prev", "*", edje_cb_prev, (void*)s);
 
 	status_fetch(s);
+
+	win->playlist = NULL;
 
 	evas_object_show(win->elm_win);
 }

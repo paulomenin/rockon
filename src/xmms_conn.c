@@ -15,9 +15,15 @@
  */
 
 #include "xmms_conn.h"
+#include "playlist.h"
 
 int  _get_media_info(xmmsv_t *value, void *data);
 void _dict_volume_foreach (const char *key, xmmsv_t *value, void *data);
+
+void  _playlist_get(rockon_status *s);
+int  _playlist_fetch(xmmsv_t *value, void *data);
+int  _playlist_item_add(xmmsv_t *value, void *data);
+void _playlist_item_info_get(rockon_status *data, int id);
 
 /* helper functions: print all values from a dict
  * FIXME remove these functions after debbuging
@@ -58,6 +64,9 @@ int xmms2_connect (rockon_status *status) {
 
 	xmmsc_disconnect_callback_set (status->connection, xmms2_disconnect_cb, (void*)status);
 	status->connected = 1;
+
+	_playlist_get(status);
+
 	xmmsc_mainloop_ecore_init (status->connection);
 
 	return TRUE;
@@ -133,7 +142,7 @@ int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
 		else
 			print_error("Memory allocation error.", ERR_CRITICAL);
 
-		s->changed_playlist = 1;
+		s->changed_playlist_pos = 1;
 		status_gui_update(s);
 		return TRUE;
 	}
@@ -220,7 +229,7 @@ int _get_media_info(xmmsv_t *value, void *data) {
 		}
 		if (!xmmsv_dict_get (infos, "genre", &dict_entry) ||
 		    !xmmsv_get_string (dict_entry, &genre)) {
-			genre = "[Unknown genre]";
+			genre = "[Unknown Genre]";
 		}
 		if (!xmmsv_dict_get (infos, "date", &dict_entry) ||
 		    !xmmsv_get_string (dict_entry, &date)) {
@@ -247,6 +256,100 @@ int _get_media_info(xmmsv_t *value, void *data) {
 	}
 	return FALSE;
 }
+
+int _playlist_item_add(xmmsv_t *value, void *data) {
+	xmmsv_t *dict_entry;
+	xmmsv_t *infos;
+	const char *artist;
+	const char *title;
+	const char *album;
+	playlist_item *pi;
+	rockon_status *s = (rockon_status*)data;
+
+	infos = xmmsv_propdict_to_dict (value, NULL);
+	/*
+	printf("\n\n\n");
+	xmmsv_dict_foreach (infos, _my_dict_foreach, NULL);
+	printf("\n\n\n");
+	*/
+	pi = (playlist_item*) malloc (sizeof(playlist_item));
+	if (pi == NULL) return FALSE;
+
+	if (!xmmsv_dict_get (infos, "id", &dict_entry) ||
+	    !xmmsv_get_int (dict_entry, &(pi->id))) {
+		pi->id = 0;
+	}
+	if (!xmmsv_dict_get (infos, "artist", &dict_entry) ||
+	    !xmmsv_get_string (dict_entry, &artist)) {
+		artist = "[Unknown Artist]";
+	}
+	if (!xmmsv_dict_get (infos, "title", &dict_entry) ||
+	    !xmmsv_get_string (dict_entry, &title)) {
+		title = "[Unknown Title]";
+	}
+	if (!xmmsv_dict_get (infos, "album", &dict_entry) ||
+	    !xmmsv_get_string (dict_entry, &album)) {
+		album = "[Unknown Album]";
+	}
+
+	pi->title = strdup(title);
+	pi->artist = strdup(artist);
+	pi->album = strdup(album);
+	pi->status = s;
+
+	s->playlist = eina_list_append(s->playlist, pi);
+
+	xmmsv_unref (infos);
+
+	s->changed_playlist = 1;
+	status_gui_update(s);
+
+	return TRUE;
+}
+
+void _playlist_item_info_get(rockon_status *data, int id) {
+	xmmsc_result_t *result;
+	result = xmmsc_medialib_get_info(((rockon_status*)data)->connection, id);
+	xmmsc_result_notifier_set (result, _playlist_item_add, data);
+	xmmsc_result_unref (result);
+}
+
+int _playlist_fetch(xmmsv_t *value, void *data) {
+	xmmsv_list_iter_t *it;
+	if (! check_error(value, NULL)) {
+		if (!xmmsv_get_list_iter (value, &it)) {
+			print_error ("get list iterator failed!", ERR_NORMAL);
+			return FALSE;
+		}
+		
+		for (; xmmsv_list_iter_valid (it); xmmsv_list_iter_next (it)) {
+			int id;
+			xmmsv_t *list_entry;
+
+			xmmsv_list_iter_entry (it, &list_entry);
+			xmmsv_get_int (list_entry, &id);
+
+			_playlist_item_info_get((rockon_status*)data, id);
+
+		}
+
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void _playlist_get(rockon_status *s) {
+	xmmsc_result_t *result;
+
+	pls_free(s);
+
+	result = xmmsc_playlist_list_entries(s->connection, NULL);
+	xmmsc_result_notifier_set (result, _playlist_fetch, s);
+	xmmsc_result_unref (result);
+
+}
+
+
 
 void _dict_volume_foreach (const char *key, xmmsv_t *value, void *data) {
 	if (xmmsv_get_type (value) == XMMSV_TYPE_INT32) {
