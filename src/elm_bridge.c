@@ -36,6 +36,12 @@ void elm_cb_play(void *data, Evas_Object *obj, void *event_info) {
 	cmd_play ((rockon_status*)data, NULL);
 }
 
+void elm_cb_pls_click(void *data, Evas_Object *obj, void *event_info) {
+	playlist_item *pi = (playlist_item*) elm_genlist_item_data_get(event_info);
+	int pos = pi->pos;
+	cmd_jump_to ((rockon_status*)data, NULL, pos);
+}
+
 
 void win_del_cb (void *data, Evas_Object *obj, void *event_info) {
 	rockon_status *s = (rockon_status*)data;

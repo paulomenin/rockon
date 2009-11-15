@@ -26,6 +26,7 @@ void cmd_pause (rockon_status *status, void *data);
 void cmd_stop  (rockon_status *status, void *data);
 void cmd_next  (rockon_status *status, void *data);
 void cmd_prev  (rockon_status *status, void *data);
+void cmd_jump_to (rockon_status *status, void *data, int pos);
 
 
 /* Macros */

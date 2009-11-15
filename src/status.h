@@ -24,7 +24,7 @@
 #include "config.h"
 
 typedef struct {
-	char 	    *name;
+	char *name;
 	Evas_Object *elm_win;
 	Evas_Object *elm_layout;
 	Evas_Object *edje_obj;
@@ -38,6 +38,7 @@ typedef struct {
 	Eina_List *windows;	
 	
 	int changed_playback;
+	int changed_playback_id;
 	int changed_playback_volume;
 	int changed_playtime;
 	int changed_mediainfo;

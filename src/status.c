@@ -143,17 +143,22 @@ void status_gui_update(rockon_status *status) {
 
 	if (status->changed_playlist) {
 		if (((rockon_window*)win)->playlist)
-			pls_populate( ((rockon_window*)win)->playlist, status );
+			pls_populate( (rockon_window*)win, status );
 	}
 
 	if (status->changed_playlist_pos) {
 		printf("Playlist: %s POS: %d\n",status->playlist_name,status->playlist_pos);
 	}
 
+	if (status->changed_playback_id) {
+		pls_update_playback_pos( (rockon_window*)win );
+	}
+
 	} // end EINA_LIST_FOREACH
 
 	if (status->changed_playtime) status->changed_playtime = 0;
 	if (status->changed_playback) status->changed_playback = 0;
+	if (status->changed_playback_id) status->changed_playback_id = 0;
 	if (status->changed_playback_volume) status->changed_playback_volume = 0;
 	if (status->changed_mediainfo) status->changed_mediainfo = 0;
 	if (status->changed_playlist) status->changed_playlist = 0;

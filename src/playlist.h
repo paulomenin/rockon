@@ -19,9 +19,11 @@
 
 #include <Elementary.h>
 #include "status.h"
+#include "elm_bridge.h"
 
 typedef struct {
 	int id;
+	int pos;
 	rockon_status* status; //needed to get access to theme
 	char *title;
 	char *artist;
@@ -36,8 +38,8 @@ Eina_Bool pls_item_state_get(const void *data, Evas_Object *obj, const char *par
 void pls_item_del(const void *data, Evas_Object *obj);
 void pls_item_sel(void *data, Evas_Object *obj, void *event_info);
 
-void pls_populate(Evas_Object *playlist, rockon_status *s);
+void pls_populate(rockon_window *win, rockon_status *s);
+void pls_update_playback_pos(rockon_window *win);
 void pls_free(rockon_status* s);
 
 #endif /* PLAYLIST_H */
-

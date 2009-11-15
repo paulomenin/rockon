@@ -39,6 +39,7 @@ EAPI int elm_main (int argc, char** argv) {
 	app_status.config = &app_config;
 	app_status.windows = NULL;
 	app_status.changed_playback = 0;
+	app_status.changed_playback_id = 0;
 	app_status.changed_playback_volume = 0;
 	app_status.changed_playtime = 0;
 	app_status.changed_mediainfo = 0;

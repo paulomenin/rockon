@@ -20,7 +20,7 @@
 int  _get_media_info(xmmsv_t *value, void *data);
 void _dict_volume_foreach (const char *key, xmmsv_t *value, void *data);
 
-void  _playlist_get(rockon_status *s);
+void _playlist_get(rockon_status *s);
 int  _playlist_fetch(xmmsv_t *value, void *data);
 int  _playlist_item_add(xmmsv_t *value, void *data);
 void _playlist_item_info_get(rockon_status *data, int id);
@@ -109,7 +109,9 @@ int broadcast_playback_id_cb (xmmsv_t *value, void *data) {
 			xmmsc_result_notifier_set (result, _get_media_info, s);
 			xmmsc_result_unref(result);
 		}
-
+		
+		s->changed_playback_id = 1;
+		status_gui_update(s);
 		return TRUE; // keep broadcast alive
 	}
 
@@ -258,6 +260,7 @@ int _get_media_info(xmmsv_t *value, void *data) {
 }
 
 int _playlist_item_add(xmmsv_t *value, void *data) {
+	static int pos;
 	xmmsv_t *dict_entry;
 	xmmsv_t *infos;
 	const char *artist;
@@ -265,6 +268,11 @@ int _playlist_item_add(xmmsv_t *value, void *data) {
 	const char *album;
 	playlist_item *pi;
 	rockon_status *s = (rockon_status*)data;
+
+	if (s == NULL) {
+		pos = 0;
+		return 0;
+	}
 
 	infos = xmmsv_propdict_to_dict (value, NULL);
 	/*
@@ -296,8 +304,10 @@ int _playlist_item_add(xmmsv_t *value, void *data) {
 	pi->artist = strdup(artist);
 	pi->album = strdup(album);
 	pi->status = s;
+	pi->pos = pos;
 
 	s->playlist = eina_list_append(s->playlist, pi);
+	pos++;
 
 	xmmsv_unref (infos);
 
@@ -321,7 +331,7 @@ int _playlist_fetch(xmmsv_t *value, void *data) {
 			print_error ("get list iterator failed!", ERR_NORMAL);
 			return FALSE;
 		}
-		
+		_playlist_item_add(NULL, NULL); // restart pos counter
 		for (; xmmsv_list_iter_valid (it); xmmsv_list_iter_next (it)) {
 			int id;
 			xmmsv_t *list_entry;

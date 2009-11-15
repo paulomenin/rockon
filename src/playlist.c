@@ -42,6 +42,7 @@ void set_playlist(rockon_status *s, const char *emission, Evas_Object *eo) {
 	Eina_List *win;
 	win = status_find_window_by_edje(s->windows, eo);
 	if (win == NULL) return;
+	if (((rockon_window*)win)->playlist) return;
 
 	((rockon_window*)win)->playlist =
 					elm_genlist_add( ((rockon_window*)win)->elm_win );
@@ -54,21 +55,22 @@ void set_playlist(rockon_status *s, const char *emission, Evas_Object *eo) {
 				((rockon_window*)win)->playlist );
 
 	evas_object_show( ((rockon_window*)win)->playlist );
-	//evas_object_smart_callback_add(s->bt, "clicked", elm_cb_play, data);
 
-	pls_populate( ((rockon_window*)win)->playlist, s);
+	evas_object_smart_callback_add(((rockon_window*)win)->playlist, "clicked", elm_cb_pls_click, s);
+
+	pls_populate( (rockon_window*)win, s);
 }
 
-void pls_populate(Evas_Object *playlist, rockon_status *s) {
+void pls_populate(rockon_window *win, rockon_status *s) {
 	Elm_Genlist_Item *pls_item;
-	void *data;
+	playlist_item *data;
 	Eina_List *l;
 
-	elm_genlist_clear(playlist);
+	elm_genlist_clear(win->playlist);
 
 	EINA_LIST_FOREACH(s->playlist, l, data) {
 		pls_item = elm_genlist_item_append(
-			playlist,
+			win->playlist,
 			&(s->pls_item_class),
 			data,
 			NULL,
@@ -77,6 +79,20 @@ void pls_populate(Evas_Object *playlist, rockon_status *s) {
 			NULL);
 	}
 }
+
+void pls_update_playback_pos(rockon_window *win) {
+	Elm_Genlist_Item *pls_item;
+
+	if (win->playlist == NULL) return;
+
+	pls_item = elm_genlist_first_item_get(win->playlist);
+
+	while (pls_item) {
+		elm_genlist_item_update(pls_item);
+		pls_item = elm_genlist_item_next_get(pls_item);
+	}
+}
+
 
 char *pls_item_label_get(const void *data, Evas_Object *obj, const char *part) {
 	char buf[256];

@@ -53,3 +53,13 @@ void cmd_prev (rockon_status *status, void *data) {
 	XMMS_CALLBACK_SET (status->connection, xmmsc_playback_tickle,
 					check_error, NULL);
 }
+
+void cmd_jump_to (rockon_status *status, void *data, int pos) {
+	xmmsc_result_t *result;
+	XMMS_CONN_IS_VALID();
+	result = xmmsc_playlist_set_next (status->connection, pos);
+	xmmsc_result_notifier_set (result, check_error, NULL);
+	xmmsc_result_unref (result);
+	XMMS_CALLBACK_SET (status->connection, xmmsc_playback_tickle,
+					check_error, NULL);
+}
