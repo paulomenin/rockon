@@ -29,6 +29,8 @@ void xmms2_shutdown ();
 int  check_error (xmmsv_t *value, void *data);
 
 int  broadcast_playlist_pos_cb (xmmsv_t *value, void *data);
+int  broadcast_playlist_changed_cb (xmmsv_t *value, void *data);
+int  broadcast_playlist_loaded_cb (xmmsv_t *value, void *data);
 int  broadcast_playback_volume_cb (xmmsv_t *value, void *data);
 int  broadcast_playback_id_cb (xmmsv_t *value, void *data);
 int  broadcast_playback_status_cb (xmmsv_t *value, void *data);

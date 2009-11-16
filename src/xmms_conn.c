@@ -61,6 +61,12 @@ int xmms2_connect (rockon_status *status) {
 	XMMS_CALLBACK_SET (status->connection,
 					xmmsc_broadcast_playlist_current_pos,
 					broadcast_playlist_pos_cb, status);
+	XMMS_CALLBACK_SET (status->connection,
+					xmmsc_broadcast_playlist_changed,
+					broadcast_playlist_changed_cb, status);
+	XMMS_CALLBACK_SET (status->connection,
+					xmmsc_broadcast_playlist_loaded,
+					broadcast_playlist_loaded_cb, status);
 
 	xmmsc_disconnect_callback_set (status->connection, xmms2_disconnect_cb, (void*)status);
 	status->connected = 1;
@@ -145,6 +151,33 @@ int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
 			print_error("Memory allocation error.", ERR_CRITICAL);
 
 		s->changed_playlist_pos = 1;
+		status_gui_update(s);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
+	rockon_status *s = (rockon_status*)data;
+
+	// FIXME make proper handling of playlist changes!
+	if (! check_error(value, NULL)) {
+		_playlist_get(s);
+
+		s->changed_playlist = 1;
+		status_gui_update(s);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+int broadcast_playlist_loaded_cb (xmmsv_t *value, void *data) {
+	rockon_status *s = (rockon_status*)data;
+
+	if (! check_error(value, NULL)) {
+		_playlist_get(s);
+
+		s->changed_playlist = 1;
 		status_gui_update(s);
 		return TRUE;
 	}
@@ -358,8 +391,6 @@ void _playlist_get(rockon_status *s) {
 	xmmsc_result_unref (result);
 
 }
-
-
 
 void _dict_volume_foreach (const char *key, xmmsv_t *value, void *data) {
 	if (xmmsv_get_type (value) == XMMSV_TYPE_INT32) {

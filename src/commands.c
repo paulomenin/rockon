@@ -16,25 +16,25 @@
 
 #include "commands.h"
 
-void cmd_play (rockon_status *status, void *data) {
+void cmd_play (rockon_status *status) {
 	XMMS_CONN_IS_VALID();
 	XMMS_CALLBACK_SET (status->connection, xmmsc_playback_start,
 					check_error, NULL);
 }
 
-void cmd_pause (rockon_status *status, void *data) {
+void cmd_pause (rockon_status *status) {
 	XMMS_CONN_IS_VALID();
 	XMMS_CALLBACK_SET (status->connection, xmmsc_playback_pause,
 					check_error, NULL);
 }
 
-void cmd_stop (rockon_status *status, void *data) {
+void cmd_stop (rockon_status *status) {
 	XMMS_CONN_IS_VALID();
 	XMMS_CALLBACK_SET (status->connection, xmmsc_playback_stop,
 					check_error, NULL);
 }
 
-void cmd_next (rockon_status *status, void *data) {
+void cmd_next (rockon_status *status) {
 	xmmsc_result_t *result;
 	XMMS_CONN_IS_VALID();
 	result = xmmsc_playlist_set_next_rel (status->connection, 1);
@@ -44,7 +44,7 @@ void cmd_next (rockon_status *status, void *data) {
 					check_error, NULL);
 }
 
-void cmd_prev (rockon_status *status, void *data) {
+void cmd_prev (rockon_status *status) {
 	xmmsc_result_t *result;
 	XMMS_CONN_IS_VALID();
 	result = xmmsc_playlist_set_next_rel (status->connection, -1);
@@ -54,7 +54,7 @@ void cmd_prev (rockon_status *status, void *data) {
 					check_error, NULL);
 }
 
-void cmd_jump_to (rockon_status *status, void *data, int pos) {
+void cmd_jump_to (rockon_status *status, int pos) {
 	xmmsc_result_t *result;
 	XMMS_CONN_IS_VALID();
 	result = xmmsc_playlist_set_next (status->connection, pos);

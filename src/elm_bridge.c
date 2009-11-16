@@ -33,13 +33,13 @@ printf("ELM_CALLBACK: emmission: %s source: %s\n", emission, source);
 }
 
 void elm_cb_play(void *data, Evas_Object *obj, void *event_info) {
-	cmd_play ((rockon_status*)data, NULL);
+	cmd_play ((rockon_status*)data);
 }
 
 void elm_cb_pls_click(void *data, Evas_Object *obj, void *event_info) {
 	playlist_item *pi = (playlist_item*) elm_genlist_item_data_get(event_info);
 	int pos = pi->pos;
-	cmd_jump_to ((rockon_status*)data, NULL, pos);
+	cmd_jump_to ((rockon_status*)data, pos);
 }
 
 
