@@ -60,6 +60,11 @@ void cmd_jump_to (rockon_status *status, int pos) {
 	result = xmmsc_playlist_set_next (status->connection, pos);
 	xmmsc_result_notifier_set (result, check_error, NULL);
 	xmmsc_result_unref (result);
-	XMMS_CALLBACK_SET (status->connection, xmmsc_playback_tickle,
+	if (status->playback_status == 1) {
+		XMMS_CALLBACK_SET (status->connection, xmmsc_playback_tickle,
 					check_error, NULL);
+	} else {
+		cmd_play(status);
+	}
+
 }

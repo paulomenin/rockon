@@ -112,11 +112,13 @@ Evas_Object *pls_item_icon_get(const void *data, Evas_Object *obj, const char *p
 	playlist_item *pi = (playlist_item*)data;
 
 	if (!strcmp(part, "elm.swallow.icon")) {
-		if ( pi->id == pi->status->playback_id ) {
+		if ( pi->pos == pi->status->playlist_pos ) {
 			icon = elm_icon_add(obj);
-			elm_icon_file_set (icon, pi->status->config->theme, "icon.pls_play");
+			elm_icon_file_set (icon, pi->status->config->theme, "icon.pls_playing");
 			evas_object_size_hint_aspect_set(icon, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 			return icon;
+		} else {
+		
 		}
 	}
 	else if (!strcmp(part, "elm.swallow.end")) {
