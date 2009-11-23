@@ -14,6 +14,7 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
 #include "error.h"
 
 /** 
@@ -23,6 +24,7 @@
  * @Param type type of error
  */
 void print_error (const char *msg, Error_type type) {
+	assert(msg);
 	switch (type) {
 		case ERR_NORMAL:
 				fprintf (stderr, "ERROR: %s\n", msg);
@@ -34,6 +36,9 @@ void print_error (const char *msg, Error_type type) {
 		case ERR_WARNING:
 				fprintf (stdout, "WARNING: %s\n", msg);
 				break;
+		default:
+				fprintf (stderr, "ERROR with invalid type!\nExiting...\n");
+				exit (1);
 	}
 }
 

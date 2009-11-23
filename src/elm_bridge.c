@@ -39,7 +39,7 @@ void elm_cb_play(void *data, Evas_Object *obj, void *event_info) {
 void elm_cb_pls_click(void *data, Evas_Object *obj, void *event_info) {
 	playlist_item *pi = (playlist_item*) elm_genlist_item_data_get(event_info);
 	int pos = pi->pos;
-	cmd_jump_to ((rockon_status*)data, pos);
+	cmd_jump_and_play ((rockon_status*)data, pos);
 }
 
 

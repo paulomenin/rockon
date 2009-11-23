@@ -14,25 +14,25 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef MEDIA_INFO_H
+#define MEDIA_INFO_H
 
-#include <string.h>
-#include <Ecore_File.h>
 #include <xmmsclient/xmmsclient.h>
-#include "lcfg_static.h"
-#include "error.h"
 
-typedef struct _rockon_config {
-	char *config_filename;
-	struct lcfg *lcfg_obj;
-	int launch_server;
-	char *theme;
-} rockon_config;
+typedef struct {
+	char *artist;
+	char *album;
+	char *title;
+	char *url;
+	char *comment;
+	char *genre;
+	char *date;
+	int bitrate;
+	int duration;
+} media_info;
 
-rockon_config* config_new();
-void config_del(rockon_config *config);
-int config_load(rockon_config *config);
-int config_save(rockon_config *config);
+media_info* media_info_new();
+void media_info_del(media_info* info);
+void media_info_get (xmmsv_t *value, media_info* info);
 
-#endif /* CONFIG_H */
+#endif /* MEDIA_INFO_H */

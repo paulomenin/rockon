@@ -12,6 +12,7 @@ sources = """
 	edje_bridge.c
 	elm_bridge.c
 	playlist.c
+	media_info.c
 """.split()
 
 libs = """
@@ -25,6 +26,7 @@ def configure(conf):
 	conf.env.append_value('CCFLAGS', '-Wall')
 	conf.env.append_value('CCFLAGS', '-O0')
 	conf.env.append_value('CCFLAGS', '-g')
+	conf.env.append_value('CCFLAGS', '-DDEBUG')
 
 	conf.check_tool('gcc')
 

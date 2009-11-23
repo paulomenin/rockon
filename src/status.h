@@ -22,6 +22,7 @@
 #include <Elementary.h>
 #include <xmmsclient/xmmsclient.h>
 #include "config.h"
+#include "media_info.h"
 
 typedef struct {
 	char *name;
@@ -55,20 +56,11 @@ typedef struct {
 	int playtime;
 	int playback_id;
 	
-	/* Be careful these pointers are not valid all the time */
-	const char *media_artist;
-	const char *media_album;
-	const char *media_title;
-	const char *media_url;
-	const char *media_comment;
-	const char *media_genre;
-	const char *media_date;
-	int  media_bitrate;
-	int  media_duration;
-
+	media_info *playback_info;
 } rockon_status;
 
-void status_free(rockon_status *status);
+rockon_status* status_new();
+void status_del(rockon_status *status);
 void status_fetch(rockon_status *status);
 void status_gui_update(rockon_status *status);
 void* status_find_window_by_win(const Eina_List *list, const void *data);

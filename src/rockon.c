@@ -16,7 +16,7 @@
 
 
 #include <Elementary.h>
-
+#include <assert.h>
 #include "error.h"
 #include "config.h"
 #include "xmms_conn.h"
@@ -24,45 +24,35 @@
 #include "elm_bridge.h"
 #include "playlist.h"
 
-
 EAPI int elm_main (int argc, char** argv) {
-	rockon_config app_config;
-	rockon_status app_status;
+	rockon_config *app_config = NULL;
+	rockon_status *app_status = NULL;
 
 	ecore_file_init();
 
-	if ( ! config_load (&app_config))
-		print_error ("Couldn't load config. Loaded default values.", ERR_WARNING);
+	app_config = config_new();
+	assert(app_config);
 
-	app_status.connected = 0;
-	app_status.connection = NULL;
-	app_status.config = &app_config;
-	app_status.windows = NULL;
-	app_status.changed_playback = 0;
-	app_status.changed_playback_id = 0;
-	app_status.changed_playback_volume = 0;
-	app_status.changed_playtime = 0;
-	app_status.changed_mediainfo = 0;
-	app_status.changed_playlist = 0;
-	app_status.changed_playlist_pos = 0;
-	app_status.playlist = NULL;
-	app_status.playlist_name = NULL;
+	app_status = status_new();
+	assert(app_status);
+	app_status->config = app_config;
 
-	pls_item_class_set(&app_status);
+	pls_item_class_set(app_status);
 
-	xmms2_connect (&app_status);
+	xmms2_connect (app_status);
 
-	elm_cb_set (&app_status, NULL, "Rockon", "elm_set.win");
+	elm_cb_set (app_status, NULL, "Rockon", "elm_set.win");
 
 	elm_run();
 
-	if ( ! config_save (&app_config))
+	if ( ! config_save (app_config))
 		print_error ("Couldn't save config.", ERR_WARNING);
 
 	/* Clean resources */
-	xmms2_shutdown (&app_status);
-	config_free(&app_config);
-	status_free(&app_status);
+	xmms2_shutdown (app_status);
+	config_del(app_config);
+	status_del(app_status);
+
 	ecore_file_shutdown();
 	elm_shutdown();
 

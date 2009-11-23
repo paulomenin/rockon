@@ -14,14 +14,39 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
 #include "config.h"
 
 char* _get_config_filename(const char* filename);
 char* _get_theme_filename(const char* themename);
 enum lcfg_status _config_visitor_load(const char *key, void *data, size_t len, void *user_data);
 
+rockon_config* config_new() {
+	rockon_config *config = NULL;
+
+	config = (rockon_config*) malloc(sizeof(rockon_config));
+	if (! config)
+		print_error ("Couldn't allocate memory for config.", ERR_CRITICAL);
+
+	if ( ! config_load (config) )
+		print_error ("Couldn't load config. Loaded default values.", ERR_WARNING);
+
+	return config;
+}
+
+void config_del(rockon_config *config) {
+	assert(config);
+
+	free(config->config_filename);
+	free(config->theme);
+	if (config->lcfg_obj) lcfg_delete(config->lcfg_obj);
+	free(config);
+}
+
 int config_load (rockon_config *config) {
 	char *theme;
+	
+	assert(config);
 
 	/* default values */
 	config->launch_server = 0;
@@ -42,12 +67,6 @@ int config_load (rockon_config *config) {
 		return 1;
 	}
 	return 0;
-}
-
-void config_free(rockon_config *config) {
-	if (config->config_filename) free(config->config_filename);
-	if (config->lcfg_obj) lcfg_delete(config->lcfg_obj);
-	if (config->theme)    free(config->theme);
 }
 
 int config_save (rockon_config *config) {

@@ -14,16 +14,52 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
 #include "status.h"
 #include "xmms_conn.h"
 #include "playlist.h"
 
-void status_free(rockon_status *status) {
+rockon_status* status_new() {
+	rockon_status *status = NULL;
+
+	status = (rockon_status*) malloc(sizeof(rockon_status));
+	if (! status)
+		print_error ("Couldn't allocate memory for status.", ERR_CRITICAL);
+
+	status->connected = 0;
+	status->connection = NULL;
+	status->config = NULL;
+	status->windows = NULL;
+	
+	status->changed_playback = 0;
+	status->changed_playback_id = 0;
+	status->changed_playback_volume = 0;
+	status->changed_playtime = 0;
+	status->changed_mediainfo = 0;
+	status->changed_playlist = 0;
+	status->changed_playlist_pos = 0;
+	
+	status->playlist = NULL;
+	status->playlist_name = NULL;
+	status->playlist_pos = 0;
+	status->playback_status = 0;
+	status->volume = 0;
+	status->playtime = 0;
+	status->playback_id = 0;
+	
+	status->playback_info = NULL;
+
+	return status;
+}
+
+void status_del(rockon_status *status) {
 	rockon_window *data;
 	Eina_List *l;
 
-	if (status->playlist_name)
-		free (status->playlist_name);
+	assert(status);
+
+	free(status->playlist_name);
+	media_info_del(status->playback_info);
 
 	if (status->windows) {
 		EINA_LIST_FOREACH(status->windows, l, data) {
@@ -37,11 +73,14 @@ void status_free(rockon_status *status) {
 	if (status->playlist) {
 		pls_free(status);
 	}
+	
+	free(status);
 }
 
 void status_fetch(rockon_status *status) {
 	xmmsc_result_t *res;
 
+	assert(status);
 	if ( ! status->connected)
 		return;
 
@@ -97,6 +136,7 @@ void status_gui_update(rockon_status *status) {
 	void *win;
 	//const Evas_Object *obj = NULL;
 	
+	assert(status);
 	EINA_LIST_FOREACH (status->windows, l, win) {
 
 	if (status->changed_playtime) {
@@ -124,17 +164,17 @@ void status_gui_update(rockon_status *status) {
 		
 		msg = calloc(1, sizeof(Edje_Message_String_Set) - sizeof(char*) + (7 * sizeof(char*)));
 		msg->count = 7;
-		msg->str[0] = (char*) status->media_artist;
-		msg->str[1] = (char*) status->media_album;
-		msg->str[2] = (char*) status->media_title;
-		msg->str[3] = (char*) status->media_url;
-		msg->str[4] = (char*) status->media_comment;
-		msg->str[5] = (char*) status->media_genre;
-		msg->str[6] = (char*) status->media_date;
+		msg->str[0] = (char*) status->playback_info->artist;
+		msg->str[1] = (char*) status->playback_info->album;
+		msg->str[2] = (char*) status->playback_info->title;
+		msg->str[3] = (char*) status->playback_info->url;
+		msg->str[4] = (char*) status->playback_info->comment;
+		msg->str[5] = (char*) status->playback_info->genre;
+		msg->str[6] = (char*) status->playback_info->date;
 		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_STRING_SET, 4, msg);
 		free(msg);
 		
-		msg_dur.val = status->media_duration;
+		msg_dur.val = status->playback_info->duration;
 		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 5, &msg_dur);
 		
 		msg_id.val = status->playback_id;

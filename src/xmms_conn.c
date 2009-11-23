@@ -14,8 +14,10 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
 #include "xmms_conn.h"
 #include "playlist.h"
+#include "media_info.h"
 
 int  _get_media_info(xmmsv_t *value, void *data);
 void _dict_volume_foreach (const char *key, xmmsv_t *value, void *data);
@@ -26,7 +28,7 @@ int  _playlist_item_add(xmmsv_t *value, void *data);
 void _playlist_item_info_get(rockon_status *data, int id);
 
 /* helper functions: print all values from a dict
- * FIXME remove these functions after debbuging
+ * FIXME remove these functions after finish debug
  */
 void _my_dict_foreach (const char *key, xmmsv_t *value, void *user_data);
 void _my_propdict_foreach (const char *key, xmmsv_t *src_val_dict,void *user_data);
@@ -71,8 +73,6 @@ int xmms2_connect (rockon_status *status) {
 	xmmsc_disconnect_callback_set (status->connection, xmms2_disconnect_cb, (void*)status);
 	status->connected = 1;
 
-	_playlist_get(status);
-
 	xmmsc_mainloop_ecore_init (status->connection);
 
 	return TRUE;
@@ -103,21 +103,21 @@ int check_error (xmmsv_t *value, void *data) {
 }
 
 int broadcast_playback_id_cb (xmmsv_t *value, void *data) {
-	rockon_status *s = (rockon_status*)data;
+	rockon_status *status = (rockon_status*)data;
 	xmmsc_result_t *result;
 
 	if (! check_error(value, NULL)) {
-		if (!xmmsv_get_int (value, &(s->playback_id)))
-			s->playback_id = 0; // nothing is playing
+		if (!xmmsv_get_int (value, &(status->playback_id)))
+			status->playback_id = 0; // nothing is playing
 
-		if (s->playback_id != 0) {
-			result = xmmsc_medialib_get_info(s->connection, s->playback_id);
-			xmmsc_result_notifier_set (result, _get_media_info, s);
+		if (status->playback_id != 0) {
+			result = xmmsc_medialib_get_info(status->connection, status->playback_id);
+			xmmsc_result_notifier_set (result, _get_media_info, status);
 			xmmsc_result_unref(result);
 		}
-		
-		s->changed_playback_id = 1;
-		status_gui_update(s);
+
+		status->changed_playback_id = 1;
+		status_gui_update(status);
 		return TRUE; // keep broadcast alive
 	}
 
@@ -125,7 +125,7 @@ int broadcast_playback_id_cb (xmmsv_t *value, void *data) {
 }
 
 int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
-	rockon_status *s = (rockon_status*)data;
+	rockon_status *status = (rockon_status*)data;
 	const char *pls_name;
 	xmmsv_t *dict_entry;
 
@@ -135,76 +135,76 @@ int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
 			pls_name = "No Name";
 		}
 		if (!xmmsv_dict_get (value, "position", &dict_entry) ||
-			!xmmsv_get_int (dict_entry, &(s->playlist_pos))) {
-			s->playlist_pos = -1;
+			!xmmsv_get_int (dict_entry, &(status->playlist_pos))) {
+			status->playlist_pos = -1;
 		}
 
-		if (s->playlist_name) {
-			free (s->playlist_name);
-			s->playlist_name = NULL;
+		if (status->playlist_name) {
+			free (status->playlist_name);
+			status->playlist_name = NULL;
 		}
 
-		s->playlist_name = (char*) malloc (sizeof(char)*(strlen(pls_name) + 1));
-		if (s->playlist_name)
-			strcpy(s->playlist_name, pls_name);
+		status->playlist_name = (char*) malloc (sizeof(char)*(strlen(pls_name) + 1));
+		if (status->playlist_name)
+			strcpy(status->playlist_name, pls_name);
 		else
 			print_error("Memory allocation error.", ERR_CRITICAL);
 
-		s->changed_playlist_pos = 1;
-		status_gui_update(s);
+		status->changed_playlist_pos = 1;
+		status_gui_update(status);
 		return TRUE;
 	}
 	return FALSE;
 }
 
 int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
-	rockon_status *s = (rockon_status*)data;
+	rockon_status *status = (rockon_status*)data;
 
 	// FIXME make proper handling of playlist changes!
 	if (! check_error(value, NULL)) {
-		_playlist_get(s);
+		_playlist_get(status);
 
-		s->changed_playlist = 1;
-		status_gui_update(s);
+		status->changed_playlist = 1;
+		status_gui_update(status);
 		return TRUE;
 	}
 	return FALSE;
 }
 
 int broadcast_playlist_loaded_cb (xmmsv_t *value, void *data) {
-	rockon_status *s = (rockon_status*)data;
+	rockon_status *status = (rockon_status*)data;
 
 	if (! check_error(value, NULL)) {
-		_playlist_get(s);
+		_playlist_get(status);
 
-		s->changed_playlist = 1;
-		status_gui_update(s);
+		status->changed_playlist = 1;
+		status_gui_update(status);
 		return TRUE;
 	}
 	return FALSE;
 }
 
 int broadcast_playback_volume_cb (xmmsv_t *value, void *data) {
-	rockon_status *s = (rockon_status*)data;
+	rockon_status *status = (rockon_status*)data;
 
 	if (! check_error(value, NULL)) {
-		xmmsv_dict_foreach (value, _dict_volume_foreach, s);
+		xmmsv_dict_foreach (value, _dict_volume_foreach, status);
 
-		s->changed_playback_volume = 1;
-		status_gui_update(s);
+		status->changed_playback_volume = 1;
+		status_gui_update(status);
 		return TRUE; // keep broadcast alive
 	}
-	s->volume = 0;
+	status->volume = 0;
 	return FALSE;
 }
 
 int broadcast_playback_status_cb (xmmsv_t *value, void *data) {
-	rockon_status *s = (rockon_status*)data;
+	rockon_status *status = (rockon_status*)data;
 	if (! check_error(value, NULL)) {
-		xmmsv_get_int (value, &s->playback_status);
+		xmmsv_get_int (value, &status->playback_status);
 
-		s->changed_playback = 1;
-		status_gui_update(s);
+		status->changed_playback = 1;
+		status_gui_update(status);
 		return TRUE;
 	}
 	return FALSE;
@@ -213,17 +213,17 @@ int broadcast_playback_status_cb (xmmsv_t *value, void *data) {
 int signal_playback_playtime_cb (xmmsv_t *value, void *data) {
 	static int time = 0;
 	int new_time;
-	rockon_status *s = (rockon_status*)data;
+	rockon_status *status = (rockon_status*)data;
 	if (! check_error(value, NULL)) {
 		xmmsv_get_int (value, &new_time);
 
 		if (((new_time - time) > 999) ||
 			(time > new_time)) {
-			s->playtime = new_time;
+			status->playtime = new_time;
 			time = new_time;
 			
-			s->changed_playtime = 1;
-			status_gui_update(s);
+			status->changed_playtime = 1;
+			status_gui_update(status);
 		}
 
 		return TRUE;
@@ -232,61 +232,21 @@ int signal_playback_playtime_cb (xmmsv_t *value, void *data) {
 }
 
 int _get_media_info(xmmsv_t *value, void *data) {
-	rockon_status *s = (rockon_status*)data;
-	xmmsv_t *infos, *dict_entry;
-	const char *artist, *album, *title, *url, *comment, *genre, *date;
+	rockon_status *status = (rockon_status*)data;
+
+	assert(data);
 
 	if (! check_error(value, NULL)) {
 
 //xmmsv_dict_foreach (value, _my_propdict_foreach, NULL);
+		if (status->playback_info) {
+			media_info_del(status->playback_info);
+		}
+		status->playback_info = media_info_new();
+		media_info_get(value, status->playback_info);
 
-		infos = xmmsv_propdict_to_dict(value, NULL);
-
-		if (!xmmsv_dict_get (infos, "artist", &dict_entry) ||
-		    !xmmsv_get_string (dict_entry, &artist)) {
-			artist = "[Unknown Artist]";
-		}
-		if (!xmmsv_dict_get (infos, "album", &dict_entry) ||
-		    !xmmsv_get_string (dict_entry, &album)) {
-			album = "[Unknown Album]";
-		}
-		if (!xmmsv_dict_get (infos, "title", &dict_entry) ||
-		    !xmmsv_get_string (dict_entry, &title)) {
-			title = "[Unknown Title]";
-		}
-		if (!xmmsv_dict_get (infos, "url", &dict_entry) ||
-		    !xmmsv_get_string (dict_entry, &url)) {
-			url = "[Unknown URL]";
-		}
-		if (!xmmsv_dict_get (infos, "comment", &dict_entry) ||
-		    !xmmsv_get_string (dict_entry, &comment)) {
-			comment = "";
-		}
-		if (!xmmsv_dict_get (infos, "genre", &dict_entry) ||
-		    !xmmsv_get_string (dict_entry, &genre)) {
-			genre = "[Unknown Genre]";
-		}
-		if (!xmmsv_dict_get (infos, "date", &dict_entry) ||
-		    !xmmsv_get_string (dict_entry, &date)) {
-			date = "";
-		}
-		
-		if (!xmmsv_dict_get (infos, "duration", &dict_entry) ||
-		    !xmmsv_get_int (dict_entry, &s->media_duration)) {
-			s->media_duration = 0;
-		}
-
-		s->media_artist = artist;
-		s->media_album = album;
-		s->media_title = title;
-		s->media_url = url;
-		s->media_comment = comment;
-		s->media_genre = genre;
-		s->media_date = date;
-
-		s->changed_mediainfo = 1;
-		status_gui_update(s);
-		xmmsv_unref(infos);
+		status->changed_mediainfo = 1;
+		status_gui_update(status);
 		return TRUE;
 	}
 	return FALSE;
