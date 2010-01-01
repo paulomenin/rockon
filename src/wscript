@@ -3,6 +3,8 @@
 
 sources = """
 	rockon.c
+	lcfg_static.c
+	config.c
 """.split()
 
 libs = """
