@@ -14,11 +14,16 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
+#include <assert.h>
 #include <string.h>
 #include <Ecore_File.h>
 #include <xmmsclient/xmmsclient.h>
-#include <assert.h>
+#include "rockon_config.h"
+
+#define DBG(...) EINA_LOG_DOM_DBG(config_log_dom, __VA_ARGS__)
+#define INFO(...) EINA_LOG_DOM_INFO(config_log_dom, __VA_ARGS__)
+
+extern int config_log_dom;
 
 char* get_config_filename(const char* filename);
 char* get_theme_filename(const char* themename);
@@ -32,7 +37,7 @@ rockon_config* config_new() {
 		EINA_LOG_CRIT("Couldn't allocate memory for config.");
 
 	if (config_load (config) == 0)
-		WARN("Couldn't load config. Loaded default values.");
+		INFO("Couldn't load config. Loaded default values.");
 
 	return config;
 }

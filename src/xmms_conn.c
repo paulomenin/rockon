@@ -1,0 +1,128 @@
+/* This file is part of Rockon.
+ * 
+ * Rockon is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * Rockon is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <assert.h>
+#include <string.h>
+#include <Ecore_Job.h>
+#include <Eina.h>
+#include <xmmsclient/xmmsclient-ecore.h>
+#include "xmms_conn.h"
+
+#define DBG(...) EINA_LOG_DOM_DBG(conn_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(conn_log_dom, __VA_ARGS__)
+#define INFO(...) EINA_LOG_DOM_INFO(conn_log_dom, __VA_ARGS__)
+
+extern int conn_log_dom;
+
+int  xmms2_connect (rockon_config *config, server_data *sdata) {
+	char *xmms_path = NULL;
+	char *xmms_error = NULL;
+	assert(config);
+	assert(sdata);
+
+	sdata->connection = xmmsc_init ("rockon");
+	if (! sdata->connection) {
+		ERR("Couldn't create XMMS2 connection.");
+		return 0;
+	}
+
+	xmms_path = getenv("XMMS_PATH");
+	DBG("XMMS_PATH %s", xmms_path);
+	if (xmms_path == NULL) {
+		xmms_path = config->ipc_path;
+	}
+
+	if (!xmmsc_connect (sdata->connection, xmms_path)) {
+		INFO("Connection to XMMS2 failed.");
+		xmms_error = xmmsc_get_last_error(sdata->connection);
+		INFO(xmms_error);
+		if (strcmp(xmms_error, "xmms2d is not running.") == 0) {
+			if (config->launch_server == 1) {
+				INFO("Launching xmms2d");
+				if (system("xmms2-launcher") == 0) {
+					ecore_job_add( (void(*)(void*))xmms2_reconnect_cb,
+					               (const void*)&(sdata->reconn_params));
+				}
+			}
+		}
+		if (config->auto_reconnect == 1) {
+			xmms2_disconnect_cb((void*)&(sdata->reconn_params));
+		}
+		return 0;
+	}
+
+	xmmsc_disconnect_callback_set (sdata->connection,
+	                               xmms2_disconnect_cb,
+	                               &(sdata->reconn_params));
+	sdata->is_connected = 1;
+	xmmsc_mainloop_ecore_init (sdata->connection);
+	DBG("XMMS2 Connected");
+	return 1;
+}
+
+int xmms2_reconnect_cb (void *parameters) {
+	reconnect_parameters *params;
+
+	assert(parameters);
+	params = (reconnect_parameters*) parameters;
+
+	if (((server_data*)(params->sdata))->is_connected == 1) {
+		return ECORE_CALLBACK_CANCEL;
+	}
+	DBG("try to reconnect");
+	if (xmms2_connect((rockon_config*)(params->config),
+		              (server_data*)(params->sdata))) {
+		((server_data*)params->sdata)->reconn_timer = NULL;
+		return ECORE_CALLBACK_CANCEL;
+	}
+	return ECORE_CALLBACK_RENEW;
+}
+
+void xmms2_disconnect_cb (void *data) {
+	reconnect_parameters *params;
+
+	INFO("xmms2 connection lost.");
+	params = (reconnect_parameters*) data;
+	xmms2_shutdown(params->sdata);
+	if (((rockon_config*)(params->config))->auto_reconnect == 1) {
+		if (((server_data*)(params->sdata))->reconn_timer == NULL) {
+			((server_data*)(params->sdata))->reconn_timer = ecore_timer_add (
+			             ((rockon_config*)(params->config))->reconnect_interval,
+			             xmms2_reconnect_cb,
+			             data);
+		}
+	}
+}
+
+void xmms2_shutdown(server_data *sdata) {
+	if ((sdata) && (sdata->connection)) {
+		//xmmsc_mainloop_ecore_shutdown(sdata->connection, NULL);
+		xmmsc_unref (sdata->connection);
+		sdata->connection = NULL;
+		sdata->is_connected = 0;
+		DBG("XMMS2 connection shutdown");
+	}
+}
+
+int  check_error (xmmsv_t *value, void *data) {
+	const char *err_buf;
+	if ( (value) && xmmsv_is_error (value) &&
+		xmmsv_get_error (value, &err_buf)) {
+		ERR(err_buf);
+		return 1;
+	}
+	return 0;
+}

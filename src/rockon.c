@@ -15,9 +15,11 @@
  */
 
 #include <Elementary.h>
-#include "config.h"
+#include "rockon_config.h"
+#include "server_data.h"
+#include "xmms_conn.h"
 
-/* log domains */
+/* eina_log domains */
 int config_log_dom = -1;
 int conn_log_dom = -1;
 
@@ -26,22 +28,30 @@ void log_shutdown(void);
 
 EAPI int elm_main (int argc, char** argv) {
 	rockon_config *app_config;
+	server_data *sdata;
 
 	if (log_init() == EINA_FALSE) {
 		EINA_LOG_ERR("Log domains init failed");
 	}
 
 	app_config = config_new();
+	sdata = server_data_new();
+	sdata->reconn_params.config = app_config;
 
-	EINA_LOG_DBG("THEME NAME: %s", app_config->theme_name);
-	EINA_LOG_DBG("THEME PATH: %s", app_config->theme_path);
+	xmms2_connect(app_config, sdata);
+
 	EINA_LOG_DBG("MainLoop Start");
 	elm_run();
 	EINA_LOG_DBG("MainLoop End");
 
 	config_save(app_config);
 
+	if (app_config->terminate_server == 1) {
+		system("nyxmms2 server shutdown");
+	}
+
 	config_del(app_config);
+	server_data_del(sdata);
 	log_shutdown();
 	elm_shutdown();
 

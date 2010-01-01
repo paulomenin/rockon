@@ -14,32 +14,25 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef SERVER_DATA_H
+#define SERVER_DATA_H
 
-#include "lcfg_static.h"
+#include <Ecore.h>
+#include <xmmsclient/xmmsclient.h>
 
-#define DBG(...) EINA_LOG_DOM_DBG(config_log_dom, __VA_ARGS__)
-#define WARN(...) EINA_LOG_DOM_WARN(config_log_dom, __VA_ARGS__)
+typedef struct {
+	void *config;
+	void *sdata;
+} reconnect_parameters;
 
-extern int config_log_dom;
+typedef struct {
+	int is_connected;
+	xmmsc_connection_t *connection;
+	Ecore_Timer *reconn_timer;
+	reconnect_parameters reconn_params;
+} server_data;
 
-typedef struct _rockon_config {
-	char *config_filename;
-	struct lcfg *lcfg_obj;
+server_data* server_data_new();
+void server_data_del(server_data *sdata);
 
-	int launch_server;
-	int terminate_server;
-	int auto_reconnect;
-	int reconnect_interval;
-	char *ipc_path;
-	char *theme_name;
-	char *theme_path;
-} rockon_config;
-
-rockon_config* config_new();
-void config_del(rockon_config *config);
-int config_load(rockon_config *config);
-int config_save(rockon_config *config);
-
-#endif /* CONFIG_H */
+#endif /* SERVER_DATA_H */

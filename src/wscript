@@ -4,7 +4,9 @@
 sources = """
 	rockon.c
 	lcfg_static.c
-	config.c
+	rockon_config.c
+	server_data.c
+	xmms_conn.c
 """.split()
 
 libs = """
