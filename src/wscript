@@ -6,6 +6,7 @@ sources = """
 	lcfg_static.c
 	rockon_config.c
 	server_data.c
+	media_info.c
 	xmms_conn.c
 	commands.c
 	broadcasts.c

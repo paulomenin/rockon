@@ -47,11 +47,6 @@ EAPI int elm_main (int argc, char** argv) {
 	EINA_LOG_DBG("MainLoop Start");
 	elm_run();
 	EINA_LOG_DBG("MainLoop End");
-	
-	if (sdata->ecore_fdh != NULL) {
-		xmmsc_mainloop_ecore_shutdown(sdata->connection, sdata->ecore_fdh);
-		sdata->ecore_fdh = NULL;
-	}
 
 	if (sdata->config->terminate_server == 1) {
 		cmd_server_shutdown(sdata);

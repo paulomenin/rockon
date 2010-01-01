@@ -37,4 +37,16 @@ void gui_upd_playback_playtime (server_data *sdata) {
 	*/
 }
 
-
+void gui_upd_playback_info (server_data *sdata) {
+	INFO("--------- MEDIA INFO ---------");
+	INFO("%s - %s", sdata->playback_info->artist, sdata->playback_info->title);
+	INFO("Album: %s", sdata->playback_info->album);
+	INFO("Track Number: %d", sdata->playback_info->tracknr);
+	INFO("URL: %s", sdata->playback_info->url);
+	INFO("Comment: %s", sdata->playback_info->comment);
+	INFO("Genre: %s Date: %s", sdata->playback_info->genre, sdata->playback_info->date);
+	INFO("Bitrate: %d Duration: %d:%02d", sdata->playback_info->bitrate,
+										(sdata->playback_info->duration / 1000)/60,
+										(sdata->playback_info->duration / 1000)%60);
+	INFO("-----------------------------");
+}

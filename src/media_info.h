@@ -14,14 +14,27 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GUI_UPDATE_H
-#define GUI_UPDATE_H
+#ifndef MEDIA_INFO_H
+#define MEDIA_INFO_H
 
-#include "server_data.h"
+#include <xmmsclient/xmmsclient.h>
 
-void gui_upd_playback_id       (server_data *sdata);
-void gui_upd_playback_status   (server_data *sdata);
-void gui_upd_playback_playtime (server_data *sdata);
-void gui_upd_playback_info     (server_data *sdata);
+typedef struct {
+	int id;
+	char *artist;
+	char *album;
+	char *title;
+	char *url;
+	char *comment;
+	char *genre;
+	char *date;
+	int bitrate;
+	int duration;
+	int tracknr;
+} media_info;
 
-#endif /* GUI_UPDATE_H */
+media_info* media_info_new();
+void media_info_del(media_info* info);
+void media_info_get (xmmsv_t *value, media_info* info);
+
+#endif /* MEDIA_INFO_H */

@@ -104,8 +104,8 @@ void xmms2_disconnect_cb (server_data *sdata) {
 
 void xmms2_shutdown(server_data *sdata) {
 	if ((sdata) && (sdata->connection)) {
-		DBG("Ecore_fdh: %p", sdata->ecore_fdh);
 		if (sdata->ecore_fdh != NULL) {
+			DBG("Ecore_fdh: %p", sdata->ecore_fdh);
 			xmmsc_mainloop_ecore_shutdown(sdata->connection, sdata->ecore_fdh);
 			sdata->ecore_fdh = NULL;
 		}

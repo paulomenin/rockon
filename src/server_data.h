@@ -20,6 +20,7 @@
 #include <Ecore.h>
 #include <xmmsclient/xmmsclient.h>
 #include "rockon_config.h"
+#include "media_info.h"
 
 typedef struct {
 	void               *ecore_fdh;
@@ -30,6 +31,7 @@ typedef struct {
 	int playback_status;
 	int playback_playtime;
 	int playback_id;
+	media_info *playback_info;
 
 } server_data;
 
