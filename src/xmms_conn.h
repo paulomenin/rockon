@@ -21,12 +21,11 @@
 #include "server_data.h"
 #include "rockon_config.h"
 
-int  xmms2_connect (rockon_config *config, server_data *sdata);
-int  xmms2_reconnect_cb (void *parameters);
-void xmms2_disconnect_cb (void *data);
+int  xmms2_connect (server_data *sdata);
+int  xmms2_reconnect_cb (server_data *sdata);
+void xmms2_disconnect_cb (server_data *sdata);
 void xmms2_shutdown (server_data *sdata);
 
 int  check_error (xmmsv_t *value, void *data);
-
 
 #endif /* XMMS_CONN_H */

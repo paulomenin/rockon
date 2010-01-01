@@ -19,17 +19,13 @@
 
 #include <Ecore.h>
 #include <xmmsclient/xmmsclient.h>
+#include "rockon_config.h"
 
 typedef struct {
-	void *config;
-	void *sdata;
-} reconnect_parameters;
-
-typedef struct {
-	int is_connected;
+	void               *ecore_fdh;
+	rockon_config      *config;
 	xmmsc_connection_t *connection;
-	Ecore_Timer *reconn_timer;
-	reconnect_parameters reconn_params;
+	Ecore_Timer        *reconn_timer;
 } server_data;
 
 server_data* server_data_new();

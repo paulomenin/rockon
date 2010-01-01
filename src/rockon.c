@@ -15,42 +15,47 @@
  */
 
 #include <Elementary.h>
-#include "rockon_config.h"
+#include <xmmsclient/xmmsclient-ecore.h>
 #include "server_data.h"
 #include "xmms_conn.h"
+#include "commands.h"
 
 /* eina_log domains */
 int config_log_dom = -1;
 int conn_log_dom = -1;
+int cmd_log_dom = -1;
 
 Eina_Bool log_init(void);
 void log_shutdown(void);
 
 EAPI int elm_main (int argc, char** argv) {
-	rockon_config *app_config;
 	server_data *sdata;
 
 	if (log_init() == EINA_FALSE) {
 		EINA_LOG_ERR("Log domains init failed");
 	}
 
-	app_config = config_new();
 	sdata = server_data_new();
-	sdata->reconn_params.config = app_config;
 
-	xmms2_connect(app_config, sdata);
+	xmms2_connect(sdata);
+
+	if (sdata->connection == NULL) {
+		cmd_server_launch(sdata);
+	}
 
 	EINA_LOG_DBG("MainLoop Start");
 	elm_run();
 	EINA_LOG_DBG("MainLoop End");
-
-	config_save(app_config);
-
-	if (app_config->terminate_server == 1) {
-		system("nyxmms2 server shutdown");
+	
+	if (sdata->ecore_fdh != NULL) {
+		xmmsc_mainloop_ecore_shutdown(sdata->connection, sdata->ecore_fdh);
+		sdata->ecore_fdh = NULL;
 	}
 
-	config_del(app_config);
+	if (sdata->config->terminate_server == 1) {
+		cmd_server_shutdown(sdata);
+	}
+
 	server_data_del(sdata);
 	log_shutdown();
 	elm_shutdown();
@@ -66,6 +71,9 @@ Eina_Bool log_init(void) {
 	if (conn_log_dom < 0) {
 		conn_log_dom = eina_log_domain_register("rck_conn", NULL);
 	} else return EINA_FALSE;
+	if (cmd_log_dom < 0) {
+		cmd_log_dom = eina_log_domain_register("rck_cmd", NULL);
+	} else return EINA_FALSE;
 
 	return EINA_TRUE;
 }
@@ -78,5 +86,9 @@ void log_shutdown(void) {
 	if (conn_log_dom >= 0) {
 		eina_log_domain_unregister(conn_log_dom);
 		conn_log_dom = -1;
+	}
+	if (cmd_log_dom >= 0) {
+		eina_log_domain_unregister(cmd_log_dom);
+		cmd_log_dom = -1;
 	}
 }

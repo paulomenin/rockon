@@ -14,33 +14,25 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
-#include <Eina.h>
+#ifndef COMMANDS_H
+#define COMMANDS_H
+
 #include "server_data.h"
-#include "xmms_conn.h"
 
-server_data* server_data_new() {
-	server_data *sdata;
-
-	sdata = (server_data*) malloc(sizeof(server_data));
-	if (sdata == NULL) {
-		EINA_LOG_CRIT("malloc server_data failed");
-	}
-
-	sdata->ecore_fdh = NULL;
-	sdata->config = config_new();
-	sdata->connection = NULL;
-	sdata->reconn_timer = NULL;
-
-	return sdata;
+#define XMMS_CONN_IS_VALID() { \
+	if ( sdata->connection == NULL ) \
+		if ( xmms2_connect (sdata) == 0 ) \
+			return; \
 }
 
-void server_data_del(server_data *sdata) {
-	assert(sdata);
+void cmd_play  (server_data *sdata);
+void cmd_pause (server_data *sdata);
+void cmd_stop  (server_data *sdata);
+void cmd_next  (server_data *sdata);
+void cmd_prev  (server_data *sdata);
+void cmd_jump_to (server_data *sdata, int pos);
+void cmd_jump_and_play (server_data *sdata, int pos);
+void cmd_server_launch(server_data *sdata);
+void cmd_server_shutdown(server_data *sdata);
 
-	config_save(sdata->config);
-	config_del(sdata->config);
-	xmms2_shutdown(sdata);
-	free(sdata);
-}
-
+#endif /* COMMANDS_H */
