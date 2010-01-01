@@ -32,7 +32,7 @@ rockon_config* config_new() {
 		EINA_LOG_CRIT("Couldn't allocate memory for config.");
 
 	if (config_load (config) == 0)
-		EINA_LOG_WARN("Couldn't load config. Loaded default values.");
+		WARN("Couldn't load config. Loaded default values.");
 
 	return config;
 }
@@ -53,7 +53,10 @@ int config_load (rockon_config *config) {
 
 	/* default values */
 	config->launch_server = 0;
+//	config->reconnect = 0;
+//	config->reconnect = 0;
 	config->theme = NULL;
+
 	config->theme_name = (char*) malloc(sizeof(char) * 12);
 	if (config->theme_name == NULL) {
 		EINA_LOG_CRIT("malloc theme_name failed");
@@ -158,14 +161,14 @@ enum lcfg_status config_visitor_load(const char *key, void *data, size_t len, vo
 
 	if (strcmp(key, "launch_server") == 0) {
 		config->launch_server = atoi((const char*)data);
-		EINA_LOG_DBG("LOADED: launch_server %d", config->launch_server);
+		DBG("LOADED: launch_server %d", config->launch_server);
 	} else
 	if (strcmp(key, "theme") == 0) {
 		if (config->theme_name) free(config->theme_name);
 		if (config->theme) free(config->theme);
 		config->theme_name = strdup((char*)data);
 		config->theme = get_theme_filename((char*)data);
-		EINA_LOG_DBG("LOADED: theme %s", config->theme_name);
+		DBG("LOADED: theme %s", config->theme_name);
 	}
 
 	return lcfg_status_ok;

@@ -19,10 +19,18 @@
 
 #include "lcfg_static.h"
 
+#define DBG(...) EINA_LOG_DOM_DBG(config_log_dom, __VA_ARGS__)
+#define WARN(...) EINA_LOG_DOM_WARN(config_log_dom, __VA_ARGS__)
+
+extern int config_log_dom;
+
 typedef struct _rockon_config {
 	char *config_filename;
 	struct lcfg *lcfg_obj;
+
 	int launch_server;
+//	int reconnect;
+//	int reconnect_interval;
 	char *theme_name;
 	char *theme;
 } rockon_config;

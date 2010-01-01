@@ -1,3 +1,7 @@
 export EINA_LOG_LEVEL=4
+export EINA_LOG_LEVELS=rck_config:4
 export EINA_LOG_LEVELS_GLOB=eina_*:0
+
 export EINA_LOG_ABORT=1
+export EINA_LOG_FILE_DISABLE=1
+export EINA_LOG_FUNCTION_DISABLE=0
