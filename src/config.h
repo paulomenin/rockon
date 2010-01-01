@@ -29,10 +29,12 @@ typedef struct _rockon_config {
 	struct lcfg *lcfg_obj;
 
 	int launch_server;
-//	int reconnect;
-//	int reconnect_interval;
+	int terminate_server;
+	int auto_reconnect;
+	int reconnect_interval;
+	char *ipc_path;
 	char *theme_name;
-	char *theme;
+	char *theme_path;
 } rockon_config;
 
 rockon_config* config_new();

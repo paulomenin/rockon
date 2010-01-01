@@ -34,7 +34,7 @@ EAPI int elm_main (int argc, char** argv) {
 	app_config = config_new();
 
 	EINA_LOG_DBG("THEME NAME: %s", app_config->theme_name);
-	EINA_LOG_DBG("THEME: %s", app_config->theme);
+	EINA_LOG_DBG("THEME PATH: %s", app_config->theme_path);
 	EINA_LOG_DBG("MainLoop Start");
 	elm_run();
 	EINA_LOG_DBG("MainLoop End");

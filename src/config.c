@@ -41,21 +41,33 @@ void config_del(rockon_config *config) {
 	assert(config);
 
 	free(config->config_filename);
-	free(config->theme);
+	free(config->ipc_path);
 	free(config->theme_name);
+	free(config->theme_path);
 	if (config->lcfg_obj) lcfg_delete(config->lcfg_obj);
 	free(config);
 }
 
 int config_load (rockon_config *config) {
+	char *username;
+	int ipc_path_lenght;
 
 	assert(config);
 
 	/* default values */
 	config->launch_server = 0;
-//	config->reconnect = 0;
-//	config->reconnect = 0;
-	config->theme = NULL;
+	config->auto_reconnect = 0;
+	config->reconnect_interval = 3;
+	config->theme_path = NULL;
+
+	username = getenv("USER");
+	ipc_path_lenght = strlen(username) + 22;
+	config->ipc_path = (char*) malloc(sizeof(char) * ipc_path_lenght);
+	if (config->ipc_path == NULL) {
+		EINA_LOG_CRIT("malloc ipc_path failed");
+		return 0;
+	}
+	snprintf(config->ipc_path, ipc_path_lenght, "unix:///tmp/xmms-ipc-%s", username);
 
 	config->theme_name = (char*) malloc(sizeof(char) * 12);
 	if (config->theme_name == NULL) {
@@ -67,7 +79,7 @@ int config_load (rockon_config *config) {
 	if ((config->config_filename = get_config_filename ("rockon.conf"))) {
 		config->lcfg_obj = lcfg_new(config->config_filename);
 		if (lcfg_parse(config->lcfg_obj) != lcfg_status_ok) {
-			config->theme = get_theme_filename(config->theme_name);
+			config->theme_path = get_theme_filename(config->theme_name);
 			return 0;
 		}
 		lcfg_accept(config->lcfg_obj, config_visitor_load, config);
@@ -95,6 +107,10 @@ int config_save (rockon_config *config) {
 	fd = fopen(config->config_filename, "w");
 	if (fd) {
 		fprintf(fd,"launch_server = \"%d\"\n", config->launch_server);
+		fprintf(fd,"terminate_server = \"%d\"\n", config->terminate_server);
+		fprintf(fd,"auto_reconnect = \"%d\"\n", config->auto_reconnect);
+		fprintf(fd,"reconnect_interval = \"%d\"\n", config->reconnect_interval);
+		fprintf(fd,"ipc_path = \"%s\"\n", config->ipc_path);
 		fprintf(fd,"theme = \"%s\"\n", config->theme_name);
 		fclose(fd);
 		return 1;
@@ -162,12 +178,24 @@ enum lcfg_status config_visitor_load(const char *key, void *data, size_t len, vo
 	if (strcmp(key, "launch_server") == 0) {
 		config->launch_server = atoi((const char*)data);
 		DBG("LOADED: launch_server %d", config->launch_server);
-	} else
-	if (strcmp(key, "theme") == 0) {
+	} else if (strcmp(key, "terminate_server") == 0) {
+		config->terminate_server = atoi((const char*)data);
+		DBG("LOADED: terminate_server %d", config->terminate_server);
+	} else if (strcmp(key, "auto_reconnect") == 0) {
+		config->auto_reconnect = atoi((const char*)data);
+		DBG("LOADED: auto_reconnect %d", config->auto_reconnect);
+	} else if (strcmp(key, "reconnect_interval") == 0) {
+		config->reconnect_interval = atoi((const char*)data);
+		DBG("LOADED: reconnect_interval %d", config->reconnect_interval);
+	} else if (strcmp(key, "ipc_path") == 0) {
+		if (config->ipc_path) free(config->ipc_path);
+		config->ipc_path = strdup((const char*)data);
+		DBG("LOADED: ipc_path %s", config->ipc_path);
+	} else if (strcmp(key, "theme") == 0) {
 		if (config->theme_name) free(config->theme_name);
-		if (config->theme) free(config->theme);
-		config->theme_name = strdup((char*)data);
-		config->theme = get_theme_filename((char*)data);
+		if (config->theme_path) free(config->theme_path);
+		config->theme_name = strdup((const char*)data);
+		config->theme_path = get_theme_filename((const char*)data);
 		DBG("LOADED: theme %s", config->theme_name);
 	}
 
