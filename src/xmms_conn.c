@@ -19,6 +19,7 @@
 #include <Eina.h>
 #include <xmmsclient/xmmsclient-ecore.h>
 #include "xmms_conn.h"
+#include "broadcasts.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(conn_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(conn_log_dom, __VA_ARGS__)
@@ -56,6 +57,17 @@ int  xmms2_connect (server_data *sdata) {
 	xmmsc_disconnect_callback_set (sdata->connection,
 	                               (void(*)(void*))xmms2_disconnect_cb,
 	                               sdata);
+
+	XMMS_CALLBACK_SET (sdata->connection,
+					xmmsc_broadcast_playback_current_id,
+					broadcast_playback_id_cb, sdata);
+	XMMS_CALLBACK_SET (sdata->connection,
+					xmmsc_broadcast_playback_status,
+					broadcast_playback_status_cb, sdata);
+	XMMS_CALLBACK_SET (sdata->connection,
+					xmmsc_signal_playback_playtime,
+					signal_playback_playtime_cb, sdata);
+
 	sdata->ecore_fdh = xmmsc_mainloop_ecore_init (sdata->connection);
 	DBG("Ecore_fdh: %p", sdata->ecore_fdh);
 	DBG("XMMS2 Connected");
@@ -105,7 +117,6 @@ void xmms2_shutdown(server_data *sdata) {
 
 int  check_error (xmmsv_t *value, void *data) {
 	const char *err_buf;
-	DBG("CHECK ERROR");
 	if ( (value) && xmmsv_is_error (value) &&
 		xmmsv_get_error (value, &err_buf)) {
 		ERR(err_buf);

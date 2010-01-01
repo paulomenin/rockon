@@ -8,6 +8,8 @@ sources = """
 	server_data.c
 	xmms_conn.c
 	commands.c
+	broadcasts.c
+	gui_update.c
 """.split()
 
 libs = """

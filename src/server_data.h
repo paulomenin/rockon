@@ -26,6 +26,11 @@ typedef struct {
 	rockon_config      *config;
 	xmmsc_connection_t *connection;
 	Ecore_Timer        *reconn_timer;
+
+	int playback_status;
+	int playback_playtime;
+	int playback_id;
+
 } server_data;
 
 server_data* server_data_new();

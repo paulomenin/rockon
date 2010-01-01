@@ -24,6 +24,7 @@
 int config_log_dom = -1;
 int conn_log_dom = -1;
 int cmd_log_dom = -1;
+int gui_upd_log_dom = -1;
 
 Eina_Bool log_init(void);
 void log_shutdown(void);
@@ -74,6 +75,9 @@ Eina_Bool log_init(void) {
 	if (cmd_log_dom < 0) {
 		cmd_log_dom = eina_log_domain_register("rck_cmd", NULL);
 	} else return EINA_FALSE;
+	if (gui_upd_log_dom < 0) {
+		gui_upd_log_dom = eina_log_domain_register("rck_GUIupd", NULL);
+	} else return EINA_FALSE;
 
 	return EINA_TRUE;
 }
@@ -90,5 +94,9 @@ void log_shutdown(void) {
 	if (cmd_log_dom >= 0) {
 		eina_log_domain_unregister(cmd_log_dom);
 		cmd_log_dom = -1;
+	}
+	if (gui_upd_log_dom >= 0) {
+		eina_log_domain_unregister(gui_upd_log_dom);
+		gui_upd_log_dom = -1;
 	}
 }

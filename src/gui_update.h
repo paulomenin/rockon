@@ -14,37 +14,13 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
-#include <Eina.h>
+#ifndef GUI_UPDATE_H
+#define GUI_UPDATE_H
+
 #include "server_data.h"
-#include "xmms_conn.h"
 
-server_data* server_data_new() {
-	server_data *sdata;
+void gui_upd_playback_id       (server_data *sdata);
+void gui_upd_playback_status   (server_data *sdata);
+void gui_upd_playback_playtime (server_data *sdata);
 
-	sdata = (server_data*) malloc(sizeof(server_data));
-	if (sdata == NULL) {
-		EINA_LOG_CRIT("malloc server_data failed");
-	}
-
-	sdata->ecore_fdh = NULL;
-	sdata->config = config_new();
-	sdata->connection = NULL;
-	sdata->reconn_timer = NULL;
-
-	sdata->playback_status = 0;
-	sdata->playback_playtime = 0;
-	sdata->playback_id = 0;
-
-	return sdata;
-}
-
-void server_data_del(server_data *sdata) {
-	assert(sdata);
-
-	config_save(sdata->config);
-	config_del(sdata->config);
-	xmms2_shutdown(sdata);
-	free(sdata);
-}
-
+#endif /* GUI_UPDATE_H */

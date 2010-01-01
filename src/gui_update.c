@@ -14,37 +14,27 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
-#include <Eina.h>
-#include "server_data.h"
-#include "xmms_conn.h"
+#include "gui_update.h"
 
-server_data* server_data_new() {
-	server_data *sdata;
+#define DBG(...) EINA_LOG_DOM_DBG(gui_upd_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(gui_upd_log_dom, __VA_ARGS__)
+#define INFO(...) EINA_LOG_DOM_INFO(gui_upd_log_dom, __VA_ARGS__)
 
-	sdata = (server_data*) malloc(sizeof(server_data));
-	if (sdata == NULL) {
-		EINA_LOG_CRIT("malloc server_data failed");
-	}
+extern int gui_upd_log_dom;
 
-	sdata->ecore_fdh = NULL;
-	sdata->config = config_new();
-	sdata->connection = NULL;
-	sdata->reconn_timer = NULL;
-
-	sdata->playback_status = 0;
-	sdata->playback_playtime = 0;
-	sdata->playback_id = 0;
-
-	return sdata;
+void gui_upd_playback_id (server_data *sdata) {
+	INFO("Playback ID: %d", sdata->playback_id);
 }
 
-void server_data_del(server_data *sdata) {
-	assert(sdata);
-
-	config_save(sdata->config);
-	config_del(sdata->config);
-	xmms2_shutdown(sdata);
-	free(sdata);
+void gui_upd_playback_status (server_data *sdata) {
+	INFO("Playback STATUS: %d", sdata->playback_status);
 }
+
+void gui_upd_playback_playtime (server_data *sdata) {
+	/*INFO("Playback Playtime: %d:%02d",
+			(sdata->playback_playtime / 1000)/60,
+			(sdata->playback_playtime / 1000)%60);
+	*/
+}
+
 

@@ -14,37 +14,13 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
-#include <Eina.h>
-#include "server_data.h"
-#include "xmms_conn.h"
+#ifndef BROADCASTS_H
+#define BROADCASTS_H
 
-server_data* server_data_new() {
-	server_data *sdata;
+#include <xmmsclient/xmmsclient.h>
 
-	sdata = (server_data*) malloc(sizeof(server_data));
-	if (sdata == NULL) {
-		EINA_LOG_CRIT("malloc server_data failed");
-	}
+int  broadcast_playback_status_cb  (xmmsv_t *value, void *data);
+int  broadcast_playback_id_cb      (xmmsv_t *value, void *data);
+int  signal_playback_playtime_cb   (xmmsv_t *value, void *data);
 
-	sdata->ecore_fdh = NULL;
-	sdata->config = config_new();
-	sdata->connection = NULL;
-	sdata->reconn_timer = NULL;
-
-	sdata->playback_status = 0;
-	sdata->playback_playtime = 0;
-	sdata->playback_id = 0;
-
-	return sdata;
-}
-
-void server_data_del(server_data *sdata) {
-	assert(sdata);
-
-	config_save(sdata->config);
-	config_del(sdata->config);
-	xmms2_shutdown(sdata);
-	free(sdata);
-}
-
+#endif /* BROADCASTS_H */
