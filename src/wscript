@@ -3,20 +3,9 @@
 
 sources = """
 	rockon.c
-	error.c
-	lcfg_static.c
-	config.c
-	status.c
-	xmms_conn.c
-	commands.c
-	edje_bridge.c
-	elm_bridge.c
-	playlist.c
-	media_info.c
 """.split()
 
 libs = """
-	ecore-evas
 	elementary
 	xmms2-client
 	xmms2-client-ecore

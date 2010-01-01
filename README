@@ -1,8 +1,7 @@
-About
+ABOUT
 ======
 
 Rockon is a XMMS2 client based on EFL libraries.
-It's fully skinnable.
 
 DEPENDENCIES
 ============
@@ -11,7 +10,6 @@ DEPENDENCIES
    - with support for xmms2-client-ecore
  * EFL http://www.enlightenment.org
    - Ecore
-   - Evas
    - Edje
    - Elementary
 
