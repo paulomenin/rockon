@@ -21,3 +21,8 @@ Just run:
 $ ./waf configure build
 
 If successful the executable will be at: build/default/src/rockon
+
+DEBUG OUTPUT
+============
+
+If you want debug messages printed on terminal you must set some environment variables, all necessary variables are in the file eina_env_vars.

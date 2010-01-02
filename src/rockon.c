@@ -25,6 +25,7 @@ int config_log_dom = -1;
 int conn_log_dom = -1;
 int cmd_log_dom = -1;
 int gui_upd_log_dom = -1;
+int playlist_log_dom = -1;
 
 Eina_Bool log_init(void);
 void log_shutdown(void);
@@ -47,6 +48,11 @@ EAPI int elm_main (int argc, char** argv) {
 	EINA_LOG_DBG("MainLoop Start");
 	elm_run();
 	EINA_LOG_DBG("MainLoop End");
+
+	if (sdata->ecore_fdh != NULL) {
+		xmmsc_mainloop_ecore_shutdown(sdata->connection, sdata->ecore_fdh);
+		sdata->ecore_fdh = NULL;
+	}
 
 	if (sdata->config->terminate_server == 1) {
 		cmd_server_shutdown(sdata);
@@ -73,6 +79,9 @@ Eina_Bool log_init(void) {
 	if (gui_upd_log_dom < 0) {
 		gui_upd_log_dom = eina_log_domain_register("rck_GUIupd", NULL);
 	} else return EINA_FALSE;
+	if (playlist_log_dom < 0) {
+		playlist_log_dom = eina_log_domain_register("rck_pls", NULL);
+	} else return EINA_FALSE;
 
 	return EINA_TRUE;
 }
@@ -93,5 +102,9 @@ void log_shutdown(void) {
 	if (gui_upd_log_dom >= 0) {
 		eina_log_domain_unregister(gui_upd_log_dom);
 		gui_upd_log_dom = -1;
+	}
+	if (playlist_log_dom >= 0) {
+		eina_log_domain_unregister(playlist_log_dom);
+		playlist_log_dom = -1;
 	}
 }

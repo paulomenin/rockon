@@ -10,8 +10,9 @@ sources = """
 	xmms_conn.c
 	commands.c
 	broadcasts.c
+	playlist.c
 	gui_update.c
-""".split()
+"""
 
 libs = """
 	elementary
@@ -33,7 +34,7 @@ def configure(conf):
 def build(bld):
 	bld.new_task_gen(
 		features     = 'cc cprogram',
-		source       = sources,
+		source       = sources.split(),
 		target       = 'rockon',
 		includes     = '.',
 		install_path = None,

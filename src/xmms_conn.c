@@ -67,10 +67,14 @@ int  xmms2_connect (server_data *sdata) {
 	XMMS_CALLBACK_SET (sdata->connection,
 					xmmsc_signal_playback_playtime,
 					signal_playback_playtime_cb, sdata);
+	XMMS_CALLBACK_SET (sdata->connection,
+					xmmsc_broadcast_playlist_current_pos,
+					broadcast_playlist_pos_cb, sdata);
 
 	sdata->ecore_fdh = xmmsc_mainloop_ecore_init (sdata->connection);
 	DBG("Ecore_fdh: %p", sdata->ecore_fdh);
 	DBG("XMMS2 Connected");
+	xmms2_get_status(sdata);
 	return 1;
 }
 
@@ -123,4 +127,33 @@ int  check_error (xmmsv_t *value, void *data) {
 		return 1;
 	}
 	return 0;
+}
+
+void xmms2_get_status (server_data *sdata) {
+	xmmsc_result_t *res;
+	assert(sdata);
+	DBG("--------- GET STATUS ---------");
+
+	if (sdata->connection == NULL) return;
+
+	XMMS_CALLBACK_SET (sdata->connection,
+					xmmsc_playback_current_id,
+					broadcast_playback_id_cb, sdata);
+	XMMS_CALLBACK_SET (sdata->connection,
+					xmmsc_playback_status,
+					broadcast_playback_status_cb, sdata);
+	XMMS_CALLBACK_SET (sdata->connection,
+					xmmsc_playback_playtime,
+					signal_playback_playtime_cb, sdata);
+
+	if (sdata->playlist_current != NULL)
+		playlist_del(sdata->playlist_current);
+
+	sdata->playlist_current = playlist_get(sdata->connection, "_active", sdata);
+
+	res = xmmsc_playlist_current_pos(sdata->connection, sdata->playlist_current->name);
+	xmmsc_result_notifier_set_full(res, broadcast_playlist_pos_cb, sdata, NULL);
+	xmmsc_result_unref(res);
+
+	DBG("------------------------------");
 }

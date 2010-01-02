@@ -26,6 +26,8 @@ int  xmms2_reconnect_cb (server_data *sdata);
 void xmms2_disconnect_cb (server_data *sdata);
 void xmms2_shutdown (server_data *sdata);
 
+void xmms2_get_status (server_data *sdata);
+
 int  check_error (xmmsv_t *value, void *data);
 
 #endif /* XMMS_CONN_H */

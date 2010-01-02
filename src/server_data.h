@@ -21,6 +21,7 @@
 #include <xmmsclient/xmmsclient.h>
 #include "rockon_config.h"
 #include "media_info.h"
+#include "playlist.h"
 
 typedef struct {
 	void               *ecore_fdh;
@@ -32,6 +33,8 @@ typedef struct {
 	int playback_playtime;
 	int playback_id;
 	media_info *playback_info;
+
+	playlist *playlist_current;
 
 } server_data;
 

@@ -50,3 +50,25 @@ void gui_upd_playback_info (server_data *sdata) {
 										(sdata->playback_info->duration / 1000)%60);
 	INFO("-----------------------------");
 }
+
+void gui_upd_playlist (server_data *sdata) {
+	Eina_List *l;
+	void *data;
+
+	INFO("--------- PLAYLIST ---------");
+	INFO("Name: %s Items: %d Pos: %d",sdata->playlist_current->name,
+									  sdata->playlist_current->num_items,
+									  sdata->playlist_current->current_pos);
+
+	EINA_LIST_FOREACH(sdata->playlist_current->items, l, data) {
+		INFO("%02d %s",((playlist_item*)data)->pos, ((playlist_item*)data)->title);
+	}
+	INFO("----------------------------");
+}
+
+void gui_upd_playlist_pos (server_data *sdata) {
+	INFO("Name: %s Items: %d POS: %d",sdata->playlist_current->name,
+									  sdata->playlist_current->num_items,
+									  sdata->playlist_current->current_pos);
+}
+

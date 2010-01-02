@@ -20,6 +20,8 @@
 #include "xmms_conn.h"
 #include "gui_update.h"
 
+#include "playlist.h"
+
 int get_media_info_cb (xmmsv_t *value, void *data);
 
 int broadcast_playback_status_cb (xmmsv_t *value, void *data) {
@@ -48,6 +50,7 @@ int broadcast_playback_id_cb (xmmsv_t *value, void *data) {
 		}
 
 		gui_upd_playback_id(sdata);
+
 		return 1; // keep broadcast alive
 	}
 
@@ -72,6 +75,39 @@ int signal_playback_playtime_cb (xmmsv_t *value, void *data) {
 		return 1; // keep signal alive
 	}
 	return 0;
+}
+
+int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
+	server_data *sdata = (server_data*)data;
+	const char *pls_name;
+	int pos;
+	xmmsv_t *dict_entry;
+
+	if (! check_error(value, NULL)) {
+		if (!xmmsv_dict_get (value, "name", &dict_entry) ||
+			!xmmsv_get_string (dict_entry, &pls_name)) {
+			pls_name = "No Name";
+		}
+		if (!xmmsv_dict_get (value, "position", &dict_entry) ||
+			!xmmsv_get_int (dict_entry, &pos)) {
+			pos = -1;
+		}
+
+		if (sdata->playlist_current != NULL) {
+
+			if (sdata->playlist_current->name) {
+				free (sdata->playlist_current->name);
+				sdata->playlist_current->name = NULL;
+			}
+
+			sdata->playlist_current->name = strdup(pls_name);
+			sdata->playlist_current->current_pos = pos;
+
+			gui_upd_playlist_pos(sdata);
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
 int get_media_info_cb (xmmsv_t *value, void *data) {

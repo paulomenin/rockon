@@ -23,5 +23,7 @@ void gui_upd_playback_id       (server_data *sdata);
 void gui_upd_playback_status   (server_data *sdata);
 void gui_upd_playback_playtime (server_data *sdata);
 void gui_upd_playback_info     (server_data *sdata);
+void gui_upd_playlist          (server_data *sdata);
+void gui_upd_playlist_pos      (server_data *sdata);
 
 #endif /* GUI_UPDATE_H */
