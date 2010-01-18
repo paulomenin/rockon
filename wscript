@@ -15,11 +15,13 @@ def set_options(opt):
 
 def configure(conf):
 	conf.sub_config('src')
+	conf.sub_config('themes')
 
 def build(bld):
 	import Options
 	
 	bld.add_subdirs('src')
+	bld.add_subdirs('themes')
 
 def shutdown():
 	pass

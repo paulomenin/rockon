@@ -14,34 +14,15 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SERVER_DATA_H
-#define SERVER_DATA_H
+#ifndef EDJE_CALLBACKS_H
+#define EDJE_CALLBACKS_H
 
-#include <Ecore.h>
-#include <Eina.h>
-#include <xmmsclient/xmmsclient.h>
-#include "rockon_config.h"
-#include "media_info.h"
-#include "playlist.h"
+#include <Evas.h>
 
-typedef struct {
-	void               *ecore_fdh;
-	rockon_config      *config;
-	xmmsc_connection_t *connection;
-	Ecore_Timer        *reconn_timer;
+void edje_cb_play  (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_pause (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_stop  (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_next  (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_prev  (void *data, Evas_Object *eo, const char *emission, const char *source);
 
-	Eina_List *windows;
-
-	int playback_status;
-	int playback_playtime;
-	int playback_id;
-	media_info *playback_info;
-
-	playlist *playlist_current;
-
-} server_data;
-
-server_data* server_data_new();
-void server_data_del(server_data *sdata);
-
-#endif /* SERVER_DATA_H */
+#endif /* EDJE_CALLBACKS_H */

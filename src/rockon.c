@@ -19,12 +19,14 @@
 #include "server_data.h"
 #include "xmms_conn.h"
 #include "commands.h"
+#include "elm_callbacks.h"
 
 /* eina_log domains */
 int config_log_dom = -1;
 int conn_log_dom = -1;
 int cmd_log_dom = -1;
 int gui_upd_log_dom = -1;
+int gui_window_log_dom = -1;
 int playlist_log_dom = -1;
 
 Eina_Bool log_init(void);
@@ -44,6 +46,8 @@ EAPI int elm_main (int argc, char** argv) {
 	if (sdata->connection == NULL) {
 		cmd_server_launch(sdata);
 	}
+
+	elm_cb_set (sdata, NULL, "Rockon", "elm_set,win");
 
 	EINA_LOG_DBG("MainLoop Start");
 	elm_run();
@@ -82,6 +86,9 @@ Eina_Bool log_init(void) {
 	if (playlist_log_dom < 0) {
 		playlist_log_dom = eina_log_domain_register("rck_pls", NULL);
 	} else return EINA_FALSE;
+	if (gui_window_log_dom < 0) {
+		gui_window_log_dom = eina_log_domain_register("rck_window", NULL);
+	} else return EINA_FALSE;
 
 	return EINA_TRUE;
 }
@@ -106,5 +113,9 @@ void log_shutdown(void) {
 	if (playlist_log_dom >= 0) {
 		eina_log_domain_unregister(playlist_log_dom);
 		playlist_log_dom = -1;
+	}
+	if (gui_window_log_dom >= 0) {
+		eina_log_domain_unregister(gui_window_log_dom);
+		gui_window_log_dom = -1;
 	}
 }

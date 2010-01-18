@@ -18,6 +18,7 @@
 #include <Eina.h>
 #include "server_data.h"
 #include "xmms_conn.h"
+#include "gui_window.h"
 
 server_data* server_data_new() {
 	server_data *sdata;
@@ -32,6 +33,8 @@ server_data* server_data_new() {
 	sdata->connection = NULL;
 	sdata->reconn_timer = NULL;
 
+	sdata->windows = NULL;
+
 	sdata->playback_status = 0;
 	sdata->playback_playtime = 0;
 	sdata->playback_id = 0;
@@ -43,6 +46,9 @@ server_data* server_data_new() {
 }
 
 void server_data_del(server_data *sdata) {
+	rockon_window *data;
+	Eina_List *l;
+
 	assert(sdata);
 
 	config_save(sdata->config);
@@ -50,6 +56,14 @@ void server_data_del(server_data *sdata) {
 	media_info_del(sdata->playback_info);
 	playlist_del(sdata->playlist_current);
 	xmms2_shutdown(sdata);
+
+	if (sdata->windows) {
+		EINA_LIST_FOREACH(sdata->windows, l, data) {
+			free(data->name);
+			free(data);
+		}
+	}
+
 	free(sdata);
 }
 

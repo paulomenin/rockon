@@ -11,7 +11,10 @@ sources = """
 	commands.c
 	broadcasts.c
 	playlist.c
+	gui_window.c
 	gui_update.c
+	edje_callbacks.c
+	elm_callbacks.c
 """
 
 libs = """

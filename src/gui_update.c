@@ -15,6 +15,7 @@
  */
 
 #include "gui_update.h"
+#include "gui_window.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(gui_upd_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(gui_upd_log_dom, __VA_ARGS__)
@@ -27,17 +28,41 @@ void gui_upd_playback_id (server_data *sdata) {
 }
 
 void gui_upd_playback_status (server_data *sdata) {
+	const Eina_List *l;
+	void *win;
+	Edje_Message_Int msg;
+
 	INFO("Playback STATUS: %d", sdata->playback_status);
+	
+	EINA_LIST_FOREACH (sdata->windows, l, win) {
+		msg.val = sdata->playback_status;
+		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 2, &msg);
+	}
 }
 
 void gui_upd_playback_playtime (server_data *sdata) {
+	const Eina_List *l;
+	void *win;
+	Edje_Message_Int msg;
+
 	/*INFO("Playback Playtime: %d:%02d",
 			(sdata->playback_playtime / 1000)/60,
 			(sdata->playback_playtime / 1000)%60);
 	*/
+
+	EINA_LIST_FOREACH (sdata->windows, l, win) {
+		msg.val = sdata->playback_playtime;
+		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 1, &msg);
+	}
 }
 
 void gui_upd_playback_info (server_data *sdata) {
+	const Eina_List *l;
+	void *win;
+	Edje_Message_String_Set *msg;
+	Edje_Message_Int msg_dur;
+	Edje_Message_Int msg_id;
+
 	INFO("--------- MEDIA INFO ---------");
 	INFO("%s - %s", sdata->playback_info->artist, sdata->playback_info->title);
 	INFO("Album: %s", sdata->playback_info->album);
@@ -49,6 +74,26 @@ void gui_upd_playback_info (server_data *sdata) {
 										(sdata->playback_info->duration / 1000)/60,
 										(sdata->playback_info->duration / 1000)%60);
 	INFO("-----------------------------");
+
+	EINA_LIST_FOREACH (sdata->windows, l, win) {
+		msg = calloc(1, sizeof(Edje_Message_String_Set) - sizeof(char*) + (7 * sizeof(char*)));
+		msg->count = 7;
+		msg->str[0] = (char*) sdata->playback_info->artist;
+		msg->str[1] = (char*) sdata->playback_info->album;
+		msg->str[2] = (char*) sdata->playback_info->title;
+		msg->str[3] = (char*) sdata->playback_info->url;
+		msg->str[4] = (char*) sdata->playback_info->comment;
+		msg->str[5] = (char*) sdata->playback_info->genre;
+		msg->str[6] = (char*) sdata->playback_info->date;
+		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_STRING_SET, 4, msg);
+		free(msg);
+
+		msg_dur.val = sdata->playback_info->duration;
+		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 5, &msg_dur);
+
+		msg_id.val = sdata->playback_id;
+		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 6, &msg_id);
+	}
 }
 
 void gui_upd_playlist (server_data *sdata) {
