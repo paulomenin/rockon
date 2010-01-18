@@ -24,7 +24,7 @@ int  broadcast_playback_id_cb      (xmmsv_t *value, void *data);
 int  signal_playback_playtime_cb   (xmmsv_t *value, void *data);
 
 int  broadcast_playlist_pos_cb     (xmmsv_t *value, void *data);
-//int  broadcast_playlist_changed_cb (xmmsv_t *value, void *data);
-//int  broadcast_playlist_loaded_cb  (xmmsv_t *value, void *data);
+int  broadcast_playlist_loaded_cb  (xmmsv_t *value, void *data);
+int  broadcast_playlist_changed_cb (xmmsv_t *value, void *data);
 
 #endif /* BROADCASTS_H */

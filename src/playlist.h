@@ -26,6 +26,7 @@ typedef struct {
 } playlist_list;
 
 typedef struct {
+	int locked;
 	char *name;
 	Eina_List *items;
 	int num_items;
@@ -59,6 +60,7 @@ playlist_item *playlist_item_new();
 void playlist_item_del (playlist_item *item);
 
 playlist* playlist_get (xmmsc_connection_t *conn, const char *pls_name, void *data);
+void playlist_wait     (playlist *pls);
 int  playlist_fetch    (xmmsv_t *value, void *data);
 int  playlist_item_add (xmmsv_t *value, void *data);
 int  playlist_is_ready (playlist *list);

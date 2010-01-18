@@ -70,6 +70,12 @@ int  xmms2_connect (server_data *sdata) {
 	XMMS_CALLBACK_SET (sdata->connection,
 					xmmsc_broadcast_playlist_current_pos,
 					broadcast_playlist_pos_cb, sdata);
+	XMMS_CALLBACK_SET (sdata->connection,
+					xmmsc_broadcast_playlist_loaded,
+					broadcast_playlist_loaded_cb, sdata);
+	XMMS_CALLBACK_SET (sdata->connection,
+					xmmsc_broadcast_playlist_changed,
+					broadcast_playlist_changed_cb, sdata);
 
 	sdata->ecore_fdh = xmmsc_mainloop_ecore_init (sdata->connection);
 	DBG("Ecore_fdh: %p", sdata->ecore_fdh);
@@ -146,8 +152,10 @@ void xmms2_get_status (server_data *sdata) {
 					xmmsc_playback_playtime,
 					signal_playback_playtime_cb, sdata);
 
-	if (sdata->playlist_current != NULL)
+	if (sdata->playlist_current != NULL) {
+		playlist_wait(sdata->playlist_current);
 		playlist_del(sdata->playlist_current);
+	}
 
 	sdata->playlist_current = playlist_get(sdata->connection, "_active", sdata);
 

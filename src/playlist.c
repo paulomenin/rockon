@@ -84,6 +84,7 @@ playlist *playlist_new() {
 
 	list = (playlist*) malloc (sizeof(playlist));
 
+	list->locked = 0;
 	list->name  = NULL;
 	list->items = NULL;
 	list->num_items = -1;
@@ -104,6 +105,14 @@ void playlist_del (playlist *list) {
 	}
 
 	free(list);
+}
+
+void playlist_wait(playlist *pls) {
+	if (pls == NULL) return;
+
+	while (pls->locked == 1) {
+		ecore_main_loop_iterate();
+	}
 }
 
 /* playlist_item */
@@ -158,6 +167,7 @@ playlist *playlist_get (xmmsc_connection_t *conn, const char *pls_name, void *da
 	params->list = pls;
 	params->data = data;
 
+	pls->locked = 1;
 	result = xmmsc_playlist_list_entries(conn, pls_name);
 	xmmsc_result_notifier_set (result, playlist_fetch, params);
 	xmmsc_result_unref (result);
@@ -253,6 +263,7 @@ void playlist_fetched(struct pls_fetch_params* data) {
 	DBG("PLS fetched");
 	if (data->list == ((server_data*)(data->data))->playlist_current) {
 		gui_upd_playlist((server_data*)(data->data));
+		data->list->locked = 0;
 	}
 
 	free(data);

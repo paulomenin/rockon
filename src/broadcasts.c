@@ -19,7 +19,6 @@
 #include "server_data.h"
 #include "xmms_conn.h"
 #include "gui_update.h"
-
 #include "playlist.h"
 
 int get_media_info_cb (xmmsv_t *value, void *data);
@@ -126,5 +125,39 @@ int get_media_info_cb (xmmsv_t *value, void *data) {
 		return 1;
 	}
 	return 0;
+}
+
+int broadcast_playlist_loaded_cb (xmmsv_t *value, void *data) {
+	server_data *sdata = (server_data*)data;
+
+	EINA_LOG_DBG("PLS LOADED CALLBACK");
+
+	if (! check_error(value, NULL)) {
+		if (sdata->playlist_current != NULL) {
+			playlist_wait(sdata->playlist_current);
+			playlist_del(sdata->playlist_current);
+		}
+		sdata->playlist_current = playlist_get(sdata->connection, "_active", sdata);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
+	server_data *sdata = (server_data*)data;
+
+	EINA_LOG_DBG("PLS CHANGED CALLBACK");
+
+	if (! check_error(value, NULL)) {
+		/* TODO handle playlist changes */
+
+		if (sdata->playlist_current != NULL) {
+			playlist_wait(sdata->playlist_current);
+			playlist_del(sdata->playlist_current);
+		}
+		sdata->playlist_current = playlist_get(sdata->connection, "_active", sdata);
+		return TRUE;
+	}
+	return FALSE;
 }
 
