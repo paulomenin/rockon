@@ -37,7 +37,8 @@ typedef struct {
 	int playback_id;
 	media_info *playback_info;
 
-	playlist *playlist_current;
+	playlist_list *playlists;
+	playlist      *playlist_current;
 
 } server_data;
 

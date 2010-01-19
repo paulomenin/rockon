@@ -44,14 +44,16 @@ typedef struct {
 
 struct pls_fetch_params {
 	xmmsc_connection_t *conn;
-	playlist *list;
+	void *list;
 	void *data;
 };
 
 playlist_list *playlist_list_new();
-void playlist_list_del    (playlist_list *list);
-int  playlist_list_get_cb (xmmsv_t *value, void *list);
-void playlist_list_item_add_cb (xmmsv_t *value, void *list);
+void playlist_list_del      (playlist_list *list);
+
+playlist_list* playlist_list_get (xmmsc_connection_t *conn, void *data);
+int  playlist_list_fetch    (xmmsv_t *value, void *list);
+void playlist_list_item_add (xmmsv_t *value, void *list);
 
 playlist *playlist_new();
 void playlist_del (playlist *list);

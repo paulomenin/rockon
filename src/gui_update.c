@@ -111,6 +111,20 @@ void gui_upd_playlist (server_data *sdata) {
 	INFO("----------------------------");
 }
 
+void gui_upd_playlist_list (server_data *sdata) {
+	Eina_List *l;
+	void *data;
+
+	INFO("------ PLAYLIST LIST -------");
+	EINA_LIST_FOREACH(sdata->playlists->playlists_, l, data) {
+		INFO("%s", (char*)data);
+	}
+	EINA_LIST_FOREACH(sdata->playlists->playlists, l, data) {
+		INFO("%s", (char*)data);
+	}
+	INFO("----------------------------");
+}
+
 void gui_upd_playlist_pos (server_data *sdata) {
 	INFO("Name: %s Items: %d POS: %d",sdata->playlist_current->name,
 									  sdata->playlist_current->num_items,

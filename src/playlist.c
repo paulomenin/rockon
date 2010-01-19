@@ -36,7 +36,7 @@ playlist_list *playlist_list_new() {
 
 	list->playlists  = NULL;
 	list->playlists_ = NULL;
-	
+
 	return list;
 }
 
@@ -56,19 +56,40 @@ void playlist_list_del(playlist_list *list) {
 	free(list);
 }
 
-int playlist_list_get_cb (xmmsv_t *value, void *list) {
+playlist_list* playlist_list_get (xmmsc_connection_t *conn, void *data) {
+	playlist_list *list;
+	struct pls_fetch_params *params;
 
-	playlist_list_del((playlist_list*)list);
+	assert(conn);
+
 	list = playlist_list_new();
-	
-	xmmsv_list_foreach(value, playlist_list_item_add_cb, list);
 
+	params = (struct pls_fetch_params*) malloc(sizeof(struct pls_fetch_params));
+
+	if (params == NULL) {
+		EINA_LOG_CRIT("pls_fetch_params malloc failed");
+		return NULL;
+	}
+
+	params->conn = conn;
+	params->list = list;
+	params->data = data;
+
+	XMMS_CALLBACK_SET (((server_data*)data)->connection,
+				xmmsc_playlist_list,
+				playlist_list_fetch, params);
+
+	return list;
+}
+
+int playlist_list_fetch (xmmsv_t *value, void *params) {
+	xmmsv_list_foreach(value, playlist_list_item_add, ((struct pls_fetch_params*)params)->list);
+	gui_upd_playlist_list(((struct pls_fetch_params*)params)->data);
 	return 1;
 }
 
-void playlist_list_item_add_cb (xmmsv_t *value, void *list) {
+void playlist_list_item_add (xmmsv_t *value, void *list) {
 	const char *val;
-
 	xmmsv_get_string (value, &val);
 	if (val[0] == '_') {
 		((playlist_list*)list)->playlists_ = eina_list_append(((playlist_list*)list)->playlists_, strdup(val));
@@ -190,7 +211,7 @@ int playlist_fetch(xmmsv_t *value, void *data) {
 
 		playlist_item_add(NULL, NULL); // restart pos counter
 
-		((struct pls_fetch_params*)data)->list->num_items = xmmsv_list_get_size(value);
+		((playlist*)(((struct pls_fetch_params*)data)->list))->num_items = xmmsv_list_get_size(value);
 
 		for (; xmmsv_list_iter_valid (it); xmmsv_list_iter_next (it)) {
 			int id;
@@ -241,9 +262,9 @@ int playlist_item_add(xmmsv_t *value, void *data) {
 
 		media_info_del(info);
 
-		params->list->items = eina_list_append(params->list->items, pi);
+		((playlist*)(params->list))->items = eina_list_append(((playlist*)(params->list))->items, pi);
 
-		if (playlist_is_ready(params->list)) {
+		if (playlist_is_ready((playlist*)(params->list))) {
 			playlist_fetched(params);
 		}
 
@@ -261,9 +282,9 @@ int  playlist_is_ready (playlist *list) {
 
 void playlist_fetched(struct pls_fetch_params* data) {
 	DBG("PLS fetched");
-	if (data->list == ((server_data*)(data->data))->playlist_current) {
+	if (((playlist*)(data->list)) == ((server_data*)(data->data))->playlist_current) {
 		gui_upd_playlist((server_data*)(data->data));
-		data->list->locked = 0;
+		((playlist*)(data->list))->locked = 0;
 	}
 
 	free(data);

@@ -152,11 +152,15 @@ void xmms2_get_status (server_data *sdata) {
 					xmmsc_playback_playtime,
 					signal_playback_playtime_cb, sdata);
 
+	if (sdata->playlists != NULL) {
+		playlist_list_del(sdata->playlists);
+	}
+	sdata->playlists = playlist_list_get(sdata->connection, sdata);
+
 	if (sdata->playlist_current != NULL) {
 		playlist_wait(sdata->playlist_current);
 		playlist_del(sdata->playlist_current);
 	}
-
 	sdata->playlist_current = playlist_get(sdata->connection, "_active", sdata);
 
 	res = xmmsc_playlist_current_pos(sdata->connection, sdata->playlist_current->name);
