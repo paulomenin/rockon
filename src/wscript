@@ -13,8 +13,7 @@ sources = """
 	playlist.c
 	gui_window.c
 	gui_update.c
-	edje_callbacks.c
-	elm_callbacks.c
+	gui_callbacks.c
 """
 
 libs = """

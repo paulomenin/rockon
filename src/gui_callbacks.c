@@ -14,8 +14,9 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "edje_callbacks.h"
+#include "gui_callbacks.h"
 #include "commands.h"
+#include "gui_window.h"
 
 void edje_cb_play  (void *data, Evas_Object *eo, const char *emission, const char *source) {
 	cmd_play((server_data*)data);
@@ -37,3 +38,11 @@ void edje_cb_prev (void *data, Evas_Object *eo, const char *emission, const char
 	cmd_prev((server_data*)data);
 }
 
+
+void elm_cb_set (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	server_data *sdata = (server_data*)data;
+
+	if (strcmp(source, "elm_set,win") == 0) {
+		window_new(sdata, emission);
+	}
+}

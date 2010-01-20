@@ -14,11 +14,19 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELM_CALLBACKS_H
-#define ELM_CALLBACKS_H
+#ifndef GUI_CALLBACKS_H
+#define GUI_CALLBACKS_H
 
 #include <Elementary.h>
 
+/* callbacks for edje */
+void edje_cb_play  (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_pause (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_stop  (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_next  (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_prev  (void *data, Evas_Object *eo, const char *emission, const char *source);
+
+/* callbacks for elementary */
 void elm_cb_set (void *data, Evas_Object *eo, const char *emission, const char *source);
 
-#endif /* ELM_CALLBACKS_H */
+#endif /* GUI_CALLBACKS_H */

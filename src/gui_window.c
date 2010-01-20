@@ -15,8 +15,7 @@
  */
 
 #include "gui_window.h"
-#include "edje_callbacks.h"
-#include "elm_callbacks.h"
+#include "gui_callbacks.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(gui_window_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(gui_window_log_dom, __VA_ARGS__)

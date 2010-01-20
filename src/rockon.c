@@ -19,7 +19,7 @@
 #include "server_data.h"
 #include "xmms_conn.h"
 #include "commands.h"
-#include "elm_callbacks.h"
+#include "gui_callbacks.h"
 
 /* eina_log domains */
 int config_log_dom = -1;
