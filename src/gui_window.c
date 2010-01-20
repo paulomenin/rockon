@@ -16,6 +16,7 @@
 
 #include "gui_window.h"
 #include "gui_callbacks.h"
+#include "gui_widgets.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(gui_window_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(gui_window_log_dom, __VA_ARGS__)
@@ -31,6 +32,7 @@ void window_del_cb (void *data, Evas_Object *obj, void *event_info) {
 	win = window_find_by_win(sdata->windows, obj);
 
 	if (win != NULL) {
+		clean_widgets(sdata->widgets, (rockon_window*)win);
 		free(((rockon_window*)win)->name);
 		free((rockon_window*)win);
 		sdata->windows = eina_list_remove(sdata->windows, win);
@@ -111,6 +113,10 @@ void window_new(server_data *sdata, const char *emission) {
 	win->name = strdup(emission);
 
 	sdata->windows = eina_list_append(sdata->windows, win);
+	DBG("window address: %p",win);
+	DBG("elmWin address: %p",win->elm_win);
+	DBG("layout address: %p",win->elm_layout);
+	DBG("edje   address: %p",win->edje_obj);
 
 	/* set callbacks */
 

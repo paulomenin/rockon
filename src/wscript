@@ -14,6 +14,7 @@ sources = """
 	gui_window.c
 	gui_update.c
 	gui_callbacks.c
+	gui_widgets.c
 """
 
 libs = """

@@ -28,5 +28,7 @@ void edje_cb_prev  (void *data, Evas_Object *eo, const char *emission, const cha
 
 /* callbacks for elementary */
 void elm_cb_set (void *data, Evas_Object *eo, const char *emission, const char *source);
+void seekbar_drag_start_cb(void *data, Evas_Object *obj, void *event_info);
+void seekbar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info);
 
 #endif /* GUI_CALLBACKS_H */

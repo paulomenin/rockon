@@ -14,26 +14,22 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COMMANDS_H
-#define COMMANDS_H
+#ifndef GUI_WIDGETS_H
+#define GUI_WIDGETS_H
 
+#include <Elementary.h>
 #include "server_data.h"
+#include "gui_window.h"
 
-#define XMMS_CONN_IS_VALID() { \
-	if ( sdata->connection == NULL ) \
-		if ( xmms2_connect (sdata) == 0 ) \
-			return; \
-}
+typedef struct {
+	Evas_Object   *widget;
+	rockon_window *window;
+	int update;
+} widget;
 
-void cmd_play  (server_data *sdata);
-void cmd_pause (server_data *sdata);
-void cmd_stop  (server_data *sdata);
-void cmd_next  (server_data *sdata);
-void cmd_prev  (server_data *sdata);
-void cmd_seek_ms(server_data *sdata, int miliseconds);
-void cmd_jump_to (server_data *sdata, int pos);
-void cmd_jump_and_play (server_data *sdata, int pos);
-void cmd_server_launch(server_data *sdata);
-void cmd_server_shutdown(server_data *sdata);
+void clean_widgets(widgets_list *widgets, rockon_window *window);
 
-#endif /* COMMANDS_H */
+void seekbar_new (server_data *sdata, const char *emission, rockon_window *window);
+const char* seekbar_format_indicator(double val);
+
+#endif /* GUI_WIDGETS_H */

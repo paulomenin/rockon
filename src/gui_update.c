@@ -16,6 +16,7 @@
 
 #include "gui_update.h"
 #include "gui_window.h"
+#include "gui_widgets.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(gui_upd_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(gui_upd_log_dom, __VA_ARGS__)
@@ -42,7 +43,7 @@ void gui_upd_playback_status (server_data *sdata) {
 
 void gui_upd_playback_playtime (server_data *sdata) {
 	const Eina_List *l;
-	void *win;
+	void *obj;
 	Edje_Message_Int msg;
 
 	/*INFO("Playback Playtime: %d:%02d",
@@ -50,15 +51,20 @@ void gui_upd_playback_playtime (server_data *sdata) {
 			(sdata->playback_playtime / 1000)%60);
 	*/
 
-	EINA_LIST_FOREACH (sdata->windows, l, win) {
+	EINA_LIST_FOREACH (sdata->windows, l, obj) {
 		msg.val = sdata->playback_playtime;
-		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 1, &msg);
+		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_INT, 1, &msg);
+	}
+	EINA_LIST_FOREACH (sdata->widgets->seekbars, l, obj) {
+		if (((widget*)obj)->update == 1) {
+			elm_slider_value_set(((widget*)obj)->widget, sdata->playback_playtime / 1000);
+		}
 	}
 }
 
 void gui_upd_playback_info (server_data *sdata) {
 	const Eina_List *l;
-	void *win;
+	void *obj;
 	Edje_Message_String_Set *msg;
 	Edje_Message_Int msg_dur;
 	Edje_Message_Int msg_id;
@@ -75,7 +81,7 @@ void gui_upd_playback_info (server_data *sdata) {
 										(sdata->playback_info->duration / 1000)%60);
 	INFO("-----------------------------");
 
-	EINA_LIST_FOREACH (sdata->windows, l, win) {
+	EINA_LIST_FOREACH (sdata->windows, l, obj) {
 		msg = calloc(1, sizeof(Edje_Message_String_Set) - sizeof(char*) + (7 * sizeof(char*)));
 		msg->count = 7;
 		msg->str[0] = (char*) sdata->playback_info->artist;
@@ -85,15 +91,20 @@ void gui_upd_playback_info (server_data *sdata) {
 		msg->str[4] = (char*) sdata->playback_info->comment;
 		msg->str[5] = (char*) sdata->playback_info->genre;
 		msg->str[6] = (char*) sdata->playback_info->date;
-		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_STRING_SET, 4, msg);
+		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_STRING_SET, 4, msg);
 		free(msg);
 
 		msg_dur.val = sdata->playback_info->duration;
-		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 5, &msg_dur);
+		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_INT, 5, &msg_dur);
 
 		msg_id.val = sdata->playback_id;
-		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 6, &msg_id);
+		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_INT, 6, &msg_id);
 	}
+
+	EINA_LIST_FOREACH (sdata->widgets->seekbars, l, obj) {
+		elm_slider_min_max_set(((widget*)obj)->widget, 0, sdata->playback_info->duration / 1000);
+	}
+
 }
 
 void gui_upd_playlist (server_data *sdata) {

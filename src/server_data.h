@@ -25,12 +25,17 @@
 #include "playlist.h"
 
 typedef struct {
+	Eina_List *seekbars;
+} widgets_list;
+
+typedef struct {
 	void               *ecore_fdh;
 	rockon_config      *config;
 	xmmsc_connection_t *connection;
 	Ecore_Timer        *reconn_timer;
 
 	Eina_List *windows;
+	widgets_list *widgets;
 
 	int playback_status;
 	int playback_playtime;

@@ -25,9 +25,10 @@
 int config_log_dom = -1;
 int conn_log_dom = -1;
 int cmd_log_dom = -1;
+int playlist_log_dom = -1;
 int gui_upd_log_dom = -1;
 int gui_window_log_dom = -1;
-int playlist_log_dom = -1;
+int gui_widgets_log_dom = -1;
 
 Eina_Bool log_init(void);
 void log_shutdown(void);
@@ -89,6 +90,9 @@ Eina_Bool log_init(void) {
 	if (gui_window_log_dom < 0) {
 		gui_window_log_dom = eina_log_domain_register("rck_window", NULL);
 	} else return EINA_FALSE;
+	if (gui_widgets_log_dom < 0) {
+		gui_widgets_log_dom = eina_log_domain_register("rck_widgets", NULL);
+	} else return EINA_FALSE;
 
 	return EINA_TRUE;
 }
@@ -118,4 +122,9 @@ void log_shutdown(void) {
 		eina_log_domain_unregister(gui_window_log_dom);
 		gui_window_log_dom = -1;
 	}
+	if (gui_widgets_log_dom >= 0) {
+		eina_log_domain_unregister(gui_widgets_log_dom);
+		gui_widgets_log_dom = -1;
+	}
+
 }

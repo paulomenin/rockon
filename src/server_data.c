@@ -28,12 +28,18 @@ server_data* server_data_new() {
 		EINA_LOG_CRIT("malloc server_data failed");
 	}
 
+	sdata->widgets = (widgets_list*) malloc(sizeof(widgets_list));
+	if (sdata->widgets == NULL) {
+		EINA_LOG_CRIT("malloc server_data widgets failed");
+	}
+
 	sdata->ecore_fdh = NULL;
 	sdata->config = config_new();
 	sdata->connection = NULL;
 	sdata->reconn_timer = NULL;
 
 	sdata->windows = NULL;
+	sdata->widgets->seekbars = NULL;
 
 	sdata->playback_status = 0;
 	sdata->playback_playtime = 0;
@@ -66,6 +72,13 @@ void server_data_del(server_data *sdata) {
 		}
 	}
 
+	if (sdata->widgets) {
+		EINA_LIST_FOREACH(sdata->widgets->seekbars, l, data) {
+			free(data);
+		}
+
+		free(sdata->widgets);
+	}
+
 	free(sdata);
 }
-
