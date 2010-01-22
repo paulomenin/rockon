@@ -57,6 +57,12 @@ void elm_cb_set (void *data, Evas_Object *eo, const char *emission, const char *
 		if (win != NULL) {
 			gui_playlist_list_new(sdata, emission, (rockon_window*)win);
 		}
+	} else
+	if (strcmp(source, "elm_set,playlist") == 0) {
+		win = window_find_by_edje(sdata->windows, eo);
+		if (win != NULL) {
+			gui_playlist_new(sdata, emission, (rockon_window*)win);
+		}
 	}
 
 }
@@ -92,4 +98,11 @@ void playlist_list_click_cb(void *data, Evas_Object *obj, void *event_info){
 	Elm_List_Item *it = elm_list_selected_item_get(obj);
 
 	cmd_playlist_load((server_data*)data, elm_list_item_label_get(it));
+}
+
+void playlist_click_cb(void *data, Evas_Object *obj, void *event_info){
+	playlist_item *item;
+	Elm_List_Item *it = elm_list_selected_item_get(obj);
+	item = (playlist_item*) elm_list_item_data_get(it);
+	cmd_jump_and_play((server_data*)data, item->pos);
 }

@@ -106,8 +106,8 @@ void gui_upd_playback_info (server_data *sdata) {
 }
 
 void gui_upd_playlist (server_data *sdata) {
-	Eina_List *l;
-	void *data;
+	Eina_List *l, *l2;
+	void *data, *data2;
 
 	if (sdata->playlist_current == NULL) return;
 	
@@ -120,6 +120,14 @@ void gui_upd_playlist (server_data *sdata) {
 		INFO("%02d %s",((playlist_item*)data)->pos, ((playlist_item*)data)->title);
 	}
 	INFO("----------------------------");
+
+	EINA_LIST_FOREACH (sdata->widgets->playlists, l, data) {
+		elm_list_clear(((widget*)data)->widget);
+		EINA_LIST_FOREACH (sdata->playlist_current->items, l2, data2) {
+			elm_list_item_append(((widget*)data)->widget, ((playlist_item*)data2)->title, NULL, NULL,  NULL, data2);
+		}
+		elm_list_go(((widget*)data)->widget);
+	}
 }
 
 void gui_upd_playlist_list (server_data *sdata) {

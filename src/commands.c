@@ -104,20 +104,20 @@ void cmd_jump_to (server_data *sdata, int pos) {
 	xmmsc_result_notifier_set (result, check_error, NULL);
 	xmmsc_result_unref (result);
 }
-/*
+
 void cmd_jump_and_play (server_data *sdata, int pos) {
 	assert(sdata);
 	assert(pos >= 0);
 
 	cmd_jump_to(sdata, pos);
-	if (sdata->playback_sdata == 1) {
+	if (sdata->playback_status == 1) {
 		XMMS_CALLBACK_SET (sdata->connection, xmmsc_playback_tickle,
 					check_error, NULL);
 	} else {
 		cmd_play(sdata);
 	}
 }
-*/
+
 void cmd_server_launch(server_data *sdata) {
 	if (sdata->config->launch_server == 1) {
 		INFO("Launching xmms2d");

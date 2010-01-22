@@ -338,10 +338,9 @@ group {
 		}
 		part {
 			name: "playlist";
-			type: RECT;
+			type: SWALLOW;
 			description {
 				state: "default" 0.0;
-				color: 0 0 0 255;
 				rel1 {relative: 1 0; to: "list"; offset: 5 0;}
 				rel2 {relative: 1 1; to: "background"; offset: -5 -5;}
 			}
@@ -354,6 +353,7 @@ group {
 			source: "";
 			script {
 				emit("list","elm_set,playlist_list");
+				emit("playlist","elm_set,playlist");
 			}
 		}
 	}

@@ -44,6 +44,12 @@ void clean_widgets(widgets_list *widgets, rockon_window *window) {
 			free((widget*)data);
 		}
 	}
+	EINA_LIST_FOREACH_SAFE(widgets->playlists, l, l_next, data) {
+		if (((widget*)data)->window == window) {
+			widgets->playlists = eina_list_remove_list(widgets->playlists, l);
+			free((widget*)data);
+		}
+	}
 }
 
 const char* seekbar_format_indicator(double val) {
@@ -100,4 +106,26 @@ void gui_playlist_list_new (server_data *sdata, const char *emission, rockon_win
 	sdata->widgets->playlist_lists = eina_list_append(sdata->widgets->playlist_lists, obj);
 
 	gui_upd_playlist_list(sdata);
+}
+
+void gui_playlist_new (server_data *sdata, const char *emission, rockon_window *window) {
+	widget* obj;
+	Evas_Object *plist;
+
+	obj = (widget*) malloc(sizeof(widget));
+	if (obj == NULL) {
+		EINA_LOG_CRIT("gui playlist malloc failed");
+	}
+
+	plist = elm_list_add(window->elm_win);
+	elm_layout_content_set(window->elm_layout, emission, plist);
+	evas_object_smart_callback_add(plist, "clicked", playlist_click_cb, sdata);
+	evas_object_show(plist);
+
+	obj->widget = plist;
+	obj->window = window;
+	obj->update = 1;
+	sdata->widgets->playlists = eina_list_append(sdata->widgets->playlists, obj);
+
+	gui_upd_playlist(sdata);
 }

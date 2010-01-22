@@ -27,6 +27,7 @@
 typedef struct {
 	Eina_List *seekbars;
 	Eina_List *playlist_lists;
+	Eina_List *playlists;
 } widgets_list;
 
 typedef struct {

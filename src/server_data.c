@@ -41,6 +41,7 @@ server_data* server_data_new() {
 	sdata->windows = NULL;
 	sdata->widgets->seekbars = NULL;
 	sdata->widgets->playlist_lists = NULL;
+	sdata->widgets->playlists = NULL;
 
 	sdata->playback_status = 0;
 	sdata->playback_playtime = 0;
@@ -78,6 +79,9 @@ void server_data_del(server_data *sdata) {
 			free(data);
 		}
 		EINA_LIST_FOREACH(sdata->widgets->playlist_lists, l, data) {
+			free(data);
+		}
+		EINA_LIST_FOREACH(sdata->widgets->playlists, l, data) {
 			free(data);
 		}
 
