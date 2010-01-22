@@ -79,11 +79,20 @@ void cmd_seek_ms (server_data *sdata, int miliseconds) {
 	assert(sdata);
 
 	XMMS_CONN_IS_VALID();
-	result =xmmsc_playback_seek_ms(sdata->connection, miliseconds, XMMS_PLAYBACK_SEEK_SET);
+	result = xmmsc_playback_seek_ms(sdata->connection, miliseconds, XMMS_PLAYBACK_SEEK_SET);
 	xmmsc_result_notifier_set (result, check_error, NULL);
 	xmmsc_result_unref (result);
 }
 
+void cmd_playlist_load(server_data* sdata, const char *playlist) {
+	xmmsc_result_t *result;
+	assert(sdata);
+	if (playlist == NULL) return;
+	XMMS_CONN_IS_VALID();
+	result = xmmsc_playlist_load(sdata->connection, playlist);
+	xmmsc_result_notifier_set (result, check_error, NULL);
+	xmmsc_result_unref (result);
+}
 
 void cmd_jump_to (server_data *sdata, int pos) {
 	assert(sdata);

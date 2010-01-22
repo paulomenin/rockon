@@ -16,6 +16,7 @@
 
 #include "gui_widgets.h"
 #include "gui_callbacks.h"
+#include "gui_update.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(gui_widgets_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(gui_widgets_log_dom, __VA_ARGS__)
@@ -37,6 +38,12 @@ void clean_widgets(widgets_list *widgets, rockon_window *window) {
 			free((widget*)data);
 		}
 	}
+	EINA_LIST_FOREACH_SAFE(widgets->playlist_lists, l, l_next, data) {
+		if (((widget*)data)->window == window) {
+			widgets->playlist_lists = eina_list_remove_list(widgets->playlist_lists, l);
+			free((widget*)data);
+		}
+	}
 }
 
 const char* seekbar_format_indicator(double val) {
@@ -51,7 +58,7 @@ const char* seekbar_format_indicator(double val) {
 	return strdup(indicator);
 }
 
-void seekbar_new (server_data *sdata, const char *emission, rockon_window *window) {
+void gui_seekbar_new (server_data *sdata, const char *emission, rockon_window *window) {
 	widget* obj;
 	Evas_Object *seekbar;
 
@@ -71,4 +78,26 @@ void seekbar_new (server_data *sdata, const char *emission, rockon_window *windo
 	obj->window = window;
 	obj->update = 1;
 	sdata->widgets->seekbars = eina_list_append(sdata->widgets->seekbars, obj);
+}
+
+void gui_playlist_list_new (server_data *sdata, const char *emission, rockon_window *window) {
+	widget* obj;
+	Evas_Object *plist;
+
+	obj = (widget*) malloc(sizeof(widget));
+	if (obj == NULL) {
+		EINA_LOG_CRIT("gui playlist_list malloc failed");
+	}
+
+	plist = elm_list_add(window->elm_win);
+	elm_layout_content_set(window->elm_layout, emission, plist);
+	evas_object_smart_callback_add(plist, "clicked", playlist_list_click_cb, sdata);
+	evas_object_show(plist);
+
+	obj->widget = plist;
+	obj->window = window;
+	obj->update = 1;
+	sdata->widgets->playlist_lists = eina_list_append(sdata->widgets->playlist_lists, obj);
+
+	gui_upd_playlist_list(sdata);
 }

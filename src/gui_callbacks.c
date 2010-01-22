@@ -49,9 +49,16 @@ void elm_cb_set (void *data, Evas_Object *eo, const char *emission, const char *
 	if (strcmp(source, "elm_set,seek_bar") == 0) {
 		win = window_find_by_edje(sdata->windows, eo);
 		if (win != NULL) {
-			seekbar_new(sdata, emission, (rockon_window*)win);
+			gui_seekbar_new(sdata, emission, (rockon_window*)win);
+		}
+	} else
+	if (strcmp(source, "elm_set,playlist_list") == 0) {
+		win = window_find_by_edje(sdata->windows, eo);
+		if (win != NULL) {
+			gui_playlist_list_new(sdata, emission, (rockon_window*)win);
 		}
 	}
+
 }
 
 void seekbar_drag_start_cb(void *data, Evas_Object *obj, void *event_info) {
@@ -79,4 +86,10 @@ void seekbar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info) {
 			((widget*)widgt)->update = 1;
 		}
 	}
+}
+
+void playlist_list_click_cb(void *data, Evas_Object *obj, void *event_info){
+	Elm_List_Item *it = elm_list_selected_item_get(obj);
+
+	cmd_playlist_load((server_data*)data, elm_list_item_label_get(it));
 }

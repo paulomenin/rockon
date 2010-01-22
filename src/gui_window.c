@@ -17,6 +17,7 @@
 #include "gui_window.h"
 #include "gui_callbacks.h"
 #include "gui_widgets.h"
+#include "gui_update.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(gui_window_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(gui_window_log_dom, __VA_ARGS__)
@@ -128,6 +129,11 @@ void window_new(server_data *sdata, const char *emission) {
 	edje_object_signal_callback_add (win->edje_obj, "cmd,stop", "*", edje_cb_stop, (void*)sdata);
 	edje_object_signal_callback_add (win->edje_obj, "cmd,next", "*", edje_cb_next, (void*)sdata);
 	edje_object_signal_callback_add (win->edje_obj, "cmd,prev", "*", edje_cb_prev, (void*)sdata);
+
+	gui_upd_playback_id(sdata);
+	gui_upd_playback_status(sdata);
+	gui_upd_playback_playtime(sdata);
+	gui_upd_playback_info(sdata);
 
 	evas_object_show(win->elm_win);
 }

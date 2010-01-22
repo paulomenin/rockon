@@ -46,11 +46,6 @@ void gui_upd_playback_playtime (server_data *sdata) {
 	void *obj;
 	Edje_Message_Int msg;
 
-	/*INFO("Playback Playtime: %d:%02d",
-			(sdata->playback_playtime / 1000)/60,
-			(sdata->playback_playtime / 1000)%60);
-	*/
-
 	EINA_LIST_FOREACH (sdata->windows, l, obj) {
 		msg.val = sdata->playback_playtime;
 		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_INT, 1, &msg);
@@ -68,6 +63,9 @@ void gui_upd_playback_info (server_data *sdata) {
 	Edje_Message_String_Set *msg;
 	Edje_Message_Int msg_dur;
 	Edje_Message_Int msg_id;
+
+	if (sdata->playback_info == NULL) return;
+	if (sdata->widgets == NULL) return;
 
 	INFO("--------- MEDIA INFO ---------");
 	INFO("%s - %s", sdata->playback_info->artist, sdata->playback_info->title);
@@ -111,6 +109,8 @@ void gui_upd_playlist (server_data *sdata) {
 	Eina_List *l;
 	void *data;
 
+	if (sdata->playlist_current == NULL) return;
+	
 	INFO("--------- PLAYLIST ---------");
 	INFO("Name: %s Items: %d Pos: %d",sdata->playlist_current->name,
 									  sdata->playlist_current->num_items,
@@ -123,8 +123,10 @@ void gui_upd_playlist (server_data *sdata) {
 }
 
 void gui_upd_playlist_list (server_data *sdata) {
-	Eina_List *l;
-	void *data;
+	Eina_List *l, *l2;
+	void *data, *data2;
+
+	if (sdata->playlists == NULL) return;
 
 	INFO("------ PLAYLIST LIST -------");
 	EINA_LIST_FOREACH(sdata->playlists->playlists_, l, data) {
@@ -134,9 +136,19 @@ void gui_upd_playlist_list (server_data *sdata) {
 		INFO("%s", (char*)data);
 	}
 	INFO("----------------------------");
+
+	EINA_LIST_FOREACH (sdata->widgets->playlist_lists, l, data) {
+		elm_list_clear(((widget*)data)->widget);
+		EINA_LIST_FOREACH (sdata->playlists->playlists, l2, data2) {
+			elm_list_item_append(((widget*)data)->widget, (char*)data2, NULL, NULL,  NULL, NULL);
+		}
+		elm_list_go(((widget*)data)->widget);
+	}
+
 }
 
 void gui_upd_playlist_pos (server_data *sdata) {
+	if (sdata->playlist_current == NULL) return;
 	INFO("Name: %s Items: %d POS: %d",sdata->playlist_current->name,
 									  sdata->playlist_current->num_items,
 									  sdata->playlist_current->current_pos);

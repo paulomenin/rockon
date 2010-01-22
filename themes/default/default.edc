@@ -153,13 +153,46 @@ group {
 		}
 
 		part {
+			name: "btn_playlist";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 1.0 0.0; to:"playback_bar"; offset: 10 0;}
+				rel2 { relative: 1.0 1.0; to:"playback_bar"; offset: 100 0;}
+				image { normal: "images/playlist.png"; }
+			}
+		}
+
+		part {
+			name: "btn_mlib";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 1.0 0.0; to:"btn_playlist"; offset: 5 0;}
+				rel2 { relative: 1.0 1.0; to:"btn_playlist"; offset: 130 0;}
+				image { normal: "images/medialibrary.png"; }
+			}
+		}
+
+		part {
 			name: "btn_close";
 			type: IMAGE;
 			description {
 				state: "default" 0.0;
-				rel1 { relative: 1.0 1.0; offset: -50 -30;}
-				rel2 { relative: 1.0 1.0; offset: -2  -2  ;}
+				rel1 { relative: 1.0 0.0; offset: -70 2;}
+				rel2 { relative: 1.0 0.0; offset: -2 30;}
 				image { normal: "images/off.png"; }
+			}
+		}
+
+		part {
+			name: "btn_config";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.0 1.0; to:"btn_close"; offset: 0 2;}
+				rel2 { relative: 1.0 1.0; to:"btn_close"; offset: 0 30;}
+				image { normal: "images/config.png"; }
 			}
 		}
 
@@ -253,17 +286,78 @@ group {
 			action: SIGNAL_EMIT "cmd,prev" "main";
 		}
 		program {
+			name: "pls";
+			signal: "mouse,clicked,1";
+			source: "btn_playlist";
+			action: SIGNAL_EMIT "Playlist" "elm_set,win";
+		}
+		program {
+			name: "mediainfo_show";
+			signal: "mouse,clicked,1";
+			source: "icon";
+			action: SIGNAL_EMIT "Media Info" "elm_set,win";
+		}
+		program {
 			name: "group_loaded";
 			signal: "load";
 			source: "";
 			script {
-				emit("Media Info","elm_set,win");
+				emit("Playlist","elm_set,win");
 				emit("seekbar","elm_set,seek_bar");
 			}
 		}
 
 	} // end programs
 } // end group
+
+/* Playlist Window */
+group {
+	name: "Playlist";
+
+	parts {
+		part {
+			name: "background";
+			type: RECT;
+			mouse_events: 0;
+			description {
+				min: 450 400;
+				state: "default" 0.0;
+				color: 255 255 255 255;
+				rel1 { relative: 0.0 0.0; }
+				rel2 { relative: 1.0 1.0; }
+			}
+		}
+		part {
+			name: "list";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0 0; offset: 5   5;}
+				rel2 {relative: 0 1; offset: 170 -5;}
+			}
+		}
+		part {
+			name: "playlist";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				rel1 {relative: 1 0; to: "list"; offset: 5 0;}
+				rel2 {relative: 1 1; to: "background"; offset: -5 -5;}
+			}
+		}
+	}
+	programs {
+		program {
+			name: "group_loaded";
+			signal: "load";
+			source: "";
+			script {
+				emit("list","elm_set,playlist_list");
+			}
+		}
+	}
+}
 
 /* Media Info window */
 group {
@@ -329,7 +423,7 @@ group {
 		part {
 			name: "background";
 			type: RECT;
-			//mouse_events: 0;
+			mouse_events: 0;
 			description {
 				min: 500 340;
 				state: "default" 0.0;

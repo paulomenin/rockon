@@ -35,5 +35,6 @@ void cmd_jump_to (server_data *sdata, int pos);
 void cmd_jump_and_play (server_data *sdata, int pos);
 void cmd_server_launch(server_data *sdata);
 void cmd_server_shutdown(server_data *sdata);
+void cmd_playlist_load(server_data* sdata, const char *playlist);
 
 #endif /* COMMANDS_H */
