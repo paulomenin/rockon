@@ -15,7 +15,6 @@
  */
 
 #include <assert.h>
-#include <Ecore_Job.h>
 #include <xmmsclient/xmmsclient.h>
 #include "xmms_conn.h"
 #include "commands.h"

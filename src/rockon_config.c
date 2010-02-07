@@ -16,6 +16,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <Ecore_Data.h>
 #include <Ecore_File.h>
 #include <xmmsclient/xmmsclient.h>
 #include "rockon_config.h"

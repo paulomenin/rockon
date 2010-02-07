@@ -18,6 +18,7 @@ sources = """
 """
 
 libs = """
+	ecore-data
 	elementary
 	xmms2-client
 	xmms2-client-ecore
