@@ -66,7 +66,7 @@ group {
 			type: RECT;
 			mouse_events: 0;
 			description {
-				min: 500 110;
+				min: 500 510;
 				state: "default" 0.0;
 				color: 255 255 255 255;
 				rel1 { relative: 0.0 0.0; }
@@ -246,6 +246,15 @@ group {
 				image { normal: "images/next.png"; }
 			}
 		}
+		part {
+			name: "playlist";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0 1; to: "icon"; offset: 0 5;}
+				rel2 {relative: 1 1; to: "background"; offset: -5 -5;}
+			}
+		}
 	} // end parts
 
 	programs {
@@ -302,8 +311,8 @@ group {
 			signal: "load";
 			source: "";
 			script {
-				emit("Playlist","elm_set,win");
 				emit("seekbar","elm_set,seek_bar");
+				emit("playlist","elm_set,playlist");
 			}
 		}
 
