@@ -18,7 +18,10 @@
 #include <assert.h>
 #include <string.h>
 #include <Eina.h>
+#include <Ecore_File.h>
 #include "media_info.h"
+
+char *decode_url(const char *url);
 
 media_info* media_info_new() {
 	media_info* info = NULL;
@@ -77,13 +80,13 @@ void media_info_get (xmmsv_t *value, media_info *info) {
 	    !xmmsv_get_string (dict_entry, &album)) {
 		album = "[Unknown Album]";
 	}
-	if (!xmmsv_dict_get (infos, "title", &dict_entry) ||
-	    !xmmsv_get_string (dict_entry, &title)) {
-		title = "[Unknown Title]";
-	}
 	if (!xmmsv_dict_get (infos, "url", &dict_entry) ||
 	    !xmmsv_get_string (dict_entry, &url)) {
 		url = "[Unknown URL]";
+	}
+	if (!xmmsv_dict_get (infos, "title", &dict_entry) ||
+	    !xmmsv_get_string (dict_entry, &title)) {
+		title = ecore_file_file_get(url);
 	}
 	if (!xmmsv_dict_get (infos, "comment", &dict_entry) ||
 	    !xmmsv_get_string (dict_entry, &comment)) {
@@ -112,11 +115,34 @@ void media_info_get (xmmsv_t *value, media_info *info) {
 
 	info->artist = strdup(artist);
 	info->album = strdup(album);
-	info->title = strdup(title);
-	info->url = strdup(url);
+	info->title = decode_url(title);
+	info->url = decode_url(url);
 	info->comment = strdup(comment);
 	info->genre = strdup(genre);
 	info->date = strdup(date);
 
 	xmmsv_unref(infos);
+}
+
+char *decode_url(const char *url) {
+	xmmsv_t *url_str;
+	xmmsv_t *decoded_url;
+	char *new_url = NULL;
+	const unsigned char *url_tmp;
+	unsigned int url_len;
+
+	url_str = xmmsv_new_string(url);
+
+	if (url_str) {
+		decoded_url = xmmsv_decode_url(url_str);
+		if (decoded_url) {
+			if (xmmsv_get_bin(decoded_url, &url_tmp, &url_len)) {
+				new_url = (char*) malloc( sizeof(char)*(url_len+1) );
+				snprintf(new_url, url_len+1, "%s", url_tmp);
+			}
+		}
+		xmmsv_unref(decoded_url);
+	}
+	xmmsv_unref(url_str);
+	return new_url;
 }
