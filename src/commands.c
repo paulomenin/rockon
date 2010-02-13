@@ -109,10 +109,10 @@ void cmd_jump_and_play (server_data *sdata, int pos) {
 	assert(pos >= 0);
 
 	cmd_jump_to(sdata, pos);
-	if (sdata->playback_status == 1) {
-		XMMS_CALLBACK_SET (sdata->connection, xmmsc_playback_tickle,
-					check_error, NULL);
-	} else {
+	XMMS_CALLBACK_SET (sdata->connection, xmmsc_playback_tickle,
+		check_error, NULL);
+
+	if (sdata->playback_status != 1) {
 		cmd_play(sdata);
 	}
 }
