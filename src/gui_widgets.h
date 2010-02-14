@@ -28,10 +28,12 @@ typedef struct {
 } widget;
 
 void clean_widgets(widgets_list *widgets, rockon_window *window);
+void *widget_find_by_widget(const Eina_List *list, const void *data);
 
 const char* seekbar_format_indicator(double val);
 void gui_seekbar_new       (server_data *sdata, const char *emission, rockon_window *window);
 void gui_playlist_list_new (server_data *sdata, const char *emission, rockon_window *window);
 void gui_playlist_new (server_data *sdata, const char *emission, rockon_window *window);
+void gui_mlib_file_selector_new (server_data *sdata, const char *emission, rockon_window *window);
 
 #endif /* GUI_WIDGETS_H */

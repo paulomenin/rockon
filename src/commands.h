@@ -36,5 +36,6 @@ void cmd_jump_and_play (server_data *sdata, int pos);
 void cmd_server_launch(server_data *sdata);
 void cmd_server_shutdown(server_data *sdata);
 void cmd_playlist_load(server_data* sdata, const char *playlist);
+void cmd_mlib_add_media(server_data* sdata, const char *path);
 
 #endif /* COMMANDS_H */

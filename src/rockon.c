@@ -48,7 +48,7 @@ EAPI int elm_main (int argc, char** argv) {
 		cmd_server_launch(sdata);
 	}
 
-	elm_cb_set (sdata, NULL, "Rockon", "elm_set,win");
+	elm_cb_set (sdata, NULL, "Rockon", "elm_set,window");
 
 	EINA_LOG_DBG("MainLoop Start");
 	elm_run();

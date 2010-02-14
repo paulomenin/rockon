@@ -137,3 +137,22 @@ void cmd_server_shutdown(server_data *sdata) {
 	}
 }
 
+void cmd_mlib_add_media(server_data* sdata, const char *path) {
+	xmmsc_result_t *result;
+	char new_path[PATH_MAX];
+	XMMS_CONN_IS_VALID();
+	assert(path);
+
+	snprintf(new_path, PATH_MAX, "file://%s", path);
+
+	if (ecore_file_is_dir(path)) {
+		result = xmmsc_medialib_import_path (sdata->connection, new_path);
+		xmmsc_result_notifier_set (result, check_error, NULL);
+		xmmsc_result_unref (result);
+	} else {
+		result = xmmsc_medialib_add_entry (sdata->connection, new_path);
+		xmmsc_result_notifier_set (result, check_error, NULL);
+		xmmsc_result_unref (result);
+	}
+}
+

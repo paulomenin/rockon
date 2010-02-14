@@ -32,5 +32,6 @@ void seekbar_drag_start_cb(void *data, Evas_Object *obj, void *event_info);
 void seekbar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info);
 void playlist_list_click_cb(void *data, Evas_Object *obj, void *event_info);
 void playlist_click_cb(void *data, Evas_Object *obj, void *event_info);
+void mlib_file_selector_done_cb(void *data, Evas_Object *obj, void *event_info);
 
 #endif /* GUI_CALLBACKS_H */

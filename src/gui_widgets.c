@@ -25,6 +25,20 @@
 
 extern int gui_widgets_log_dom;
 
+void *widget_find_by_widget(const Eina_List *list, const void *data) {
+	const Eina_List *l;
+	void *list_data;
+
+	if (list == NULL) return NULL;
+
+	EINA_LIST_FOREACH(list, l, list_data) {
+		if (((widget*)list_data)->widget == data)
+			return (Eina_List *)list_data;
+	}
+
+	return NULL;
+}
+
 void clean_widgets(widgets_list *widgets, rockon_window *window) {
 	Eina_List *l, *l_next;
 	void *data;
@@ -47,6 +61,12 @@ void clean_widgets(widgets_list *widgets, rockon_window *window) {
 	EINA_LIST_FOREACH_SAFE(widgets->playlists, l, l_next, data) {
 		if (((widget*)data)->window == window) {
 			widgets->playlists = eina_list_remove_list(widgets->playlists, l);
+			free((widget*)data);
+		}
+	}
+	EINA_LIST_FOREACH_SAFE(widgets->file_selectors, l, l_next, data) {
+		if (((widget*)data)->window == window) {
+			widgets->file_selectors = eina_list_remove_list(widgets->file_selectors, l);
 			free((widget*)data);
 		}
 	}
@@ -128,4 +148,28 @@ void gui_playlist_new (server_data *sdata, const char *emission, rockon_window *
 	sdata->widgets->playlists = eina_list_append(sdata->widgets->playlists, obj);
 
 	gui_upd_playlist(sdata);
+}
+
+void gui_mlib_file_selector_new (server_data *sdata, const char *emission, rockon_window *window) {
+	widget* obj;
+	Evas_Object *fselector;
+
+	obj = (widget*) malloc(sizeof(widget));
+	if (obj == NULL) {
+		EINA_LOG_CRIT("file selector malloc failed");
+	}
+
+	fselector = elm_fileselector_add(window->elm_win);
+	elm_layout_content_set(window->elm_layout, emission, fselector);
+	elm_fileselector_is_save_set(fselector, EINA_FALSE);
+	elm_fileselector_expandable_set(fselector, EINA_TRUE);
+	elm_fileselector_path_set(fselector, getenv("HOME"));
+	elm_fileselector_buttons_ok_cancel_set(fselector, EINA_TRUE);
+	evas_object_smart_callback_add(fselector, "done", mlib_file_selector_done_cb, sdata);
+	evas_object_show(fselector);
+
+	obj->widget = fselector;
+	obj->window = window;
+	obj->update = 1;
+	sdata->widgets->file_selectors = eina_list_append(sdata->widgets->file_selectors, obj);
 }
