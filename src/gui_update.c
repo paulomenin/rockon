@@ -37,7 +37,7 @@ void gui_upd_playback_status (server_data *sdata) {
 	
 	EINA_LIST_FOREACH (sdata->windows, l, win) {
 		msg.val = sdata->playback_status;
-		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, 2, &msg);
+		edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, PLAYBACK_STATUS, &msg);
 	}
 }
 
@@ -48,7 +48,7 @@ void gui_upd_playback_playtime (server_data *sdata) {
 
 	EINA_LIST_FOREACH (sdata->windows, l, obj) {
 		msg.val = sdata->playback_playtime;
-		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_INT, 1, &msg);
+		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_INT, PLAYBACK_PLAYTIME, &msg);
 	}
 	EINA_LIST_FOREACH (sdata->widgets->seekbars, l, obj) {
 		if (((widget*)obj)->update == 1) {
@@ -89,14 +89,14 @@ void gui_upd_playback_info (server_data *sdata) {
 		msg->str[4] = (char*) sdata->playback_info->comment;
 		msg->str[5] = (char*) sdata->playback_info->genre;
 		msg->str[6] = (char*) sdata->playback_info->date;
-		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_STRING_SET, 4, msg);
+		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_STRING_SET, PLAYBACK_INFO, msg);
 		free(msg);
 
 		msg_dur.val = sdata->playback_info->duration;
-		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_INT, 5, &msg_dur);
+		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_INT, PLAYBACK_DURATION, &msg_dur);
 
 		msg_id.val = sdata->playback_id;
-		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_INT, 6, &msg_id);
+		edje_object_message_send( ((rockon_window*)obj)->edje_obj, EDJE_MESSAGE_INT, PLAYBACK_ID, &msg_id);
 	}
 
 	EINA_LIST_FOREACH (sdata->widgets->seekbars, l, obj) {
@@ -160,5 +160,31 @@ void gui_upd_playlist_pos (server_data *sdata) {
 	INFO("Name: %s Items: %d POS: %d",sdata->playlist_current->name,
 									  sdata->playlist_current->num_items,
 									  sdata->playlist_current->current_pos);
+}
+
+void gui_upd_mlib_reader_status(server_data *sdata, int files) {
+	Eina_List *l;
+	void *win;
+	Edje_Message_Int msg;
+
+	msg.val = files;
+
+	EINA_LIST_FOREACH (sdata->windows, l, win) {
+		switch (files) {
+			case -1:
+				INFO("mlib updating files.");
+				edje_object_signal_emit( ((rockon_window*)win)->edje_obj, "update","mlib,status");
+				break;
+			case  0:
+				INFO("mlib updating files finished.");
+				edje_object_signal_emit( ((rockon_window*)win)->edje_obj, "ready","mlib,status");
+				break;
+			default:
+				INFO("mlib updating files: %d remaining.", files);
+				edje_object_message_send( ((rockon_window*)win)->edje_obj, EDJE_MESSAGE_INT, MLIB_STATUS_FILES, &msg);
+
+				break;
+		}
+	}
 }
 

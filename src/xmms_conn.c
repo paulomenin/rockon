@@ -76,6 +76,12 @@ int  xmms2_connect (server_data *sdata) {
 	XMMS_CALLBACK_SET (sdata->connection,
 					xmmsc_broadcast_playlist_changed,
 					broadcast_playlist_changed_cb, sdata);
+	XMMS_CALLBACK_SET (sdata->connection,
+					xmmsc_broadcast_mediainfo_reader_status,
+					mlib_reader_status_cb, sdata);
+	XMMS_CALLBACK_SET (sdata->connection,
+					xmmsc_signal_mediainfo_reader_unindexed,
+					mlib_reader_unindexed_cb, sdata);
 
 	sdata->ecore_fdh = xmmsc_mainloop_ecore_init (sdata->connection);
 	DBG("Ecore_fdh: %p", sdata->ecore_fdh);

@@ -19,6 +19,16 @@
 
 #include "server_data.h"
 
+enum Message_id {
+	PLAYBACK_PLAYTIME = 1,
+	PLAYBACK_STATUS   = 2,
+	PLAYBACK_INFO     = 3,
+	PLAYBACK_DURATION = 4,
+	PLAYBACK_ID       = 5,
+
+	MLIB_STATUS_FILES = 6 // remaining files to process
+};
+
 void gui_upd_playback_id       (server_data *sdata);
 void gui_upd_playback_status   (server_data *sdata);
 void gui_upd_playback_playtime (server_data *sdata);
@@ -26,5 +36,6 @@ void gui_upd_playback_info     (server_data *sdata);
 void gui_upd_playlist          (server_data *sdata);
 void gui_upd_playlist_pos      (server_data *sdata);
 void gui_upd_playlist_list     (server_data *sdata);
+void gui_upd_mlib_reader_status(server_data *sdata, int files);
 
 #endif /* GUI_UPDATE_H */

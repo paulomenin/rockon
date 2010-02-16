@@ -161,3 +161,29 @@ int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
 	return FALSE;
 }
 
+int mlib_reader_status_cb (xmmsv_t *value, void *data) {
+	int status;
+
+	if (! check_error(value, NULL)) {
+		xmmsv_get_int(value, &status);
+		if (status == 0) {
+			gui_upd_mlib_reader_status((server_data*)data, 0);
+		} else if (status == 1) {
+			gui_upd_mlib_reader_status((server_data*)data, -1);
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
+
+int mlib_reader_unindexed_cb (xmmsv_t *value, void *data) {
+	int number_of_files;
+
+	if (! check_error(value, NULL)) {
+		xmmsv_get_int(value, &number_of_files);
+		gui_upd_mlib_reader_status((server_data*)data, number_of_files);
+		return TRUE;
+	}
+	return FALSE;
+}
+

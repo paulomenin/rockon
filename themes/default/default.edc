@@ -49,10 +49,10 @@ group {
 				}
 				set_text(PART:"PlaybackPlaytime", str);
 
-			} else if (id == 5) {
+			} else if (id == 4) {
 				set_int(global_media_duration, getarg(2));
 
-			} else if (id == 4) {
+			} else if (id == 3) {
 				new str_title[100];
 				getsarg(4, str_title, 100);
 				set_text(PART:"PlaybackInfo", str_title);
@@ -368,6 +368,17 @@ group {
 group {
 	name: "Media Library";
 
+	script {
+		public files;
+
+		public message(Msg_Type:type, id, ...) {
+			if (id == 6) {
+				set_int(files, getarg(2));
+				emit("files","mlib,status");
+			}
+		}
+	}
+
 	parts {
 		part {
 			name: "background";
@@ -411,12 +422,64 @@ group {
 			description {
 				state: "default" 0.0;
 				rel1 {relative: 0 1; to: "label"; offset: 0 5;}
-				rel2 {relative: 1 1; to: "background"; offset: -5 -5;}
+				rel2 {relative: 1 1; to: "background"; offset: -5 -40;}
+			}
+		}
+
+		part {
+			name: "status";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				
+				color:  0 0 0 255;
+				color2: 255 255 255 255;
+				color3: 100 100 100  255;
+
+				rel1 { relative: 0 1; to: "browse"; offset: 0 5;}
+				rel2 { relative: 1 1; to: "browse"; offset: 0 35;}
+
+				text {
+					text: "Media Library: Ready";
+					font: "Vera";
+					size: 12;
+					align: 0 0.5;
+				}
 			}
 		}
 	}
 
 	programs {
+		program {
+			name: "mlib_ready";
+			signal: "ready";
+			source: "mlib,status";
+			script {
+				set_text(PART:"status","Media Library: Ready");
+			}
+		}
+
+		program {
+			name: "mlib_upt";
+			signal: "update";
+			source: "mlib,status";
+			script {
+				set_text(PART:"status","Media Library: Updating");
+			}
+		}
+		
+		program {
+			name: "mlib_files";
+			signal: "files";
+			source: "mlib,status";
+			script {
+				new str[100];
+				snprintf(str, 100, "Media Library: %d files remaining.", get_int(files));
+				set_text(PART:"status", str);
+			}
+		}
+
 		program {
 			name: "group_loaded";
 			signal: "load";
@@ -435,7 +498,7 @@ group {
 	script {
 
 		public message(Msg_Type:type, id, ...) {
-			if (id == 5) {
+			if (id == 4) {
 				new str[100];
 				new min, sec;
 				min = getarg(2)/60000;
@@ -447,7 +510,7 @@ group {
 				}
 				set_text(PART:"length", str);
 			}
-			else if (id == 4) {
+			else if (id == 3) {
 				new str_artist[100];
 				new str_album[100];
 				new str_title[100];
@@ -480,7 +543,7 @@ group {
 				snprintf(str, 100, "Date: %s", str_date);
 				set_text(PART:"date", str);
 			}
-			else if (id == 6) {
+			else if (id == 5) {
 				new m_id[10];
 				snprintf(m_id, 10, "ID: %d", getarg(2));
 				set_text(PART:"id", m_id);
