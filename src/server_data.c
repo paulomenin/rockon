@@ -51,6 +51,7 @@ server_data* server_data_new() {
 
 	sdata->playlists = NULL;
 	sdata->playlist_current = NULL;
+	sdata->collection_current = NULL;
 
 	return sdata;
 }
@@ -66,6 +67,7 @@ void server_data_del(server_data *sdata) {
 	media_info_del(sdata->playback_info);
 	playlist_list_del(sdata->playlists);
 	playlist_del(sdata->playlist_current);
+	collection_del(sdata->collection_current);
 	xmms2_shutdown(sdata);
 
 	if (sdata->windows) {

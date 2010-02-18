@@ -36,6 +36,7 @@ void gui_upd_playback_info     (server_data *sdata);
 void gui_upd_playlist          (server_data *sdata);
 void gui_upd_playlist_pos      (server_data *sdata);
 void gui_upd_playlist_list     (server_data *sdata);
+void gui_upd_collection        (server_data *sdata);
 void gui_upd_mlib_reader_status(server_data *sdata, int files);
 
 #endif /* GUI_UPDATE_H */

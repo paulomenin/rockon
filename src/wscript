@@ -8,9 +8,11 @@ sources = """
 	server_data.c
 	media_info.c
 	xmms_conn.c
+	util.c
 	commands.c
 	broadcasts.c
 	playlist.c
+	collection.c
 	gui_window.c
 	gui_update.c
 	gui_callbacks.c

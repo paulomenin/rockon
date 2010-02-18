@@ -23,6 +23,7 @@
 #include "rockon_config.h"
 #include "media_info.h"
 #include "playlist.h"
+#include "collection.h"
 
 typedef struct {
 	Eina_List *seekbars;
@@ -47,6 +48,8 @@ typedef struct {
 
 	playlist_list *playlists;
 	playlist      *playlist_current;
+	
+	collection    *collection_current; // used in search
 
 } server_data;
 

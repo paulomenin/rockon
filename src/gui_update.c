@@ -130,6 +130,21 @@ void gui_upd_playlist (server_data *sdata) {
 	}
 }
 
+void gui_upd_collection (server_data *sdata) {
+	Eina_List *l;
+	void *data;
+
+	if (sdata->collection_current == NULL) return;
+	
+	INFO("--------- COLLECTION ---------");
+	INFO("Items: %d", sdata->collection_current->num_items);
+
+	EINA_LIST_FOREACH(sdata->collection_current->items, l, data) {
+		INFO("%s",((collection_item*)data)->title);
+	}
+	INFO("----------------------------");
+}
+
 void gui_upd_playlist_list (server_data *sdata) {
 	Eina_List *l, *l2;
 	void *data, *data2;
