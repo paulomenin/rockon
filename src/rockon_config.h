@@ -14,8 +14,8 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef ROCKON_CONFIG_H
+#define ROCKON_CONFIG_H
 
 #include "lcfg_static.h"
 
@@ -28,8 +28,6 @@ typedef struct {
 	int auto_reconnect;
 	int reconnect_interval;
 	char *ipc_path;
-	char *theme_name;
-	char *theme_path;
 } rockon_config;
 
 rockon_config* config_new();
@@ -37,4 +35,4 @@ void config_del(rockon_config *config);
 int config_load(rockon_config *config);
 int config_save(rockon_config *config);
 
-#endif /* CONFIG_H */
+#endif /* ROCKON_CONFIG_H */

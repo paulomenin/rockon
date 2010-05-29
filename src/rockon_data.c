@@ -14,27 +14,30 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MEDIA_INFO_H
-#define MEDIA_INFO_H
+#include <assert.h>
+#include <Eina.h>
+#include "rockon_data.h"
 
-#include <xmmsclient/xmmsclient.h>
+rockon_data* rockon_data_new() {
+	rockon_data *rdata;
 
-typedef struct {
-	int id;
-	char *artist;
-	char *album;
-	char *title;
-	char *url;
-	char *comment;
-	char *genre;
-	char *date;
-	int bitrate;
-	int duration;
-	int tracknr;
-} media_info;
+	rdata = (rockon_data*) malloc(sizeof(rockon_data));
+	if (rdata == NULL) {
+		EINA_LOG_CRIT("malloc rockon_data failed");
+	}
 
-media_info* media_info_new();
-void media_info_del(media_info* info);
-void media_info_get (xmmsv_t *value, media_info* info);
+	rdata->config = config_new();
 
-#endif /* MEDIA_INFO_H */
+	return rdata;
+}
+
+void rockon_data_del(rockon_data *rdata) {
+	assert(rdata);
+
+	if (rdata->config != NULL) {
+		config_save(rdata->config);
+		config_del(rdata->config);
+	}
+
+	free(rdata);
+}

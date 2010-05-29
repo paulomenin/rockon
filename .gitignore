@@ -1,6 +1,6 @@
 # Waf files
 .lock-wscript
-.waf-1.5.8-*
+.waf*
 build
 
 *.pyc

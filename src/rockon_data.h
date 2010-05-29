@@ -14,21 +14,20 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BROADCASTS_H
-#define BROADCASTS_H
+#ifndef ROCKON_DATA_H
+#define ROCKON_DATA_H
 
+#include <Ecore.h>
+#include <Eina.h>
 #include <xmmsclient/xmmsclient.h>
+#include "rockon_config.h"
 
-int  broadcast_playback_status_cb  (xmmsv_t *value, void *data);
-int  broadcast_playback_id_cb      (xmmsv_t *value, void *data);
-int  signal_playback_playtime_cb   (xmmsv_t *value, void *data);
+typedef struct {
+	rockon_config      *config;
 
-int  broadcast_playlist_pos_cb     (xmmsv_t *value, void *data);
-int  broadcast_playlist_loaded_cb  (xmmsv_t *value, void *data);
-int  broadcast_playlist_changed_cb (xmmsv_t *value, void *data);
+} rockon_data;
 
-int  mlib_reader_status_cb         (xmmsv_t *value, void *data);
-int  mlib_reader_unindexed_cb      (xmmsv_t *value, void *data);
+rockon_data* rockon_data_new();
+void rockon_data_del(rockon_data *rdata);
 
-
-#endif /* BROADCASTS_H */
+#endif /* ROCKON_DATA_H */

@@ -14,88 +14,40 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <Elementary.h>
-#include <xmmsclient/xmmsclient-ecore.h>
-#include "server_data.h"
-#include "xmms_conn.h"
-#include "commands.h"
-#include "gui_callbacks.h"
+#include <Ecore.h>
+#include <Eina.h>
+#include "rockon_data.h"
 
 /* eina_log domains */
 int config_log_dom = -1;
-int conn_log_dom = -1;
-int cmd_log_dom = -1;
-int playlist_log_dom = -1;
-int collection_log_dom = -1;
-int gui_upd_log_dom = -1;
-int gui_window_log_dom = -1;
-int gui_widgets_log_dom = -1;
 
 Eina_Bool log_init(void);
 void log_shutdown(void);
 
-EAPI int elm_main (int argc, char** argv) {
-	server_data *sdata;
+int main (int argc, char** argv) {
+	rockon_data *rdata;
+
+	ecore_init();
 
 	if (log_init() == EINA_FALSE) {
 		EINA_LOG_ERR("Log domains init failed");
 	}
 
-	sdata = server_data_new();
-
-	xmms2_connect(sdata);
-
-	if (sdata->connection == NULL) {
-		cmd_server_launch(sdata);
-	}
-
-	elm_cb_set (sdata, NULL, "Rockon", "elm_set,window");
+	rdata = rockon_data_new();
 
 	EINA_LOG_DBG("MainLoop Start");
-	elm_run();
+	ecore_main_loop_begin();
 	EINA_LOG_DBG("MainLoop End");
 
-	if (sdata->ecore_fdh != NULL) {
-		xmmsc_mainloop_ecore_shutdown(sdata->connection, sdata->ecore_fdh);
-		sdata->ecore_fdh = NULL;
-	}
-
-	if (sdata->config->terminate_server == 1) {
-		cmd_server_shutdown(sdata);
-	}
-
-	server_data_del(sdata);
 	log_shutdown();
-	elm_shutdown();
+	ecore_shutdown();
 
 	return 0;
 }
-ELM_MAIN()
 
 Eina_Bool log_init(void) {
 	if (config_log_dom < 0) {
 		config_log_dom = eina_log_domain_register("rck_config", NULL);
-	} else return EINA_FALSE;
-	if (conn_log_dom < 0) {
-		conn_log_dom = eina_log_domain_register("rck_conn", NULL);
-	} else return EINA_FALSE;
-	if (cmd_log_dom < 0) {
-		cmd_log_dom = eina_log_domain_register("rck_cmd", NULL);
-	} else return EINA_FALSE;
-	if (gui_upd_log_dom < 0) {
-		gui_upd_log_dom = eina_log_domain_register("rck_GUIupd", NULL);
-	} else return EINA_FALSE;
-	if (playlist_log_dom < 0) {
-		playlist_log_dom = eina_log_domain_register("rck_pls", NULL);
-	} else return EINA_FALSE;
-	if (collection_log_dom < 0) {
-		collection_log_dom = eina_log_domain_register("rck_coll", NULL);
-	} else return EINA_FALSE;
-	if (gui_window_log_dom < 0) {
-		gui_window_log_dom = eina_log_domain_register("rck_window", NULL);
-	} else return EINA_FALSE;
-	if (gui_widgets_log_dom < 0) {
-		gui_widgets_log_dom = eina_log_domain_register("rck_widgets", NULL);
 	} else return EINA_FALSE;
 
 	return EINA_TRUE;
@@ -106,33 +58,4 @@ void log_shutdown(void) {
 		eina_log_domain_unregister(config_log_dom);
 		config_log_dom = -1;
 	}
-	if (conn_log_dom >= 0) {
-		eina_log_domain_unregister(conn_log_dom);
-		conn_log_dom = -1;
-	}
-	if (cmd_log_dom >= 0) {
-		eina_log_domain_unregister(cmd_log_dom);
-		cmd_log_dom = -1;
-	}
-	if (gui_upd_log_dom >= 0) {
-		eina_log_domain_unregister(gui_upd_log_dom);
-		gui_upd_log_dom = -1;
-	}
-	if (playlist_log_dom >= 0) {
-		eina_log_domain_unregister(playlist_log_dom);
-		playlist_log_dom = -1;
-	}
-	if (collection_log_dom >= 0) {
-		eina_log_domain_unregister(collection_log_dom);
-		collection_log_dom = -1;
-	}
-	if (gui_window_log_dom >= 0) {
-		eina_log_domain_unregister(gui_window_log_dom);
-		gui_window_log_dom = -1;
-	}
-	if (gui_widgets_log_dom >= 0) {
-		eina_log_domain_unregister(gui_widgets_log_dom);
-		gui_widgets_log_dom = -1;
-	}
-
 }
