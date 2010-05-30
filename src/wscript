@@ -6,6 +6,14 @@ sources = """
 	lcfg_static.c
 	rockon_data.c
 	rockon_config.c
+	xmms_conn.c
+	commands.c
+	broadcasts.c
+	media_info.c
+	playlist.c
+	ui_update.c
+
+	util.c
 """
 
 libs = """
@@ -13,6 +21,7 @@ libs = """
 	ecore-file
 	eina-0
 	xmms2-client
+	xmms2-client-ecore
 """
 
 def configure(conf):

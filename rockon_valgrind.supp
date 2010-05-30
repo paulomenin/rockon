@@ -1,0 +1,40 @@
+{
+   xmmsc_init/xmms_connection
+   Memcheck:Leak
+   fun:calloc
+   fun:xmmsc_init
+   fun:xmms2_connect
+   fun:main
+}
+{
+   on_fd_data/xmmsclient-ecore
+   Memcheck:Leak
+   fun:calloc
+   fun:xmmsv_new
+   fun:xmmsv_new_int
+   fun:xmms_ipc_msg_get_value_of_type_alloc
+   fun:xmms_ipc_msg_get_value_alloc
+   fun:xmms_ipc_msg_get_value
+   fun:xmmsc_result_parse_msg
+   fun:xmmsc_result_run
+   fun:xmmsc_ipc_exec_msg
+   fun:xmmsc_ipc_io_in_callback
+   fun:xmmsc_io_in_handle
+   fun:on_fd_data
+}
+{
+   first_call/get_media_info_cb
+   Memcheck:Addr1
+   fun:vfprintf
+   fun:vsnprintf
+   fun:snprintf
+   fun:decode_url
+   fun:media_info_get
+   fun:get_media_info_cb
+   fun:xmmsc_result_run
+   fun:xmmsc_ipc_exec_msg
+   fun:xmmsc_ipc_io_in_callback
+   fun:xmmsc_io_in_handle
+   fun:on_fd_data
+   fun:_ecore_main_loop_iterate_internal
+}

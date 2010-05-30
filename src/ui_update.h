@@ -14,33 +14,19 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ROCKON_DATA_H
-#define ROCKON_DATA_H
+#ifndef UI_UPDATE_H
+#define UI_UPDATE_H
 
-#include <Ecore.h>
-#include <Eina.h>
-#include <xmmsclient/xmmsclient.h>
-#include "rockon_config.h"
-#include "media_info.h"
+#include "rockon_data.h"
 #include "playlist.h"
 
-typedef struct {
-	void               *ecore_fdh;
-	xmmsc_connection_t *connection;
-	Ecore_Timer        *reconn_timer;
-	rockon_config      *config;
+void ui_upd_playback_id       (rockon_data *rdata);
+void ui_upd_playback_status   (rockon_data *rdata);
+void ui_upd_playback_playtime (rockon_data *rdata);
+void ui_upd_playback_info     (rockon_data *rdata);
+void ui_upd_playlist          (rockon_data *rdata, playlist* pls);
+void ui_upd_playlist_pos      (rockon_data *rdata);
+void ui_upd_playlist_list     (rockon_data *rdata);
+void ui_upd_mlib_reader_status(rockon_data *rdata, int files);
 
-	int playback_status;
-	int playback_id;
-	int playback_playtime;
-	media_info *playback_info;
-	
-	playlist_list *playlists;
-	playlist *current_playlist;
-
-} rockon_data;
-
-rockon_data* rockon_data_new();
-void rockon_data_del(rockon_data *rdata);
-
-#endif /* ROCKON_DATA_H */
+#endif /* UI_UPDATE_H */

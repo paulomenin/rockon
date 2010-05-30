@@ -14,33 +14,20 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ROCKON_DATA_H
-#define ROCKON_DATA_H
+#ifndef XMMS_CONN_H
+#define XMMS_CONN_H
 
-#include <Ecore.h>
-#include <Eina.h>
 #include <xmmsclient/xmmsclient.h>
+#include "rockon_data.h"
 #include "rockon_config.h"
-#include "media_info.h"
-#include "playlist.h"
 
-typedef struct {
-	void               *ecore_fdh;
-	xmmsc_connection_t *connection;
-	Ecore_Timer        *reconn_timer;
-	rockon_config      *config;
+int  xmms2_connect (rockon_data *rdata);
+int  xmms2_reconnect_cb (rockon_data *rdata);
+void xmms2_disconnect_cb (rockon_data *rdata);
+void xmms2_shutdown (rockon_data *rdata);
 
-	int playback_status;
-	int playback_id;
-	int playback_playtime;
-	media_info *playback_info;
-	
-	playlist_list *playlists;
-	playlist *current_playlist;
+void xmms2_get_status (rockon_data *rdata);
 
-} rockon_data;
+int  check_error (xmmsv_t *value, void *data);
 
-rockon_data* rockon_data_new();
-void rockon_data_del(rockon_data *rdata);
-
-#endif /* ROCKON_DATA_H */
+#endif /* XMMS_CONN_H */
