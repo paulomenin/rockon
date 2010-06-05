@@ -14,18 +14,28 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// TODO use media_info reference on playlist_item instead of copy values
+
 #include <assert.h>
 #include <string.h>
 #include "playlist.h"
 #include "xmms_conn.h"
 #include "media_info.h"
 #include "ui_update.h"
+#include "rockon_data.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(playlist_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(playlist_log_dom, __VA_ARGS__)
 #define INFO(...) EINA_LOG_DOM_INFO(playlist_log_dom, __VA_ARGS__)
 
+struct pls_changed_params {
+	playlist  *list;
+	int position;
+};
+
 extern int playlist_log_dom;
+
+int playlist_change_item_add_inner (xmmsv_t *value, void *data);
 
 /* playlist_list */
 
@@ -145,6 +155,15 @@ void playlist_del (playlist *list) {
 	free(list);
 }
 
+int  playlist_is_fetched(playlist *list) {
+	assert(list);
+
+	if (list->num_items < 0)
+		return 0;
+	else
+		return 1;
+}
+
 void playlist_wait(playlist *pls) {
 	if (pls == NULL) return;
 
@@ -197,7 +216,31 @@ void playlist_item_del (playlist_item *item) {
 
 /* playlist get */
 
+playlist* playlist_find(playlist_list *pls_list, const char *pls_name) {
+	void* list;
+	Eina_List *l;
+
+	assert(pls_name);
+
+	if (pls_name[0] == '_') {
+		EINA_LIST_FOREACH( pls_list->playlists_, l, list) {
+			if (strcmp( ((playlist*)list)->name, pls_name) == 0 ) {
+				return list;
+			}
+		}
+	} else {
+		EINA_LIST_FOREACH( pls_list->playlists, l, list) {
+			if (strcmp( ((playlist*)list)->name, pls_name) == 0 ) {
+				return list;
+			}
+		}
+	}
+
+	return NULL;
+}
+
 playlist* playlist_get_by_name(xmmsc_connection_t *conn, const char *pls_name, void *data) {
+	// TODO use playlist_find
 	playlist *pls = NULL;
 	void* list;
 	Eina_List *l;
@@ -247,7 +290,7 @@ playlist *playlist_get (xmmsc_connection_t *conn, playlist *pls, void *data) {
 
 	pls->locked = 1;
 
-	if (pls->num_items != -1) { // playlist is already fetched
+	if ( playlist_is_fetched(pls) ) {
 		playlist_clear_items(pls);
 	}
 
@@ -347,4 +390,135 @@ void playlist_fetched(struct pls_fetch_params* data) {
 	((playlist*)(data->list))->locked = 0;
 	ui_upd_playlist((rockon_data*)(data->data), (playlist*)(data->list));
 	free(data);
+}
+
+void playlist_change_item_del (playlist_list *pls_list, const char* name, int position) {
+	Eina_List *item;
+	playlist *pls;
+
+	pls = playlist_find(pls_list, name);
+
+	if (pls && playlist_is_fetched(pls)) {
+		Eina_List *l;
+		void *data;
+		item = eina_list_nth_list(pls->items, position);
+
+		EINA_LIST_FOREACH(item , l, data) {
+			((playlist_item*)data)->pos--;
+		}
+
+		playlist_item_del((playlist_item*)eina_list_data_get(item));
+		pls->items = eina_list_remove_list(pls->items, item);
+		pls->num_items--;
+	}
+}
+
+void playlist_change_item_add (void *rck_data, const char* name, int position, int id) {
+	xmmsc_result_t *result;
+	struct pls_changed_params *params;
+	playlist *pls;
+	rockon_data *rdata = (rockon_data*)rck_data;
+	pls = playlist_find(rdata->playlists, name);
+
+	if (pls && playlist_is_fetched(pls)) {
+		params = (struct pls_changed_params*) malloc(sizeof(struct pls_changed_params));
+		if (params == NULL) {
+			EINA_LOG_CRIT("pls_changed_params malloc failed");
+			return;
+		}
+		pls->locked = 1;
+		params->list = pls;
+		params->position = position;
+
+		result = xmmsc_medialib_get_info(rdata->connection, id);
+		xmmsc_result_notifier_set (result, playlist_change_item_add_inner, params);
+		xmmsc_result_unref (result);
+
+		playlist_wait(pls);
+	}
+}
+
+int playlist_change_item_add_inner (xmmsv_t *value, void *data) {
+	playlist_item *pi;
+	media_info *info;
+	Eina_List *insert_pos, *l;
+	void *item;
+	struct pls_changed_params *params = (struct pls_changed_params*)data;
+
+	if (! check_error(value, NULL)) {
+
+		info = media_info_new();
+		media_info_get(value, info);
+
+		pi = playlist_item_new();
+
+		pi->title = strdup(info->title);
+		pi->artist = strdup(info->artist);
+		pi->album = strdup(info->album);
+		pi->id  = info->id;
+		pi->tracknr  = info->tracknr;
+		pi->pos = params->position;
+
+		media_info_del(info);
+
+		insert_pos = eina_list_nth_list(params->list->items, params->position);
+		if (insert_pos) {
+			EINA_LIST_FOREACH(insert_pos , l, item) {
+				((playlist_item*)item)->pos++;
+			}
+			params->list->items = eina_list_prepend_relative_list(params->list->items, pi, insert_pos);
+		} else {
+			params->list->items = eina_list_append(params->list->items, pi);
+		}
+		params->list->num_items++;
+		params->list->locked = 0;
+		free(params);
+		return 1;
+	}
+	free(params);
+	return 0;
+}
+
+void playlist_change_item_moved (playlist_list *pls_list, const char* name, int position, int newposition) {
+	Eina_List *item_on_newpos, *item_on_oldpos, *l;
+	void *list;
+	playlist *pls;
+
+	if (position == newposition)
+		return;
+
+	pls = playlist_find(pls_list, name);
+
+	if (pls && playlist_is_fetched(pls)) {
+		int pos;
+		if (newposition < position) {
+			pos = 0;
+			EINA_LIST_FOREACH(pls->items, l, list) {
+				if (pos == position) break;
+				if (pos >= newposition)
+					((playlist_item*)list)->pos++;
+				pos++;
+			}
+		} else {
+			pos = 0;
+			EINA_LIST_FOREACH(pls->items, l, list) {
+				if (pos > position)
+					((playlist_item*)list)->pos--;
+				if (pos == newposition) break;
+				pos++;
+			}
+		}
+
+		item_on_newpos = eina_list_nth_list(pls->items, newposition);
+		item_on_oldpos = eina_list_nth_list(pls->items, position);
+		((playlist_item*)eina_list_data_get(item_on_oldpos))->pos = newposition;
+		if (newposition < position) {
+			pls->items = eina_list_prepend_relative_list(pls->items,
+						 eina_list_data_get(item_on_oldpos), item_on_newpos);
+		} else {
+			pls->items = eina_list_append_relative_list(pls->items,
+						 eina_list_data_get(item_on_oldpos), item_on_newpos);
+		}
+		pls->items = eina_list_remove_list(pls->items, item_on_oldpos);
+	}
 }

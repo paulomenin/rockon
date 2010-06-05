@@ -71,5 +71,11 @@ int  playlist_fetch    (xmmsv_t *value, void *data);
 int  playlist_item_add (xmmsv_t *value, void *data);
 int  playlist_is_ready (playlist *list);
 void playlist_fetched  (struct pls_fetch_params* data);
+int  playlist_is_fetched(playlist *list);
+playlist* playlist_find(playlist_list *pls_list, const char *pls_name);
+
+void playlist_change_item_del (playlist_list *pls_list, const char* name, int position);
+void playlist_change_item_add (void *rck_data, const char* name, int position, int id);
+void playlist_change_item_moved (playlist_list *pls_list, const char* name, int position, int newposition);
 
 #endif /* PLAYLIST_H */

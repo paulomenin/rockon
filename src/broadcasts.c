@@ -144,13 +144,43 @@ int broadcast_playlist_loaded_cb (xmmsv_t *value, void *data) {
 
 int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
 	rockon_data *rdata = (rockon_data*)data;
+	playlist *pls;
+	int type, pos, newpos, id;
+	const char *name;
 
 	EINA_LOG_DBG("PLS CHANGED CALLBACK");
 
 	if (! check_error(value, NULL)) {
-		dump_xmms_value(value);
-		// TODO handle playlist changes
-
+		xmmsv_t *vtype, *vname, *vpos, *vnewpos, *vid;
+		//dump_xmms_value(value);
+		if (xmmsv_dict_get(value, "type", &vtype)) {
+			xmmsv_get_int(vtype, &type);
+			xmmsv_dict_get(value, "name", &vname);
+			xmmsv_get_string(vname, &name);
+			xmmsv_dict_get(value, "position", &vpos);
+			xmmsv_get_int(vpos, &pos);
+			switch (type) {
+				case 0:
+					xmmsv_dict_get(value, "id", &vid);
+					xmmsv_get_int(vid, &id);
+					playlist_change_item_add(rdata, name, pos, id);
+					break;
+				case 3:
+					playlist_change_item_del(rdata->playlists, name, pos);
+					break;
+				case 5:
+					xmmsv_dict_get(value, "newposition", &vnewpos);
+					xmmsv_get_int(vnewpos, &newpos);
+					playlist_change_item_moved(rdata->playlists, name, pos, newpos);
+					break;
+				default:
+				EINA_LOG_DBG("unknown type: %d", type);
+				// reload entire playlist
+				//pls = playlist_get_by_name(rdata->connection, name, rdata);
+			}
+		}
+		pls = playlist_find(rdata->playlists, name);
+		ui_upd_playlist(rdata, pls);
 		return 1;
 	}
 	return 0;
