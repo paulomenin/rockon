@@ -174,9 +174,9 @@ int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
 					playlist_change_item_moved(rdata->playlists, name, pos, newpos);
 					break;
 				default:
-				EINA_LOG_DBG("unknown type: %d", type);
-				// reload entire playlist
-				//pls = playlist_get_by_name(rdata->connection, name, rdata);
+					EINA_LOG_WARN("unknown type: %d", type);
+					// reload entire playlist
+					playlist_get_by_name(rdata->connection, name, rdata);
 			}
 		}
 		pls = playlist_find(rdata->playlists, name);

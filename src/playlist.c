@@ -240,31 +240,16 @@ playlist* playlist_find(playlist_list *pls_list, const char *pls_name) {
 }
 
 playlist* playlist_get_by_name(xmmsc_connection_t *conn, const char *pls_name, void *data) {
-	// TODO use playlist_find
 	playlist *pls = NULL;
-	void* list;
-	Eina_List *l;
 
 	assert(conn);
 	assert(pls_name);
 
 	DBG("PLS GET BY NAME: %s", pls_name);
 
-	if (pls_name[0] == '_') {
-		EINA_LIST_FOREACH( ((rockon_data*)data)->playlists->playlists_, l, list) {
-			if (strcmp( ((playlist*)list)->name, pls_name) == 0 ) {
-				pls = playlist_get(conn, list, data);
-				return pls;
-			}
-		}
-	} else {
-		EINA_LIST_FOREACH( ((rockon_data*)data)->playlists->playlists, l, list) {
-			if (strcmp( ((playlist*)list)->name, pls_name) == 0 ) {
-				pls = playlist_get(conn, list, data);
-				return pls;
-			}
-		}
-	}
+	pls = playlist_find(((rockon_data*)data)->playlists, pls_name);
+	if (pls)
+		playlist_get(conn, pls, data);
 
 	return pls;
 }
