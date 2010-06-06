@@ -17,6 +17,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <Ecore_File.h>
+#include <Eina.h>
 #include <xmmsclient/xmmsclient.h>
 #include "xmms_conn.h"
 #include "commands.h"
@@ -155,6 +156,25 @@ void cmd_mlib_add_media(rockon_data* rdata, const char *path) {
 		result = xmmsc_medialib_add_entry (rdata->connection, new_path);
 		xmmsc_result_notifier_set (result, check_error, NULL);
 		xmmsc_result_unref (result);
+	}
+}
+
+void cmd_volume_change(rockon_data* rdata, const char *channel, int volume) {
+	xmmsc_result_t *result;
+	assert(rdata);
+
+	XMMS_CONN_IS_VALID();
+	result = xmmsc_playback_volume_set(rdata->connection, channel, volume);
+	xmmsc_result_notifier_set (result, check_error, NULL);
+	xmmsc_result_unref (result);
+}
+
+void cmd_volume_change_all(rockon_data* rdata, int volume) {
+	Eina_List *l;
+	volume_channel *ch;
+
+	EINA_LIST_FOREACH(rdata->volume, l, ch) {
+		cmd_volume_change(rdata, ch->name, volume);
 	}
 }
 

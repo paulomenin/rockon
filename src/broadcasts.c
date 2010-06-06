@@ -16,6 +16,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <Eina.h>
 #include "broadcasts.h"
 #include "rockon_data.h"
 #include "xmms_conn.h"
@@ -23,7 +24,8 @@
 
 #include "util.h" // TODO remove after debug
 
-int get_media_info_cb (xmmsv_t *value, void *data);
+int  get_media_info_cb   (xmmsv_t *value, void *data);
+void playback_volume_add (const char *key, xmmsv_t *value, void *user_data);
 
 int broadcast_playback_status_cb (xmmsv_t *value, void *data) {
 	rockon_data *rdata = (rockon_data*)data;
@@ -56,6 +58,29 @@ int broadcast_playback_id_cb (xmmsv_t *value, void *data) {
 	}
 
 	return 0;
+}
+void playback_volume_add(const char *key, xmmsv_t *value, void *user_data) {
+	rockon_data *rdata = (rockon_data*)user_data;
+	volume_channel *ch;
+
+	ch = volume_channel_new();
+	if (ch) {
+		ch->name = strdup(key);
+		xmmsv_get_int(value, &(ch->value));
+
+		rdata->volume = eina_list_append(rdata->volume, ch);
+	}
+}
+
+int broadcast_playback_volume_cb (xmmsv_t *value, void *data) {
+	rockon_data *rdata = (rockon_data*)data;
+
+	volume_del(rdata->volume);
+	rdata->volume = NULL;
+	xmmsv_dict_foreach (value, playback_volume_add, data);
+
+	ui_upd_playback_volume(rdata);
+	return 1;
 }
 
 int signal_playback_playtime_cb (xmmsv_t *value, void *data) {
@@ -152,7 +177,6 @@ int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
 
 	if (! check_error(value, NULL)) {
 		xmmsv_t *vtype, *vname, *vpos, *vnewpos, *vid;
-		//dump_xmms_value(value);
 		if (xmmsv_dict_get(value, "type", &vtype)) {
 			xmmsv_get_int(vtype, &type);
 			xmmsv_dict_get(value, "name", &vname);

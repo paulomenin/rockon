@@ -57,6 +57,15 @@ void ui_upd_playback_info (rockon_data *rdata) {
 
 }
 
+void ui_upd_playback_volume (rockon_data *rdata) {
+	Eina_List *l;
+	volume_channel* ch;
+	INFO("Volume Changed");
+	EINA_LIST_FOREACH(rdata->volume, l, ch) {
+		INFO("%s %d", ch->name, ch->value);
+	}
+}
+
 void ui_upd_playlist (rockon_data *rdata, playlist *pls) {
 	Eina_List *l;
 	void *data;

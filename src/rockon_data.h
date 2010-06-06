@@ -25,6 +25,11 @@
 #include "playlist.h"
 
 typedef struct {
+	char *name;
+	int  value;
+} volume_channel;
+
+typedef struct {
 	void               *ecore_fdh;
 	xmmsc_connection_t *connection;
 	Ecore_Timer        *reconn_timer;
@@ -33,6 +38,7 @@ typedef struct {
 	int playback_status;
 	int playback_id;
 	int playback_playtime;
+	Eina_List *volume;
 	media_info *playback_info;
 	
 	playlist_list *playlists;
@@ -42,5 +48,9 @@ typedef struct {
 
 rockon_data* rockon_data_new();
 void rockon_data_del(rockon_data *rdata);
+
+volume_channel* volume_channel_new();
+void volume_channel_del(volume_channel* channel);
+void volume_del(Eina_List *volume);
 
 #endif /* ROCKON_DATA_H */

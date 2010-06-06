@@ -36,6 +36,7 @@ rockon_data* rockon_data_new() {
 	rdata->playback_id = 0;
 	rdata->playback_playtime = 0;
 	rdata->playback_info = NULL;
+	rdata->volume = NULL;
 
 	rdata->playlists = NULL;
 	rdata->current_playlist = NULL;
@@ -56,8 +57,41 @@ void rockon_data_del(rockon_data *rdata) {
 	if (rdata->playlists != NULL) {
 		playlist_list_del(rdata->playlists);
 	}
+	if (rdata->volume != NULL) {
+		volume_del(rdata->volume);
+	}
 	
 	xmms2_shutdown(rdata);
 
 	free(rdata);
+}
+
+volume_channel* volume_channel_new() {
+	volume_channel *vol = NULL;
+
+	vol = (volume_channel*) malloc(sizeof(volume_channel));
+	if (vol) {
+		vol->name = NULL;
+		vol->value = 0;
+	}
+	return vol;
+}
+
+void volume_channel_del(volume_channel* channel) {
+	if (channel == NULL) return;
+
+	if (channel->name) {
+		free(channel->name);
+	}
+	free(channel);
+}
+
+void volume_del(Eina_List *volume) {
+	volume_channel *channel;
+
+	if (volume == NULL) return;
+
+	EINA_LIST_FREE(volume, channel) {
+		volume_channel_del(channel);
+	}
 }

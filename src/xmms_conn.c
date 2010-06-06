@@ -83,6 +83,9 @@ int  xmms2_connect (rockon_data *rdata) {
 	XMMS_CALLBACK_SET (rdata->connection,
 					xmmsc_signal_mediainfo_reader_unindexed,
 					mlib_reader_unindexed_cb, rdata);
+	XMMS_CALLBACK_SET (rdata->connection,
+					xmmsc_broadcast_playback_volume_changed,
+					broadcast_playback_volume_cb, rdata);
 
 	rdata->ecore_fdh = xmmsc_mainloop_ecore_init (rdata->connection);
 	DBG("Ecore_fdh: %p", rdata->ecore_fdh);
@@ -159,6 +162,9 @@ void xmms2_get_status (rockon_data *rdata) {
 	XMMS_CALLBACK_SET (rdata->connection,
 					xmmsc_playback_playtime,
 					signal_playback_playtime_cb, rdata);
+	XMMS_CALLBACK_SET (rdata->connection,
+					xmmsc_playback_volume_get,
+					broadcast_playback_volume_cb, rdata);
 
 	if (rdata->playlists != NULL) {
 		playlist_list_del(rdata->playlists);
