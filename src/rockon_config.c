@@ -38,6 +38,9 @@ rockon_config* config_new() {
 	if (config_load (config) == 0)
 		INFO("Couldn't load config. Loaded default values.");
 
+	// TODO get this path from config
+	config->edj_data_path = strdup("./build/default/src/gui_data/gui.edj");
+
 	return config;
 }
 
@@ -47,6 +50,7 @@ void config_del(rockon_config *config) {
 	free(config->config_filename);
 	free(config->ipc_path);
 	if (config->lcfg_obj) lcfg_delete(config->lcfg_obj);
+	if (config->edj_data_path) free(config->edj_data_path);
 	free(config);
 }
 

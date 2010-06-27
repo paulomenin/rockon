@@ -28,6 +28,7 @@ typedef struct {
 	int auto_reconnect;
 	int reconnect_interval;
 	char *ipc_path;
+	char *edj_data_path;
 } rockon_config;
 
 rockon_config* config_new();

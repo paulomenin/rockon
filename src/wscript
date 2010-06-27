@@ -33,6 +33,7 @@ def configure(conf):
 	conf.env.append_value('CCFLAGS', '-DDEBUG')
 
 	conf.check_tool('gcc')
+	conf.check_tool('edje', tooldir='waf_tools')
 
 	for lib in libs.split():
 		conf.check_cfg(package=lib, args='--cflags --libs')
@@ -46,4 +47,10 @@ def build(bld):
 		install_path = None,
 		uselib       = libs.upper().split()
 	)
-
+	bld.new_task_gen(
+		features     = 'edje',
+		source       = 'gui_data/gui.edc',
+		target       = 'gui.edj',
+		cwd          = bld.path.abspath() + '/gui_data',
+		install_path = None
+	)

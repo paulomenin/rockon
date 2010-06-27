@@ -57,7 +57,7 @@ void ui_upd_playback_info (rockon_data *rdata) {
 										(rdata->playback_info->duration / 1000)%60);
 	INFO("-----------------------------");
 
-	snprintf(str_buffer, 100, "%s - %s", rdata->playback_info->artist, rdata->playback_info->title);
+	snprintf(str_buffer, 100, "<b>%s</b> - %s", rdata->playback_info->artist, rdata->playback_info->title);
 	elm_label_label_set(rdata->widgets.label_title, str_buffer);
 }
 

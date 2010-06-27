@@ -27,8 +27,10 @@
 
 typedef struct {
 	Evas_Object *win;
+	Evas_Object *table;
 	Evas_Object *background;
 	Evas_Object *label_title;
+	Evas_Object *logo;
 } elm_widgets;
 
 typedef struct {
