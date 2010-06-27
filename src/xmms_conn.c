@@ -170,10 +170,9 @@ void xmms2_get_status (rockon_data *rdata) {
 		playlist_list_del(rdata->playlists);
 	}
 	rdata->playlists = playlist_list_get(rdata->connection, rdata);
-
 	playlist_list_wait(rdata->playlists);
-	rdata->current_playlist = playlist_get_by_name(rdata->connection, "_active", rdata);
 
+	rdata->current_playlist = playlist_get_by_name(rdata->connection, "_active", rdata);
 	playlist_wait(rdata->current_playlist);
 	res = xmmsc_playlist_current_pos(rdata->connection, rdata->current_playlist->name);
 	xmmsc_result_notifier_set_full(res, broadcast_playlist_pos_cb, rdata, NULL);

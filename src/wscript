@@ -12,6 +12,7 @@ sources = """
 	media_info.c
 	playlist.c
 	ui_update.c
+	gui.c
 
 	util.c
 """
@@ -20,6 +21,7 @@ libs = """
 	ecore
 	ecore-file
 	eina-0
+	elementary
 	xmms2-client
 	xmms2-client-ecore
 """

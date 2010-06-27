@@ -184,7 +184,9 @@ int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
 			xmmsv_dict_get(value, "position", &vpos);
 			xmmsv_get_int(vpos, &pos);
 			switch (type) {
+				/*
 				case 0:
+				case 1:
 					xmmsv_dict_get(value, "id", &vid);
 					xmmsv_get_int(vid, &id);
 					playlist_change_item_add(rdata, name, pos, id);
@@ -192,19 +194,22 @@ int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
 				case 3:
 					playlist_change_item_del(rdata->playlists, name, pos);
 					break;
+				case 4: // clear playlist
+					break;
 				case 5:
 					xmmsv_dict_get(value, "newposition", &vnewpos);
 					xmmsv_get_int(vnewpos, &newpos);
 					playlist_change_item_moved(rdata->playlists, name, pos, newpos);
 					break;
+				*/
 				default:
 					EINA_LOG_WARN("unknown type: %d", type);
-					// reload entire playlist
+					dump_xmms_value(value);
 					playlist_get_by_name(rdata->connection, name, rdata);
 			}
+			pls = playlist_find(rdata->playlists, name);
+			ui_upd_playlist(rdata, pls);
 		}
-		pls = playlist_find(rdata->playlists, name);
-		ui_upd_playlist(rdata, pls);
 		return 1;
 	}
 	return 0;

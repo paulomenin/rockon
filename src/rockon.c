@@ -16,9 +16,11 @@
 
 #include <Ecore.h>
 #include <Eina.h>
+#include <Elementary.h>
 #include "rockon_data.h"
 #include "xmms_conn.h"
 #include "commands.h"
+#include "gui.h"
 
 /* eina_log domains */
 int config_log_dom = -1;
@@ -33,16 +35,15 @@ void log_shutdown(void);
 // TODO remove after test
 Ecore_Timer *launch_cmd = NULL;
 int cmd_launch (rockon_data *rdata) {
-	EINA_LOG_DBG("Command Launched!");
+	EINA_LOG_DBG("Command launched!");
 	//cmd_volume_change(rdata, "left",10);
-	return ECORE_CALLBACK_CANCEL;
+	//ui_upd_playlist(rdata, rdata->current_playlist);
+	return ECORE_CALLBACK_RENEW;
 }
 
 
-int main (int argc, char** argv) {
+EAPI int elm_main (int argc, char** argv) {
 	rockon_data *rdata;
-
-	ecore_init();
 
 	if (log_init() == EINA_FALSE) {
 		EINA_LOG_ERR("Log domains init failed");
@@ -50,24 +51,27 @@ int main (int argc, char** argv) {
 
 	rdata = rockon_data_new();
 
+	gui_window_set(rdata);
+
 	xmms2_connect(rdata);
 	if (rdata->connection == NULL) {
 		cmd_server_launch(rdata);
 	}
 
 	// * TODO remove after test
-	launch_cmd = ecore_timer_add (3, (int(*)(void*))cmd_launch, rdata);
+	launch_cmd = ecore_timer_add (5, (int(*)(void*))cmd_launch, rdata);
 
 	EINA_LOG_DBG("MainLoop Start");
-	ecore_main_loop_begin();
+	elm_run();
 	EINA_LOG_DBG("MainLoop End");
 
 	rockon_data_del(rdata);
 	log_shutdown();
-	ecore_shutdown();
+	elm_shutdown();
 
 	return 0;
 }
+ELM_MAIN()
 
 Eina_Bool log_init(void) {
 	if (config_log_dom < 0) {

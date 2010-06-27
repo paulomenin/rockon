@@ -14,6 +14,7 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Elementary.h>
 #include "ui_update.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(ui_upd_log_dom, __VA_ARGS__)
@@ -40,6 +41,7 @@ void ui_upd_playback_playtime (rockon_data *rdata) {
 }
 
 void ui_upd_playback_info (rockon_data *rdata) {
+	char str_buffer[100];
 
 	if (rdata->playback_info == NULL) return;
 
@@ -55,6 +57,8 @@ void ui_upd_playback_info (rockon_data *rdata) {
 										(rdata->playback_info->duration / 1000)%60);
 	INFO("-----------------------------");
 
+	snprintf(str_buffer, 100, "%s - %s", rdata->playback_info->artist, rdata->playback_info->title);
+	elm_label_label_set(rdata->widgets.label_title, str_buffer);
 }
 
 void ui_upd_playback_volume (rockon_data *rdata) {
@@ -71,7 +75,7 @@ void ui_upd_playlist (rockon_data *rdata, playlist *pls) {
 	void *data;
 
 	if (pls == NULL) return;
-	
+	playlist_wait(pls);
 	INFO("--------- PLAYLIST ---------");
 	INFO("Name: %s Items: %d Pos: %d",pls->name,
 									  pls->num_items,

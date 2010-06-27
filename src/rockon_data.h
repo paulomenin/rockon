@@ -19,10 +19,17 @@
 
 #include <Ecore.h>
 #include <Eina.h>
+#include <Elementary.h>
 #include <xmmsclient/xmmsclient.h>
 #include "rockon_config.h"
 #include "media_info.h"
 #include "playlist.h"
+
+typedef struct {
+	Evas_Object *win;
+	Evas_Object *background;
+	Evas_Object *label_title;
+} elm_widgets;
 
 typedef struct {
 	char *name;
@@ -44,6 +51,7 @@ typedef struct {
 	playlist_list *playlists;
 	playlist *current_playlist;
 
+	elm_widgets widgets;
 } rockon_data;
 
 rockon_data* rockon_data_new();
