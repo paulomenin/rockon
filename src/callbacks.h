@@ -14,12 +14,13 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "rockon_data.h"
+#include <Elementary.h>
 
-void gui_window_set(rockon_data *rdata);
-void app_exit(void *data, Evas_Object *obj, void *event_info);
-
-Evas_Object* gui_playback_buttons_set(Evas_Object* parent, rockon_data *rdata);
-
-const char* seekbar_format_indicator(double val);
-
+void elm_cb_prev(void *data, Evas_Object *obj, void *event_info);
+void elm_cb_play(void *data, Evas_Object *obj, void *event_info);
+void elm_cb_pause(void *data, Evas_Object *obj, void *event_info);
+void elm_cb_stop(void *data, Evas_Object *obj, void *event_info);
+void elm_cb_next(void *data, Evas_Object *obj, void *event_info);
+void seekbar_drag_start_cb(void *data, Evas_Object *obj, void *event_info);
+void seekbar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info);
+void toolbar_playlist_click_cb(void *data, Evas_Object *obj, void *event_info);

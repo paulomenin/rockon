@@ -37,7 +37,11 @@ void ui_upd_playback_status (rockon_data *rdata) {
 }
 
 void ui_upd_playback_playtime (rockon_data *rdata) {
-	//INFO("Playtime: %d:%02d", rdata->playback_playtime/60000, (rdata->playback_playtime/1000)%60);
+	char str_buffer[8];
+	snprintf(str_buffer, 8, "%d:%02d", rdata->playback_playtime/60000, (rdata->playback_playtime/1000)%60);
+	elm_label_label_set(rdata->widgets.label_playtime, str_buffer);
+	if (rdata->widgets.seekbar_update)
+		elm_slider_value_set(rdata->widgets.seekbar, rdata->playback_playtime / 1000);
 }
 
 void ui_upd_playback_info (rockon_data *rdata) {
@@ -59,6 +63,7 @@ void ui_upd_playback_info (rockon_data *rdata) {
 
 	snprintf(str_buffer, 100, "<b>%s</b> - %s", rdata->playback_info->artist, rdata->playback_info->title);
 	elm_label_label_set(rdata->widgets.label_title, str_buffer);
+	elm_slider_min_max_set(rdata->widgets.seekbar, 0, rdata->playback_info->duration / 1000);
 }
 
 void ui_upd_playback_volume (rockon_data *rdata) {

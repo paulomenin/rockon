@@ -13,6 +13,7 @@ sources = """
 	playlist.c
 	ui_update.c
 	gui.c
+	callbacks.c
 
 	util.c
 """
