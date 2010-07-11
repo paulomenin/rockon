@@ -24,7 +24,7 @@ void app_exit(void *data, Evas_Object *obj, void *event_info) {
 void gui_window_set(rockon_data *rdata) {
 	Evas_Object *win, *ly, *edje_obj, *bg;
 	Evas_Object *ic_logo, *ly_info, *ic_config;
-	Evas_Object *pb, *tb, *seekbar;
+	Evas_Object *pb, *tb, *seekbar, *volumebar;
 
 	win = elm_win_add(NULL, "rockon", ELM_WIN_BASIC);
 	elm_win_title_set(win, "Rockon");
@@ -72,6 +72,18 @@ void gui_window_set(rockon_data *rdata) {
 	evas_object_smart_callback_add(seekbar, "slider,drag,stop", seekbar_drag_stop_cb, rdata);
 	elm_layout_content_set(ly, "seekbar", seekbar);
 	evas_object_show(seekbar);
+	
+	volumebar = elm_slider_add(win);
+	elm_slider_min_max_set(volumebar, 0, 100);
+	elm_slider_label_set(volumebar, "Volume:");
+	elm_slider_indicator_format_function_set(volumebar, volumebar_format_indicator);
+	evas_object_size_hint_align_set(volumebar, EVAS_HINT_FILL, 0.5);
+	evas_object_size_hint_weight_set(volumebar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_smart_callback_add(volumebar, "slider,drag,start", volumebar_drag_start_cb, rdata);
+	evas_object_smart_callback_add(volumebar, "slider,drag,stop", volumebar_drag_stop_cb, rdata);
+	elm_layout_content_set(ly, "volumebar", volumebar);
+
+	evas_object_show(volumebar);
 
 	tb = elm_toolbar_add(win);
 	evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -89,6 +101,8 @@ void gui_window_set(rockon_data *rdata) {
 	rdata->widgets.layout = ly;
 	rdata->widgets.seekbar = seekbar;
 	rdata->widgets.seekbar_update = 1;
+	rdata->widgets.volumebar = volumebar;
+	rdata->widgets.volumebar_update = 1;
 	rdata->widgets.playback_info = ly_info;
 	rdata->widgets.playlist = ic_logo;
 	rdata->widgets.config = ic_config;
@@ -175,5 +189,11 @@ const char* seekbar_format_indicator(double val) {
 	
 	snprintf(indicator, 8, "%d:%02d", minutes, seconds);
 	
+	return strdup(indicator);
+}
+
+const char* volumebar_format_indicator(double val) {
+	char indicator[5];
+	snprintf(indicator, 5, "%d%%", (int)val);
 	return strdup(indicator);
 }

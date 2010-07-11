@@ -41,7 +41,14 @@ void seekbar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info) {
 	cmd_seek_ms((rockon_data*)data, seconds*1000);
 	((rockon_data*)data)->widgets.seekbar_update = 1;
 }
-
+void volumebar_drag_start_cb(void *data, Evas_Object *obj, void *event_info) {
+	((rockon_data*)data)->widgets.volumebar_update = 0;
+}
+void volumebar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info) {
+	int volume = (int)elm_slider_value_get(obj);
+	cmd_volume_change_all((rockon_data*)data, volume);
+	((rockon_data*)data)->widgets.volumebar_update = 1;
+}
 
 
 void content_show(rockon_data* rdata, Evas_Object* obj) {
@@ -65,8 +72,6 @@ void config_show_cb(void *data, Evas_Object *obj, void *event_info){
 	content_show( ((rockon_data*)data),
 				  ((rockon_data*)data)->widgets.config);
 }
-
-
 
 
 void edje_cb_play  (void *data, Evas_Object *eo, const char *emission, const char *source) {

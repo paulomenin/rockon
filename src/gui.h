@@ -22,4 +22,5 @@ void app_exit(void *data, Evas_Object *obj, void *event_info);
 Evas_Object* gui_playback_buttons_set(Evas_Object* parent, rockon_data *rdata);
 
 const char* seekbar_format_indicator(double val);
+const char* volumebar_format_indicator(double val);
 

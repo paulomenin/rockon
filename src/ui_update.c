@@ -90,10 +90,16 @@ void ui_upd_playback_info (rockon_data *rdata) {
 void ui_upd_playback_volume (rockon_data *rdata) {
 	Eina_List *l;
 	volume_channel* ch;
+	int volume = 0;
 	INFO("Volume Changed");
 	EINA_LIST_FOREACH(rdata->volume, l, ch) {
 		INFO("%s %d", ch->name, ch->value);
+		volume = ch->value;
 	}
+	/* show only last channel */
+	if (rdata->widgets.volumebar_update)
+		elm_slider_value_set(rdata->widgets.volumebar, volume);
+
 }
 
 void ui_upd_playlist (rockon_data *rdata, playlist *pls) {

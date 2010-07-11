@@ -24,6 +24,8 @@ void elm_cb_stop(void *data, Evas_Object *obj, void *event_info);
 void elm_cb_next(void *data, Evas_Object *obj, void *event_info);
 void seekbar_drag_start_cb(void *data, Evas_Object *obj, void *event_info);
 void seekbar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info);
+void volumebar_drag_start_cb(void *data, Evas_Object *obj, void *event_info);
+void volumebar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info);
 
 void content_show(rockon_data* rdata, Evas_Object* obj);
 void info_show_cb(void *data, Evas_Object *obj, void *event_info);

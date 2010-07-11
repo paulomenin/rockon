@@ -197,6 +197,16 @@ group { name: "layout";
 				rel2 { relative: 0.0 1.0; to: "playback_bg"; offset: 200 0; }
 			}
 		}
+		part {
+			name: "volumebar";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 1.0 0.0; to: "playbackbar"; offset: 5 0; }
+				rel2 { relative: 1.0 1.0; to: "playback_bg"; offset: -5 -3; }
+			}
+		}
+
 	}
 }
 

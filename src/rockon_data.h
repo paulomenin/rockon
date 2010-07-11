@@ -31,6 +31,8 @@ typedef struct {
 	Evas_Object *edje;
 	Evas_Object *seekbar;
 	int seekbar_update;
+	Evas_Object *volumebar;
+	int volumebar_update;
 
 	Evas_Object *current_content;
 	Evas_Object *playback_info;
