@@ -9,20 +9,207 @@ images {
 }
 
 fonts {
-	//font: "Vera.ttf" "vera";
+	font: "Vera.ttf" "Vera";
 }
 
 collections {
+
+group { name: "layout";
+
+	script {
+		public global_media_duration;
+
+		public message(Msg_Type:type, id, ...) {
+			if (id == 1) {
+				new str[100];
+				new rem[10];
+				new min, sec, rem_media_dur, rmin, rsec;//, porc;
+				min = getarg(2 )/60000;
+				sec = (getarg(2)%60000)/1000;
+				rem_media_dur = get_int(global_media_duration) - getarg(2);
+				rmin = rem_media_dur/60000;
+				rsec = (rem_media_dur%60000)/1000;
+				//if (get_int(global_media_duration) != 0) {
+				//	porc = (getarg(2)*100)/get_int(global_media_duration);
+				//} else { porc = 0; }
+				if (rsec < 10) {
+					snprintf(rem, 10, "-%d:0%d", rmin, rsec);
+				} else {
+					snprintf(rem, 10, "-%d:%d", rmin, rsec);
+				}
+				if (sec < 10) {
+					snprintf(str, 100, "%d:0%d", min, sec);
+				} else {
+					snprintf(str, 100, "%d:%d", min, sec);
+				}
+				set_text(PART:"PlaybackPlaytime", str);
+				if (rmin > 0) {
+					set_text(PART:"PlaybackRemPlaytime", rem);
+				}
+			} else if (id == 4) {
+				set_int(global_media_duration, getarg(2));
+			} else if (id == 3) {
+				new str_title[100];
+				getsarg(4, str_title, 100);
+				set_text(PART:"PlaybackTitle", str_title);
+			}
+		}
+	} // end script
+
+	parts {
+		part {
+			name: "background";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				min: 400 600;
+				rel1 { relative: 0.0 0.0; }
+				rel2 { relative: 1.0 1.0; }
+			}
+		}
+		part {
+			name: "toolbar";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.0 0.0; }
+				rel2 { relative: 1.0 0.0; offset: 0 50; }
+			}
+		}
+		part {
+			name: "info_bg";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 255;
+				rel1 { relative: 0.0 1.0; to: "toolbar"; }
+				rel2 { relative: 1.0 1.0; to: "toolbar"; offset: 0 70; }
+			}
+		}
+		part {
+			name: "PlaybackPlaytime";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 100 100 100 255;
+
+				rel1 { relative: 0.00 0.00; to: "info_bg"; offset: 5 5; }
+				rel2 { relative: 0.00 0.00; to: "info_bg"; offset: 55 30 ;}
+
+				text {
+					text: "00:00";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "PlaybackRemPlaytime";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 100 100 100 255;
+
+				rel1 { relative: 1.00 0.00; to: "info_bg"; offset: -55 5; }
+				rel2 { relative: 1.00 0.00; to: "info_bg"; offset: -5 30 ;}
+
+				text {
+					text: "00:00";
+					font: "Vera";
+					size: 14;
+					align: 1 0.5;
+				}
+			}
+		}
+		part {
+			name: "PlaybackTitle";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 100 100 100 255;
+
+				rel1 { relative: 1.00 0.00; to: "PlaybackPlaytime"; offset: 2 0; }
+				rel2 { relative: 0.00 1.00; to: "PlaybackRemPlaytime"; offset: -2 0;}
+
+				text {
+					text: "No Title";
+					font: "Vera";
+					size: 14;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "seekbar";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.0 1.0; to: "PlaybackPlaytime"; }
+				rel2 { relative: 1.0 1.0; to: "info_bg"; }
+			}
+		}
+		part {
+			name: "content";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {
+					relative: 0.0 1.0;
+					to: "info_bg";
+					offset: 0 0;
+				}
+				rel2 {
+					relative: 1.0 0.0;
+					to: "playback_bg";
+					offset:  0 0;
+				}
+			}
+		}
+		part {
+			name: "playback_bg";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 255;
+				rel1 { relative: 0.0 1.0; to: "background"; offset: 0 -40; }
+				rel2 { relative: 1.0 1.0; to: "background"; offset: 0 0; }
+			}
+		}
+		part {
+			name: "playbackbar";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 { relative: 0.0 0.0; to: "playback_bg"; offset: 0 0; }
+				rel2 { relative: 0.0 1.0; to: "playback_bg"; offset: 200 0; }
+			}
+		}
+	}
+}
 
 group { name: "background";
 	parts {
 		part {
 			name: "bg";
-			type: IMAGE;
+			type: RECT;// IMAGE;
 			mouse_events: 0;
 			description {
 				state: "default" 0.0;
-				image { normal: "background.png";}
+				color: 100 100 255 255;
+				//image { normal: "background.png";}
 				rel1 { relative: 0.0 0.0; }
 				rel2 { relative: 1.0 1.0; }
 			}
@@ -120,6 +307,388 @@ group { name: "icon_next";
 				rel2 { relative: 1.0 1.0; offset: -1 -1;}
 			}
 		}
+	}
+}
+
+group { name: "playback_info";
+	script {
+		public message(Msg_Type:type, id, ...) {
+			if (id == 4) {
+				new str[100];
+				new min, sec;
+				min = getarg(2)/60000;
+				sec = (getarg(2)%60000)/1000;
+				if (sec < 10) {
+					snprintf(str,100,"Length: %d:0%d", min, sec);
+				} else {
+					snprintf(str,100,"Length: %d:%d", min, sec);
+				}
+				set_text(PART:"length", str);
+			}
+			else if (id == 3) {
+				new str_artist[100];
+				new str_album[100];
+				new str_title[100];
+				new str_url[100];
+				new str_comment[100];
+				new str_genre[100];
+				new str_date[100];
+
+				getsarg(2, str_artist, 100);
+				getsarg(3, str_album, 100);
+				getsarg(4, str_title, 100);
+				getsarg(5, str_url, 100);
+				getsarg(6, str_comment, 100);
+				getsarg(7, str_genre, 100);
+				getsarg(8, str_date, 100);
+
+				new str[100];
+				snprintf(str, 100, "Title: %s", str_title);
+				set_text(PART:"title", str);
+				snprintf(str, 100, "Artist: %s", str_artist);
+				set_text(PART:"artist", str);
+				snprintf(str, 100, "Album: %s", str_album);
+				set_text(PART:"album", str);
+				snprintf(str, 100, "URL: %s", str_url);
+				set_text(PART:"url", str);
+				snprintf(str, 100, "Comment: %s", str_comment);
+				set_text(PART:"comment", str);
+				snprintf(str, 100, "Genre: %s", str_genre);
+				set_text(PART:"genre", str);
+				snprintf(str, 100, "Date: %s", str_date);
+				set_text(PART:"date", str);
+			}
+			else if (id == 5) {
+				new m_id[10];
+				snprintf(m_id, 10, "ID: %d", getarg(2));
+				set_text(PART:"id", m_id);
+			}
+		}
+	}
+
+	parts {
+		part {
+			name: "background";
+			type: RECT;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 128;
+				rel1 { relative: 0.0 0.0; }
+				rel2 { relative: 1.0 1.0; }
+			}
+		}
+
+		part {
+			name: "title";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 0.00; offset: 5 5 ; }
+				rel2 { relative: 1.0 0.00; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "artist";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"title"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"title"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "album";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"artist"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"artist"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "date";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"album"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"album"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "comment";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"date"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"date"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "genre";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"comment"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"comment"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "url";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"genre"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"genre"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "length";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"url"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"url"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "ftype";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"length"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"length"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "fsize";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"ftype"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"ftype"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "brate";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"fsize"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"fsize"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "srate";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"brate"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"brate"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+		part {
+			name: "id";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 255;
+
+				rel1 { relative: 0.00 1.00; to:"srate"; offset: 0 0; }
+				rel2 { relative: 1.00 1.00; to:"srate"; offset: 0 25 ;}
+
+				text {
+					text: "[Nothing]";
+					font: "Vera";
+					size: 14;
+					align: 0 0.5;
+				}
+			}
+		}
+	}
+}
+
+group { name: "config";
+	parts {
+		part {
+			name: "bg";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				rel1 {relative: 0.0 0.0; }
+				rel2 {relative: 1.0 1.0; offset: -1 -1;}
+			}
+		}
+		part {
+			name: "msg";
+			type: TEXT;
+			effect: GLOW;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 255;
+				color2: 255 0 0 255;
+				color3: 100 100 100 255;
+
+				rel1 { relative: 0.00 0.00; to: "bg"; }
+				rel2 { relative: 1.00 1.00; to: "bg"; }
+
+				text {
+					text: "Configuration";
+					font: "Vera";
+					size: 14;
+					align: 0.5 0.5;
+				}
+			}
+		}
+
 	}
 }
 

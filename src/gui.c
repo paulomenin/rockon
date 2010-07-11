@@ -22,10 +22,9 @@ void app_exit(void *data, Evas_Object *obj, void *event_info) {
 }
 
 void gui_window_set(rockon_data *rdata) {
-	Evas_Object *win, *bg, *ic_logo;
-	Evas_Object *lb_title, *lb_playtime;
-	Evas_Object *bx, *bx_up, *pb, *tb, *seekbar;
-	Evas_Object *flip;
+	Evas_Object *win, *ly, *edje_obj, *bg;
+	Evas_Object *ic_logo, *ly_info, *ic_config;
+	Evas_Object *pb, *tb, *seekbar;
 
 	win = elm_win_add(NULL, "rockon", ELM_WIN_BASIC);
 	elm_win_title_set(win, "Rockon");
@@ -33,81 +32,73 @@ void gui_window_set(rockon_data *rdata) {
 	elm_win_autodel_set(win, 1);
 	evas_object_smart_callback_add(win, "delete,request", app_exit, NULL);
 
+	ly = elm_layout_add(win);
+	elm_layout_file_set(ly, rdata->config->edj_data_path, "layout");
+	evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_win_resize_object_add(win, ly);
+	evas_object_show(ly);
+
+	edje_obj = elm_layout_edje_get(ly);
+
 	bg = elm_bg_add(win);
 	elm_bg_file_set(bg, rdata->config->edj_data_path, "background");
-	evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_win_resize_object_add(win, bg);
+	elm_layout_content_set(ly, "background", bg);
 	evas_object_show(bg);
 
-	bx = elm_box_add(win);
-	elm_win_resize_object_add(win, bx);
-	evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_show(bx);
-	
-	bx_up = elm_box_add(win);
-	elm_box_horizontal_set(bx_up, 1);
-	evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_box_pack_end(bx, bx_up);
-	elm_object_scale_set(bx_up, 1.5);
-	evas_object_show(bx_up);
-
-	lb_playtime = elm_label_add(win);
-	evas_object_size_hint_weight_set(lb_playtime, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(lb_playtime, -1.0, 0.5);
-	elm_box_pack_end(bx_up, lb_playtime);
-	evas_object_show(lb_playtime);
-	
-	lb_title = elm_label_add(win);
-	evas_object_size_hint_weight_set(lb_title, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(lb_title, -1.0, 0.5);
-	elm_box_pack_end(bx_up, lb_title);
-	evas_object_show(lb_title);
-
-	flip = elm_flip_add(win);
-	evas_object_size_hint_align_set(flip, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_size_hint_weight_set(flip, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_box_pack_end(bx, flip);
-	evas_object_show(flip);
 
 	ic_logo = elm_icon_add(win);
 	elm_icon_file_set(ic_logo, rdata->config->edj_data_path, "logo");
-	elm_icon_scale_set(ic_logo, 0, 0);
-	elm_icon_no_scale_set(ic_logo, 1);
-	elm_flip_content_front_set(flip, ic_logo);
+	elm_layout_content_set(ly, "content", ic_logo);
 	evas_object_show(ic_logo);
 
+	ly_info = elm_layout_add(win);
+	elm_layout_file_set(ly_info, rdata->config->edj_data_path, "playback_info");
+	evas_object_hide(ly_info);
+
+	ic_config = elm_icon_add(win);
+	elm_icon_file_set(ic_config, rdata->config->edj_data_path, "config");
+	evas_object_hide(ic_config);
+
+
 	pb = gui_playback_buttons_set(win, rdata);
-	evas_object_size_hint_align_set(pb, 0.5, 0.5);
-	elm_box_pack_end(bx, pb);
-	
+	evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_layout_content_set(ly, "playbackbar", pb);
+
 	seekbar = elm_slider_add(win);
 	evas_object_size_hint_align_set(seekbar, EVAS_HINT_FILL, 0.5);
 	evas_object_size_hint_weight_set(seekbar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_slider_indicator_format_function_set(seekbar, seekbar_format_indicator);
 	evas_object_smart_callback_add(seekbar, "slider,drag,start", seekbar_drag_start_cb, rdata);
 	evas_object_smart_callback_add(seekbar, "slider,drag,stop", seekbar_drag_stop_cb, rdata);
-	elm_box_pack_end(bx, seekbar);
+	elm_layout_content_set(ly, "seekbar", seekbar);
 	evas_object_show(seekbar);
 
 	tb = elm_toolbar_add(win);
-	elm_toolbar_homogenous_set(tb, 1);
-	evas_object_size_hint_weight_set(tb, 0.0, 0.0);
-	evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
-	elm_box_pack_end(bx, tb);
+	evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_layout_content_set(ly, "toolbar", tb);
 	evas_object_show(tb);
 
-	elm_toolbar_item_add(tb, NULL, "Playlist", toolbar_playlist_click_cb, rdata);
-	elm_toolbar_item_add(tb, NULL, "Collections", toolbar_playlist_click_cb, rdata);
+	elm_toolbar_item_add(tb, NULL, "Playback", playlist_show_cb, rdata);
+	elm_toolbar_item_add(tb, NULL, "Info", info_show_cb, rdata);
+	elm_toolbar_item_add(tb, NULL, "Config", config_show_cb, rdata);
 
 	evas_object_show(win);
 
 	rdata->widgets.win = win;
-	rdata->widgets.label_title = lb_title;
-	rdata->widgets.label_playtime = lb_playtime;
+	rdata->widgets.edje = edje_obj;
+	rdata->widgets.layout = ly;
 	rdata->widgets.seekbar = seekbar;
 	rdata->widgets.seekbar_update = 1;
-	rdata->widgets.cover = ic_logo;
-	rdata->widgets.flip = flip;
+	rdata->widgets.playback_info = ly_info;
+	rdata->widgets.playlist = ic_logo;
+	rdata->widgets.config = ic_config;
+	rdata->widgets.current_content = ic_logo;
+
+	edje_object_signal_callback_add (edje_obj, "cmd,play", "*", edje_cb_play, (void*)rdata);
+	edje_object_signal_callback_add (edje_obj, "cmd,stop", "*", edje_cb_stop, (void*)rdata);
+	edje_object_signal_callback_add (edje_obj, "cmd,next", "*", edje_cb_next, (void*)rdata);
+	edje_object_signal_callback_add (edje_obj, "cmd,prev", "*", edje_cb_prev, (void*)rdata);
+	edje_object_signal_callback_add (edje_obj, "cmd,pause", "*",edje_cb_pause,(void*)rdata);
 }
 
 Evas_Object* gui_playback_buttons_set(Evas_Object* parent, rockon_data *rdata) {

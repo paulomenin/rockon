@@ -27,13 +27,15 @@
 
 typedef struct {
 	Evas_Object *win;
-	Evas_Object *label_title;
-	Evas_Object *label_playtime;
+	Evas_Object *layout;
+	Evas_Object *edje;
 	Evas_Object *seekbar;
-	Evas_Object *cover;
-	Evas_Object *flip;
-
 	int seekbar_update;
+
+	Evas_Object *current_content;
+	Evas_Object *playback_info;
+	Evas_Object *playlist;
+	Evas_Object *config;
 } elm_widgets;
 
 typedef struct {

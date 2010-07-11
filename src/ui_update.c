@@ -37,15 +37,18 @@ void ui_upd_playback_status (rockon_data *rdata) {
 }
 
 void ui_upd_playback_playtime (rockon_data *rdata) {
-	char str_buffer[8];
-	snprintf(str_buffer, 8, "%d:%02d", rdata->playback_playtime/60000, (rdata->playback_playtime/1000)%60);
-	elm_label_label_set(rdata->widgets.label_playtime, str_buffer);
+	Edje_Message_Int msg;
+	msg.val = rdata->playback_playtime;
+	edje_object_message_send(rdata->widgets.edje, EDJE_MESSAGE_INT, PLAYBACK_PLAYTIME, &msg);
 	if (rdata->widgets.seekbar_update)
 		elm_slider_value_set(rdata->widgets.seekbar, rdata->playback_playtime / 1000);
 }
 
 void ui_upd_playback_info (rockon_data *rdata) {
-	char str_buffer[100];
+	Edje_Message_String_Set *msg;
+	Edje_Message_Int msg_dur;
+	Edje_Message_Int msg_id;
+	Evas_Object *info = elm_layout_edje_get(rdata->widgets.playback_info);
 
 	if (rdata->playback_info == NULL) return;
 
@@ -61,8 +64,26 @@ void ui_upd_playback_info (rockon_data *rdata) {
 										(rdata->playback_info->duration / 1000)%60);
 	INFO("-----------------------------");
 
-	snprintf(str_buffer, 100, "<b>%s</b> - %s", rdata->playback_info->artist, rdata->playback_info->title);
-	elm_label_label_set(rdata->widgets.label_title, str_buffer);
+	msg = calloc(1, sizeof(Edje_Message_String_Set) - sizeof(char*) + (7 * sizeof(char*)));
+	msg->count = 7;
+	msg->str[0] = (char*) rdata->playback_info->artist;
+	msg->str[1] = (char*) rdata->playback_info->album;
+	msg->str[2] = (char*) rdata->playback_info->title;
+	msg->str[3] = (char*) rdata->playback_info->url;
+	msg->str[4] = (char*) rdata->playback_info->comment;
+	msg->str[5] = (char*) rdata->playback_info->genre;
+	msg->str[6] = (char*) rdata->playback_info->date;
+	edje_object_message_send( rdata->widgets.edje, EDJE_MESSAGE_STRING_SET, PLAYBACK_INFO, msg);
+	edje_object_message_send( info, EDJE_MESSAGE_STRING_SET, PLAYBACK_INFO, msg);
+	free(msg);
+
+	msg_dur.val = rdata->playback_info->duration;
+	edje_object_message_send( rdata->widgets.edje, EDJE_MESSAGE_INT, PLAYBACK_DURATION, &msg_dur);
+	edje_object_message_send( info, EDJE_MESSAGE_INT, PLAYBACK_DURATION, &msg_dur);
+	msg_id.val = rdata->playback_id;
+	edje_object_message_send( rdata->widgets.edje, EDJE_MESSAGE_INT, PLAYBACK_ID, &msg_id);
+	edje_object_message_send( info, EDJE_MESSAGE_INT, PLAYBACK_ID, &msg_id);
+
 	elm_slider_min_max_set(rdata->widgets.seekbar, 0, rdata->playback_info->duration / 1000);
 }
 

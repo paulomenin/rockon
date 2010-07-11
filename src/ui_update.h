@@ -20,6 +20,16 @@
 #include "rockon_data.h"
 #include "playlist.h"
 
+enum Message_id {
+	PLAYBACK_PLAYTIME = 1,
+	PLAYBACK_STATUS   = 2,
+	PLAYBACK_INFO     = 3,
+	PLAYBACK_DURATION = 4,
+	PLAYBACK_ID       = 5,
+
+	MLIB_STATUS_FILES = 6 // remaining files to process
+};
+
 void ui_upd_playback_id       (rockon_data *rdata);
 void ui_upd_playback_status   (rockon_data *rdata);
 void ui_upd_playback_playtime (rockon_data *rdata);

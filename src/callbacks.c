@@ -42,6 +42,49 @@ void seekbar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info) {
 	((rockon_data*)data)->widgets.seekbar_update = 1;
 }
 
-void toolbar_playlist_click_cb(void *data, Evas_Object *obj, void *event_info) {
-	elm_flip_go(((rockon_data*)data)->widgets.flip, ELM_FLIP_ROTATE_Y_CENTER_AXIS);		
+
+
+void content_show(rockon_data* rdata, Evas_Object* obj) {
+	if (rdata->widgets.current_content == obj) return;
+
+	evas_object_hide(rdata->widgets.current_content);
+	elm_layout_content_set(rdata->widgets.layout, "content", obj);
+	evas_object_show(obj);
+	rdata->widgets.current_content = obj;
+}
+
+void info_show_cb(void *data, Evas_Object *obj, void *event_info){
+	content_show( ((rockon_data*)data),
+				  ((rockon_data*)data)->widgets.playback_info);
+}
+void playlist_show_cb(void *data, Evas_Object *obj, void *event_info){
+	content_show( ((rockon_data*)data),
+				  ((rockon_data*)data)->widgets.playlist);
+}
+void config_show_cb(void *data, Evas_Object *obj, void *event_info){
+	content_show( ((rockon_data*)data),
+				  ((rockon_data*)data)->widgets.config);
+}
+
+
+
+
+void edje_cb_play  (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	cmd_play((rockon_data*)data);
+}
+
+void edje_cb_pause (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	cmd_pause((rockon_data*)data);
+}
+
+void edje_cb_stop (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	cmd_stop((rockon_data*)data);
+}
+
+void edje_cb_next (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	cmd_next((rockon_data*)data);
+}
+
+void edje_cb_prev (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	cmd_prev((rockon_data*)data);
 }
