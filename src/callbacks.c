@@ -49,7 +49,16 @@ void volumebar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info) {
 	cmd_volume_change_all((rockon_data*)data, volume);
 	((rockon_data*)data)->widgets.volumebar_update = 1;
 }
-
+void playlist_list_click_cb(void *data, Evas_Object *obj, void *event_info) {
+	Elm_List_Item *it = elm_list_selected_item_get(obj);
+	cmd_playlist_load((rockon_data*)data, elm_list_item_label_get(it));
+}
+void playlist_click_cb(void *data, Evas_Object *obj, void *event_info){
+	playlist_item *item;
+	Elm_List_Item *it = elm_list_selected_item_get(obj);
+	item = (playlist_item*) elm_list_item_data_get(it);
+	cmd_jump_and_play((rockon_data*)data, item->pos);
+}
 
 void content_show(rockon_data* rdata, Evas_Object* obj) {
 	if (rdata->widgets.current_content == obj) return;
@@ -64,10 +73,15 @@ void info_show_cb(void *data, Evas_Object *obj, void *event_info){
 	content_show( ((rockon_data*)data),
 				  ((rockon_data*)data)->widgets.playback_info);
 }
+void playlists_show_cb(void *data, Evas_Object *obj, void *event_info){
+	content_show( ((rockon_data*)data),
+				  ((rockon_data*)data)->widgets.playlists);
+}
 void playlist_show_cb(void *data, Evas_Object *obj, void *event_info){
 	content_show( ((rockon_data*)data),
 				  ((rockon_data*)data)->widgets.playlist);
 }
+
 void config_show_cb(void *data, Evas_Object *obj, void *event_info){
 	content_show( ((rockon_data*)data),
 				  ((rockon_data*)data)->widgets.config);

@@ -113,10 +113,13 @@ void ui_upd_playlist (rockon_data *rdata, playlist *pls) {
 									  pls->num_items,
 									  pls->current_pos);
 
+	elm_list_clear(rdata->widgets.playlist_obj);
 	EINA_LIST_FOREACH(pls->items, l, data) {
 		INFO("%02d %s",((playlist_item*)data)->pos, ((playlist_item*)data)->title);
+		elm_list_item_append(rdata->widgets.playlist_obj, ((playlist_item*)data)->title, NULL, NULL,  NULL, data);
 	}
 	INFO("----------------------------");
+	elm_list_go(rdata->widgets.playlist_obj);
 }
 
 void ui_upd_playlist_list (rockon_data *rdata) {
@@ -131,8 +134,11 @@ void ui_upd_playlist_list (rockon_data *rdata) {
 	}
 	EINA_LIST_FOREACH(rdata->playlists->playlists, l, data) {
 		INFO("%s", ((playlist*)data)->name);
+		elm_list_item_append(rdata->widgets.playlists_obj, ((playlist*)data)->name, NULL, NULL,  NULL, NULL);
 	}
 	INFO("----------------------------");
+
+	elm_list_go(rdata->widgets.playlists_obj);
 }
 
 void ui_upd_playlist_pos (rockon_data *rdata) {

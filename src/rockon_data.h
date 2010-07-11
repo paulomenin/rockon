@@ -36,7 +36,10 @@ typedef struct {
 
 	Evas_Object *current_content;
 	Evas_Object *playback_info;
+	Evas_Object *playlists;
+	Evas_Object *playlists_obj;
 	Evas_Object *playlist;
+	Evas_Object *playlist_obj;
 	Evas_Object *config;
 } elm_widgets;
 

@@ -32,16 +32,6 @@ int playlist_log_dom = -1;
 Eina_Bool log_init(void);
 void log_shutdown(void);
 
-// TODO remove after test
-Ecore_Timer *launch_cmd = NULL;
-int cmd_launch (rockon_data *rdata) {
-	EINA_LOG_DBG("Command launched!");
-	//cmd_volume_change(rdata, "left",10);
-	//ui_upd_playlist(rdata, rdata->current_playlist);
-	return ECORE_CALLBACK_RENEW;
-}
-
-
 EAPI int elm_main (int argc, char** argv) {
 	rockon_data *rdata;
 
@@ -57,9 +47,6 @@ EAPI int elm_main (int argc, char** argv) {
 	if (rdata->connection == NULL) {
 		cmd_server_launch(rdata);
 	}
-
-	// * TODO remove after test
-	launch_cmd = ecore_timer_add (5, (int(*)(void*))cmd_launch, rdata);
 
 	EINA_LOG_DBG("MainLoop Start");
 	elm_run();
