@@ -22,9 +22,8 @@ void app_exit(void *data, Evas_Object *obj, void *event_info) {
 }
 
 void gui_window_set(rockon_data *rdata) {
-	Evas_Object *win, *ly, *edje_obj, *bg;
-	Evas_Object *pb, *tb, *seekbar, *volumebar;
-	Evas_Object *page_info, *page_config, *page_lists, *page_list;
+	Evas_Object *win, *ly, *edje_obj;
+	Evas_Object *pb, *seekbar, *volumebar;
 	Evas_Object *pls_lists, *pls_list;
 
 	win = elm_win_add(NULL, "rockon", ELM_WIN_BASIC);
@@ -34,21 +33,16 @@ void gui_window_set(rockon_data *rdata) {
 	evas_object_smart_callback_add(win, "delete,request", app_exit, NULL);
 
 	ly = elm_layout_add(win);
-	elm_layout_file_set(ly, rdata->config->edj_data_path, "layout");
+	elm_layout_file_set(ly, rdata->config->edj_data_path, "rockon");
 	evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_win_resize_object_add(win, ly);
 	evas_object_show(ly);
 
 	edje_obj = elm_layout_edje_get(ly);
 
-	bg = elm_bg_add(win);
-	elm_bg_file_set(bg, rdata->config->edj_data_path, "background");
-	elm_layout_content_set(ly, "background", bg);
-	evas_object_show(bg);
-
 	pb = gui_playback_buttons_set(win, rdata);
 	evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_layout_content_set(ly, "playbackbar", pb);
+	elm_layout_content_set(ly, "main:playbackbar", pb);
 
 	seekbar = elm_slider_add(win);
 	evas_object_size_hint_align_set(seekbar, EVAS_HINT_FILL, 0.5);
@@ -56,7 +50,7 @@ void gui_window_set(rockon_data *rdata) {
 	elm_slider_indicator_format_function_set(seekbar, seekbar_format_indicator);
 	evas_object_smart_callback_add(seekbar, "slider,drag,start", seekbar_drag_start_cb, rdata);
 	evas_object_smart_callback_add(seekbar, "slider,drag,stop", seekbar_drag_stop_cb, rdata);
-	elm_layout_content_set(ly, "seekbar", seekbar);
+	elm_layout_content_set(ly, "main:seekbar", seekbar);
 	evas_object_show(seekbar);
 	
 	volumebar = elm_slider_add(win);
@@ -66,42 +60,16 @@ void gui_window_set(rockon_data *rdata) {
 	evas_object_size_hint_weight_set(volumebar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_smart_callback_add(volumebar, "slider,drag,start", volumebar_drag_start_cb, rdata);
 	evas_object_smart_callback_add(volumebar, "slider,drag,stop", volumebar_drag_stop_cb, rdata);
-	elm_layout_content_set(ly, "volumebar", volumebar);
+	elm_layout_content_set(ly, "main:volumebar", volumebar);
 	evas_object_show(volumebar);
 
-	tb = elm_toolbar_add(win);
-	evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_layout_content_set(ly, "toolbar", tb);
-	evas_object_show(tb);
-	elm_toolbar_item_add(tb, NULL, "Playlists", playlists_show_cb, rdata);
-	elm_toolbar_item_add(tb, NULL, "Playlist", playlist_show_cb, rdata);
-	elm_toolbar_item_add(tb, NULL, "Info", info_show_cb, rdata);
-	elm_toolbar_item_add(tb, NULL, "Config", config_show_cb, rdata);
-
-
-	page_info = elm_layout_add(win);
-	elm_layout_file_set(page_info, rdata->config->edj_data_path, "playback_info");
-	evas_object_hide(page_info);
-
-	page_config = elm_icon_add(win);
-	elm_icon_file_set(page_config, rdata->config->edj_data_path, "config");
-	evas_object_hide(page_config);
-
-	page_lists = elm_layout_add(win);
-	elm_layout_file_set(page_lists, rdata->config->edj_data_path, "playlists");
-	evas_object_hide(page_lists);
-
 	pls_lists = elm_list_add(win);
-	elm_layout_content_set(page_lists, "list", pls_lists);
+	elm_layout_content_set(ly, "main:content:plss:list", pls_lists);
 	evas_object_smart_callback_add(pls_lists, "clicked", playlist_list_click_cb, rdata);
 	evas_object_show(pls_lists);
 
-	page_list = elm_layout_add(win);
-	elm_layout_file_set(page_list, rdata->config->edj_data_path, "playlist");
-	evas_object_hide(page_list);
-
 	pls_list = elm_list_add(win);
-	elm_layout_content_set(page_list, "list", pls_list);
+	elm_layout_content_set(ly, "main:content:pls:list", pls_list);
 	evas_object_smart_callback_add(pls_list, "clicked", playlist_click_cb, rdata);
 	evas_object_show(pls_list);
 
@@ -114,13 +82,8 @@ void gui_window_set(rockon_data *rdata) {
 	rdata->widgets.seekbar_update = 1;
 	rdata->widgets.volumebar = volumebar;
 	rdata->widgets.volumebar_update = 1;
-	rdata->widgets.playback_info = page_info;
-	rdata->widgets.playlists = page_lists;
-	rdata->widgets.playlists_obj = pls_lists;
-	rdata->widgets.playlist = page_list;
-	rdata->widgets.playlist_obj = pls_list;
-	rdata->widgets.config = page_config;
-	rdata->widgets.current_content = NULL;
+	rdata->widgets.playlists = pls_lists;
+	rdata->widgets.playlist = pls_list;
 
 	edje_object_signal_callback_add (edje_obj, "cmd,play", "*", edje_cb_play, (void*)rdata);
 	edje_object_signal_callback_add (edje_obj, "cmd,stop", "*", edje_cb_stop, (void*)rdata);

@@ -17,6 +17,8 @@
 #include "callbacks.h"
 #include "commands.h"
 
+/* callbacks from elementary widgets */
+
 void elm_cb_prev(void *data, Evas_Object *obj, void *event_info) {
 	cmd_prev((rockon_data*)data);
 }
@@ -60,33 +62,7 @@ void playlist_click_cb(void *data, Evas_Object *obj, void *event_info){
 	cmd_jump_and_play((rockon_data*)data, item->pos);
 }
 
-void content_show(rockon_data* rdata, Evas_Object* obj) {
-	if (rdata->widgets.current_content == obj) return;
-
-	evas_object_hide(rdata->widgets.current_content);
-	elm_layout_content_set(rdata->widgets.layout, "content", obj);
-	evas_object_show(obj);
-	rdata->widgets.current_content = obj;
-}
-
-void info_show_cb(void *data, Evas_Object *obj, void *event_info){
-	content_show( ((rockon_data*)data),
-				  ((rockon_data*)data)->widgets.playback_info);
-}
-void playlists_show_cb(void *data, Evas_Object *obj, void *event_info){
-	content_show( ((rockon_data*)data),
-				  ((rockon_data*)data)->widgets.playlists);
-}
-void playlist_show_cb(void *data, Evas_Object *obj, void *event_info){
-	content_show( ((rockon_data*)data),
-				  ((rockon_data*)data)->widgets.playlist);
-}
-
-void config_show_cb(void *data, Evas_Object *obj, void *event_info){
-	content_show( ((rockon_data*)data),
-				  ((rockon_data*)data)->widgets.config);
-}
-
+/* callbacks from edje objects */
 
 void edje_cb_play  (void *data, Evas_Object *eo, const char *emission, const char *source) {
 	cmd_play((rockon_data*)data);

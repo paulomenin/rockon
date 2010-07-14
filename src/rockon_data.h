@@ -29,18 +29,13 @@ typedef struct {
 	Evas_Object *win;
 	Evas_Object *layout;
 	Evas_Object *edje;
+
 	Evas_Object *seekbar;
 	int seekbar_update;
 	Evas_Object *volumebar;
 	int volumebar_update;
-
-	Evas_Object *current_content;
-	Evas_Object *playback_info;
-	Evas_Object *playlists;
-	Evas_Object *playlists_obj;
 	Evas_Object *playlist;
-	Evas_Object *playlist_obj;
-	Evas_Object *config;
+	Evas_Object *playlists;
 } elm_widgets;
 
 typedef struct {
