@@ -61,7 +61,6 @@ void gui_window_set(rockon_data *rdata) {
 	
 	volumebar = elm_slider_add(win);
 	elm_slider_min_max_set(volumebar, 0, 100);
-	elm_slider_label_set(volumebar, "Volume:");
 	elm_slider_indicator_format_function_set(volumebar, volumebar_format_indicator);
 	evas_object_size_hint_align_set(volumebar, EVAS_HINT_FILL, 0.5);
 	evas_object_size_hint_weight_set(volumebar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

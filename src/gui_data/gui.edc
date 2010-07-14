@@ -1,5 +1,6 @@
 images {
 	image: "background.png" COMP;
+	image: "panel_bg.png" COMP;
 	image: "icon.png" COMP;
 	image: "prev.png" COMP;
 	image: "play.png" COMP;
@@ -52,6 +53,16 @@ group { name: "layout";
 				new str_title[100];
 				getsarg(4, str_title, 100);
 				set_text(PART:"PlaybackTitle", str_title);
+			} else if (id == 2) {
+				new stat;
+				stat = getarg(2);
+				if (stat == 0) {
+					emit("status,stop","");
+				} else if (stat == 1) {
+					emit("status,play","");
+				} else {
+					emit("status,pause","");
+				}
 			}
 		}
 	} // end script
@@ -68,34 +79,34 @@ group { name: "layout";
 			}
 		}
 		part {
+			name: "info_bg";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				image{ normal: "panel_bg.png";}
+				rel1 { relative: 0.0 0.0; }
+				rel2 { relative: 1.0 0.0; offset: 0 70; }
+			}
+		}
+		part {
 			name: "toolbar";
 			type: SWALLOW;
 			description {
 				state: "default" 0.0;
-				rel1 { relative: 0.0 0.0; }
-				rel2 { relative: 1.0 0.0; offset: 0 50; }
-			}
-		}
-		part {
-			name: "info_bg";
-			type: RECT;
-			description {
-				state: "default" 0.0;
-				color: 255 255 255 255;
-				rel1 { relative: 0.0 1.0; to: "toolbar"; }
-				rel2 { relative: 1.0 1.0; to: "toolbar"; offset: 0 70; }
+				rel1 { relative: 0.0 1.0; to: "info_bg"; }
+				rel2 { relative: 1.0 1.0; to: "info_bg"; offset: 0 50; }
 			}
 		}
 		part {
 			name: "PlaybackPlaytime";
 			type: TEXT;
-			effect: NONE;
+			effect: OUTLINE;
 			description {
 				state: "default" 0.0;
 
-				color: 0 0 0 255;
+				color: 255 255 255 255;
 				color2: 0 0 0 255;
-				color3: 100 100 100 255;
+				color3: 255 255 255 255;
 
 				rel1 { relative: 0.00 0.00; to: "info_bg"; offset: 5 5; }
 				rel2 { relative: 0.00 0.00; to: "info_bg"; offset: 55 30 ;}
@@ -111,13 +122,13 @@ group { name: "layout";
 		part {
 			name: "PlaybackRemPlaytime";
 			type: TEXT;
-			effect: NONE;
+			effect: OUTLINE;
 			description {
 				state: "default" 0.0;
 
-				color: 0 0 0 255;
+				color: 255 255 255 255;
 				color2: 0 0 0 255;
-				color3: 100 100 100 255;
+				color3: 255 255 255 255;
 
 				rel1 { relative: 1.00 0.00; to: "info_bg"; offset: -55 5; }
 				rel2 { relative: 1.00 0.00; to: "info_bg"; offset: -5 30 ;}
@@ -133,13 +144,13 @@ group { name: "layout";
 		part {
 			name: "PlaybackTitle";
 			type: TEXT;
-			effect: NONE;
+			effect: OUTLINE;
 			description {
 				state: "default" 0.0;
 
-				color: 0 0 0 255;
+				color: 255 255 255 255;
 				color2: 0 0 0 255;
-				color3: 100 100 100 255;
+				color3: 255 255 255 255;
 
 				rel1 { relative: 1.00 0.00; to: "PlaybackPlaytime"; offset: 2 0; }
 				rel2 { relative: 0.00 1.00; to: "PlaybackRemPlaytime"; offset: -2 0;}
@@ -153,11 +164,33 @@ group { name: "layout";
 			}
 		}
 		part {
+			name: "status";
+			type: IMAGE;
+			description {
+				state: "default" 0.0;
+				image { normal: "play.png";}
+				rel1 {relative: 0.0 1.0; to: "PlaybackPlaytime"; offset: 3 5;}
+				rel2 {relative: 0.0 1.0; to: "PlaybackPlaytime"; offset: 28 30;}
+			}
+			description {
+				state: "paused" 0.0;
+				image { normal: "pause.png";}
+				rel1 {relative: 0.0 1.0; to: "PlaybackPlaytime"; offset: 3 5;}
+				rel2 {relative: 0.0 1.0; to: "PlaybackPlaytime"; offset: 28 30;}
+			}
+			description {
+				state: "stopped" 0.0;
+				image { normal: "stop.png";}
+				rel1 {relative: 0.0 1.0; to: "PlaybackPlaytime"; offset: 3 5;}
+				rel2 {relative: 0.0 1.0; to: "PlaybackPlaytime"; offset: 28 30;}
+			}
+		}
+		part {
 			name: "seekbar";
 			type: SWALLOW;
 			description {
 				state: "default" 0.0;
-				rel1 { relative: 0.0 1.0; to: "PlaybackPlaytime"; }
+				rel1 { relative: 0.0 1.0; to: "PlaybackPlaytime"; offset: 28 0; }
 				rel2 { relative: 1.0 1.0; to: "info_bg"; }
 			}
 		}
@@ -168,7 +201,7 @@ group { name: "layout";
 				state: "default" 0.0;
 				rel1 {
 					relative: 0.0 1.0;
-					to: "info_bg";
+					to: "toolbar";
 					offset: 0 0;
 				}
 				rel2 {
@@ -180,10 +213,10 @@ group { name: "layout";
 		}
 		part {
 			name: "playback_bg";
-			type: RECT;
+			type: IMAGE;
 			description {
 				state: "default" 0.0;
-				color: 255 255 255 255;
+				image { normal: "panel_bg.png";}
 				rel1 { relative: 0.0 1.0; to: "background"; offset: 0 -40; }
 				rel2 { relative: 1.0 1.0; to: "background"; offset: 0 0; }
 			}
@@ -206,6 +239,30 @@ group { name: "layout";
 				rel2 { relative: 1.0 1.0; to: "playback_bg"; offset: 0 0; }
 			}
 		}
+	}
+
+	programs {
+		program {
+			name: "status_play";
+			signal: "status,play";
+			source: "";
+			action: STATE_SET "default" 0.0;
+			target: "status";
+		}	
+		program {
+			name: "status_pause";
+			signal: "status,pause";
+			source: "";
+			action: STATE_SET "paused" 0.0;
+			target: "status";
+		}
+		program {
+			name: "status_stop";
+			signal: "status,stop";
+			source: "";
+			action: STATE_SET "stopped" 0.0;
+			target: "status";
+		}	
 
 	}
 }
@@ -214,12 +271,11 @@ group { name: "background";
 	parts {
 		part {
 			name: "bg";
-			type: RECT;// IMAGE;
+			type: IMAGE;
 			mouse_events: 0;
 			description {
 				state: "default" 0.0;
-				color: 100 100 255 255;
-				//image { normal: "background.png";}
+				image { normal: "background.png";}
 				rel1 { relative: 0.0 0.0; }
 				rel2 { relative: 1.0 1.0; }
 			}

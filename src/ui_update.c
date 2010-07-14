@@ -28,12 +28,15 @@ void ui_upd_playback_id (rockon_data *rdata) {
 }
 
 void ui_upd_playback_status (rockon_data *rdata) {
+	Edje_Message_Int msg;
 	switch (rdata->playback_status) {
 		case 0:  INFO("Playback STATUS: Stopped"); break;
 		case 1:  INFO("Playback STATUS: Playing"); break;
 		case 2:  INFO("Playback STATUS: Paused"); break;
 		default: INFO("Playback STATUS: %d", rdata->playback_status);
 	}
+	msg.val = rdata->playback_status;
+	edje_object_message_send(rdata->widgets.edje, EDJE_MESSAGE_INT, PLAYBACK_STATUS, &msg);
 }
 
 void ui_upd_playback_playtime (rockon_data *rdata) {
