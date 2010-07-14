@@ -26,8 +26,10 @@ enum Message_id {
 	PLAYBACK_INFO     = 3,
 	PLAYBACK_DURATION = 4,
 	PLAYBACK_ID       = 5,
-
-	MLIB_STATUS_FILES = 6 // remaining files to process
+	MLIB_STATUS_FILES = 6, // remaining files to process
+	PLAYLIST_NAME     = 7,
+	PLAYLIST_POS      = 8,
+	PLAYLIST_ITENS    = 9
 };
 
 void ui_upd_playback_id       (rockon_data *rdata);

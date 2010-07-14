@@ -108,6 +108,10 @@ void ui_upd_playback_volume (rockon_data *rdata) {
 void ui_upd_playlist (rockon_data *rdata, playlist *pls) {
 	Eina_List *l;
 	void *data;
+	Evas_Object *pls_edje = elm_layout_edje_get(rdata->widgets.playlist);
+	Edje_Message_String pls_name;
+	Edje_Message_Int pls_pos;
+	Edje_Message_Int pls_itens;
 
 	if (pls == NULL) return;
 	playlist_wait(pls);
@@ -123,6 +127,14 @@ void ui_upd_playlist (rockon_data *rdata, playlist *pls) {
 	}
 	INFO("----------------------------");
 	elm_list_go(rdata->widgets.playlist_obj);
+
+	pls_name.str  = pls->name;
+	pls_pos.val   = pls->current_pos;
+	pls_itens.val = pls->num_items;
+	edje_object_message_send (pls_edje, EDJE_MESSAGE_STRING, PLAYLIST_NAME, &pls_name);
+	edje_object_message_send (pls_edje, EDJE_MESSAGE_INT, PLAYLIST_POS, &pls_pos);
+	edje_object_message_send (pls_edje, EDJE_MESSAGE_INT, PLAYLIST_ITENS, &pls_itens);
+
 }
 
 void ui_upd_playlist_list (rockon_data *rdata) {
