@@ -44,13 +44,22 @@ rockon_data* rockon_data_new() {
 	return rdata;
 }
 
-void rockon_data_del(rockon_data *rdata) {
+void rockon_data_del(rockon_data* rdata) {
 	assert(rdata);
+
+	rockon_data_clean(rdata);
 
 	if (rdata->config != NULL) {
 		config_save(rdata->config);
 		config_del(rdata->config);
 	}
+
+	free(rdata);
+}
+
+void rockon_data_clean(rockon_data *rdata) {
+	assert(rdata);
+
 	if (rdata->playback_info != NULL) {
 		media_info_del(rdata->playback_info);
 	}
@@ -62,8 +71,6 @@ void rockon_data_del(rockon_data *rdata) {
 	}
 	
 	xmms2_shutdown(rdata);
-
-	free(rdata);
 }
 
 volume_channel* volume_channel_new() {

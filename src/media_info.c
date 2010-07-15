@@ -57,6 +57,7 @@ void media_info_del (media_info* info) {
 	free(info->date);
 
 	free(info);
+	info = NULL;
 }
 
 void media_info_get (xmmsv_t *value, media_info *info) {

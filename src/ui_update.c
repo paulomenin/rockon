@@ -23,6 +23,19 @@
 
 extern int ui_upd_log_dom;
 
+void ui_upd_disconnect (rockon_data *rdata) {
+	INFO("xmms2 connection lost.");
+
+	elm_list_clear(rdata->widgets.playlist);
+	elm_list_clear(rdata->widgets.playlists);
+	if (rdata->widgets.volumebar_update)
+		elm_slider_value_set(rdata->widgets.volumebar, 0);
+	if (rdata->widgets.seekbar_update)
+		elm_slider_value_set(rdata->widgets.seekbar, 0);
+
+	edje_object_signal_emit(rdata->widgets.edje, "main:disconnect", "rockon");
+}
+
 void ui_upd_playback_id (rockon_data *rdata) {
 	INFO("Playback ID: %d", rdata->playback_id);
 }

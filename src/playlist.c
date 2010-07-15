@@ -65,6 +65,7 @@ void playlist_list_del(playlist_list *list) {
 		playlist_del(data);
 	}
 	free(list);
+	list = NULL;
 }
 
 void playlist_list_wait(playlist_list *list) {
@@ -153,6 +154,7 @@ void playlist_del (playlist *list) {
 	}
 
 	free(list);
+	list = NULL;
 }
 
 int  playlist_is_fetched(playlist *list) {

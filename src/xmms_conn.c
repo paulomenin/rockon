@@ -20,6 +20,7 @@
 #include <xmmsclient/xmmsclient-ecore.h>
 #include "xmms_conn.h"
 #include "broadcasts.h"
+#include "ui_update.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(conn_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(conn_log_dom, __VA_ARGS__)
@@ -110,7 +111,7 @@ int xmms2_reconnect_cb (rockon_data *rdata) {
 }
 
 void xmms2_disconnect_cb (rockon_data *rdata) {
-	INFO("xmms2 connection lost.");
+	ui_upd_disconnect(rdata);
 	xmms2_shutdown(rdata);
 	if (rdata->config->auto_reconnect == 1) {
 		if (rdata->reconn_timer == NULL) {

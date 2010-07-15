@@ -63,6 +63,7 @@ typedef struct {
 
 rockon_data* rockon_data_new();
 void rockon_data_del(rockon_data *rdata);
+void rockon_data_clean(rockon_data *rdata);
 
 volume_channel* volume_channel_new();
 void volume_channel_del(volume_channel* channel);

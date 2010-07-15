@@ -416,6 +416,14 @@ group { name: "layout";
 			target: "content";
 			transition: SINUSOIDAL 1.0;
 		}
+		program {
+			name: "disconnected";
+			signal: "disconnect";
+			source: "rockon";
+			script {
+				set_text(PART:"PlaybackTitle","Disconnected from server");
+			}
+		}
 	}
 }
 
