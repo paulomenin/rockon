@@ -14,18 +14,12 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef UTIL_H
-#define UTIL_H
+#include "collection.h"
 
-#include <xmmsclient/xmmsclient.h>
+#define DBG(...) EINA_LOG_DOM_DBG(collection_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(collection_log_dom, __VA_ARGS__)
+#define INFO(...) EINA_LOG_DOM_INFO(collection_log_dom, __VA_ARGS__)
+#define WARN(...) EINA_LOG_DOM_WARN(collection_log_dom, __VA_ARGS__)
 
-void wait_mutex(int *mutex);
-void up_mutex(int *mutex);
-void down_mutex(int *mutex);
+extern int collection_log_dom;
 
-void dump_list(xmmsv_t *list);
-void dump_dict(xmmsv_t *dict);
-void dump_xmms_value(xmmsv_t *value);
-void dict_foreach(const char *key, xmmsv_t *value, void *user_data);
-
-#endif /* UTIL_H */

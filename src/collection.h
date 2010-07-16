@@ -14,18 +14,14 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef COLLECTION_H
+#define COLLECTION_H
 
-#include <xmmsclient/xmmsclient.h>
+#include <Eina.h>
 
-void wait_mutex(int *mutex);
-void up_mutex(int *mutex);
-void down_mutex(int *mutex);
+typedef struct {
+	Eina_List *Playlists;
+	Eina_List *Collections;
+} collection_list;
 
-void dump_list(xmmsv_t *list);
-void dump_dict(xmmsv_t *dict);
-void dump_xmms_value(xmmsv_t *value);
-void dict_foreach(const char *key, xmmsv_t *value, void *user_data);
-
-#endif /* UTIL_H */
+#endif /* COLLECTION_H */

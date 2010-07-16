@@ -40,6 +40,7 @@ rockon_data* rockon_data_new() {
 
 	rdata->playlists = NULL;
 	rdata->current_playlist = NULL;
+	rdata->mutex_playlist = 0;
 
 	return rdata;
 }

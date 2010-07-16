@@ -14,7 +14,24 @@
  * along with Rockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Ecore.h>
 #include "util.h"
+
+void wait_mutex(int *mutex){
+	while (*mutex > 0) {
+		ecore_main_loop_iterate();
+	}
+}
+
+void up_mutex(int *mutex) {
+	*mutex += 1;
+}
+
+void down_mutex(int *mutex) {
+	*mutex -= 1;
+	if (*mutex < 0)
+		*mutex = 0;
+}
 
 void dump_list(xmmsv_t *list) {
 	xmmsv_list_iter_t *it;

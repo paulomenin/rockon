@@ -11,6 +11,7 @@ sources = """
 	broadcasts.c
 	media_info.c
 	playlist.c
+	collection.c
 	ui_update.c
 	gui.c
 	callbacks.c

@@ -28,6 +28,8 @@ int conn_log_dom   = -1;
 int cmd_log_dom    = -1;
 int ui_upd_log_dom = -1;
 int playlist_log_dom = -1;
+int broadcast_log_dom = -1;
+int collection_log_dom = -1;
 
 Eina_Bool log_init(void);
 void log_shutdown(void);
@@ -76,6 +78,12 @@ Eina_Bool log_init(void) {
 	if (playlist_log_dom < 0) {
 		playlist_log_dom = eina_log_domain_register("rck_pls", NULL);
 	} else return EINA_FALSE;
+	if (broadcast_log_dom < 0) {
+		broadcast_log_dom = eina_log_domain_register("rck_bcast", NULL);
+	} else return EINA_FALSE;
+	if (collection_log_dom < 0) {
+		collection_log_dom = eina_log_domain_register("rck_coll", NULL);
+	} else return EINA_FALSE;
 
 	return EINA_TRUE;
 }
@@ -100,5 +108,13 @@ void log_shutdown(void) {
 	if (playlist_log_dom >= 0) {
 		eina_log_domain_unregister(playlist_log_dom);
 		playlist_log_dom = -1;
+	}
+	if (broadcast_log_dom >= 0) {
+		eina_log_domain_unregister(broadcast_log_dom);
+		broadcast_log_dom = -1;
+	}
+	if (collection_log_dom >= 0) {
+		eina_log_domain_unregister(collection_log_dom);
+		collection_log_dom = -1;
 	}
 }

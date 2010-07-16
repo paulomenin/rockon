@@ -24,6 +24,7 @@
 #include "rockon_config.h"
 #include "media_info.h"
 #include "playlist.h"
+#include "collection.h"
 
 typedef struct {
 	Evas_Object *win;
@@ -57,6 +58,7 @@ typedef struct {
 	
 	playlist_list *playlists;
 	playlist *current_playlist;
+	int mutex_playlist;;
 
 	elm_widgets widgets;
 } rockon_data;

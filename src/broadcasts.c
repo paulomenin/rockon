@@ -24,6 +24,13 @@
 
 #include "util.h" // TODO remove after debug
 
+#define DBG(...) EINA_LOG_DOM_DBG(broadcast_log_dom, __VA_ARGS__)
+#define WARN(...) EINA_LOG_DOM_WARN(broadcast_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(broadcast_log_dom, __VA_ARGS__)
+#define INFO(...) EINA_LOG_DOM_INFO(broadcast_log_dom, __VA_ARGS__)
+
+extern int broadcast_log_dom;
+
 int  get_media_info_cb   (xmmsv_t *value, void *data);
 void playback_volume_add (const char *key, xmmsv_t *value, void *user_data);
 
@@ -107,18 +114,31 @@ int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
 	rockon_data *rdata = (rockon_data*)data;
 	const char *pls_name;
 	int pos;
+	playlist* pls;
 	xmmsv_t *dict_entry;
 
 	if (! check_error(value, NULL)) {
 		if (!xmmsv_dict_get (value, "name", &dict_entry) ||
 			!xmmsv_get_string (dict_entry, &pls_name)) {
-			pls_name = "No Name";
+			WARN("playlist name not found");
+			return 0;
 		}
 		if (!xmmsv_dict_get (value, "position", &dict_entry) ||
 			!xmmsv_get_int (dict_entry, &pos)) {
-			pos = -1;
+			WARN("playlist position not found");
+			return 0;
 		}
 
+		pls = playlist_find(rdata->playlists, pls_name);
+		if (pls) {
+			if (pls != rdata->current_playlist)
+				rdata->current_playlist = pls;
+			pls->current_pos = pos;
+		} else {
+			WARN("playlist \'%s\' not found", pls_name);
+		}
+		ui_upd_playlist_pos(rdata);
+/*
 		if (strcmp(rdata->current_playlist->name, pls_name) == 0 ) {
 			rdata->current_playlist->current_pos = pos;
 			ui_upd_playlist_pos(rdata);
@@ -128,6 +148,7 @@ int broadcast_playlist_pos_cb (xmmsv_t *value, void *data) {
 			rdata->current_playlist->current_pos = pos;
 			ui_upd_playlist_pos(rdata);
 		}
+*/
 		return 1;
 	}
 	return 0;
@@ -173,7 +194,7 @@ int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
 	int type, pos, newpos, id;
 	const char *name;
 
-	EINA_LOG_DBG("PLS CHANGED CALLBACK");
+	DBG("PLS CHANGED CALLBACK");
 
 	if (! check_error(value, NULL)) {
 		xmmsv_t *vtype, *vname, *vpos, *vnewpos, *vid;
@@ -181,33 +202,40 @@ int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
 			xmmsv_get_int(vtype, &type);
 			xmmsv_dict_get(value, "name", &vname);
 			xmmsv_get_string(vname, &name);
-			xmmsv_dict_get(value, "position", &vpos);
-			xmmsv_get_int(vpos, &pos);
+			pls = playlist_find(rdata->playlists, name);
+
+			WARN("type: %d", type);
+			dump_xmms_value(value);
 			switch (type) {
-				/*
-				case 0:
-				case 1:
+				case XMMS_PLAYLIST_CHANGED_ADD:
+				case XMMS_PLAYLIST_CHANGED_INSERT:
 					xmmsv_dict_get(value, "id", &vid);
 					xmmsv_get_int(vid, &id);
-					playlist_change_item_add(rdata, name, pos, id);
+					xmmsv_dict_get(value, "position", &vpos);
+					xmmsv_get_int(vpos, &pos);
+					playlist_change_item_add(rdata, name, pos, id); // bugged
 					break;
-				case 3:
+				case XMMS_PLAYLIST_CHANGED_REMOVE:
+					xmmsv_dict_get(value, "position", &vpos);
+					xmmsv_get_int(vpos, &pos);
 					playlist_change_item_del(rdata->playlists, name, pos);
 					break;
-				case 4: // clear playlist
-					break;
-				case 5:
+				case XMMS_PLAYLIST_CHANGED_MOVE:
+					xmmsv_dict_get(value, "position", &vpos);
+					xmmsv_get_int(vpos, &pos);
 					xmmsv_dict_get(value, "newposition", &vnewpos);
 					xmmsv_get_int(vnewpos, &newpos);
 					playlist_change_item_moved(rdata->playlists, name, pos, newpos);
 					break;
-				*/
+				case XMMS_PLAYLIST_CHANGED_CLEAR:
+					playlist_clear_items(pls);
+					break;
+				case XMMS_PLAYLIST_CHANGED_SHUFFLE:
+				case XMMS_PLAYLIST_CHANGED_SORT:
+				case XMMS_PLAYLIST_CHANGED_UPDATE:
 				default:
-					EINA_LOG_WARN("unknown type: %d", type);
-					dump_xmms_value(value);
 					playlist_get_by_name(rdata->connection, name, rdata);
 			}
-			pls = playlist_find(rdata->playlists, name);
 			ui_upd_playlist(rdata, pls);
 		}
 		return 1;
@@ -220,9 +248,9 @@ int mlib_reader_status_cb (xmmsv_t *value, void *data) {
 
 	if (! check_error(value, NULL)) {
 		xmmsv_get_int(value, &status);
-		if (status == 0) {
+		if (status == XMMS_MEDIAINFO_READER_STATUS_IDLE) {
 			ui_upd_mlib_reader_status((rockon_data*)data, 0);
-		} else if (status == 1) {
+		} else if (status == XMMS_MEDIAINFO_READER_STATUS_RUNNING) {
 			ui_upd_mlib_reader_status((rockon_data*)data, -1);
 		}
 		return 1;
@@ -239,4 +267,14 @@ int mlib_reader_unindexed_cb (xmmsv_t *value, void *data) {
 		return 1;
 	}
 	return 0;
+}
+
+int  broadcast_collection_changed_cb(xmmsv_t *value, void *data) {
+	//DBG("Coll Changed");
+	//dump_xmms_value(value);
+	//XMMS_COLLECTION_CHANGED_ADD
+	//XMMS_COLLECTION_CHANGED_UPDATE
+	//XMMS_COLLECTION_CHANGED_RENAME
+	//XMMS_COLLECTION_CHANGED_REMOVE
+	return 1; // keep broadcast alive
 }

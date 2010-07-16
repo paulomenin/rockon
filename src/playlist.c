@@ -23,17 +23,18 @@
 #include "media_info.h"
 #include "ui_update.h"
 #include "rockon_data.h"
+#include "util.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(playlist_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(playlist_log_dom, __VA_ARGS__)
 #define INFO(...) EINA_LOG_DOM_INFO(playlist_log_dom, __VA_ARGS__)
 
+extern int playlist_log_dom;
+
 struct pls_changed_params {
 	playlist  *list;
 	int position;
 };
-
-extern int playlist_log_dom;
 
 int playlist_change_item_add_inner (xmmsv_t *value, void *data);
 
@@ -70,10 +71,7 @@ void playlist_list_del(playlist_list *list) {
 
 void playlist_list_wait(playlist_list *list) {
 	if (list == NULL) return;
-
-	while (list->locked == 1) {
-		ecore_main_loop_iterate();
-	}
+	wait_mutex(&(list->locked));
 }
 
 playlist_list* playlist_list_get (xmmsc_connection_t *conn, void *data) {
@@ -83,7 +81,7 @@ playlist_list* playlist_list_get (xmmsc_connection_t *conn, void *data) {
 	assert(conn);
 
 	list = playlist_list_new();
-	list->locked = 1;
+	up_mutex(&(list->locked));
 
 	params = (struct pls_fetch_params*) malloc(sizeof(struct pls_fetch_params));
 
@@ -105,7 +103,7 @@ playlist_list* playlist_list_get (xmmsc_connection_t *conn, void *data) {
 
 int playlist_list_fetch (xmmsv_t *value, void *params) {
 	xmmsv_list_foreach(value, playlist_list_item_add, ((struct pls_fetch_params*)params)->list);
-	((playlist_list*)((struct pls_fetch_params*)params)->list)->locked = 0;
+	down_mutex(&(((playlist_list*)((struct pls_fetch_params*)params)->list)->locked));
 	ui_upd_playlist_list(((struct pls_fetch_params*)params)->data);
 	free((struct pls_fetch_params*)params);
 	return 1;
@@ -168,10 +166,7 @@ int  playlist_is_fetched(playlist *list) {
 
 void playlist_wait(playlist *pls) {
 	if (pls == NULL) return;
-
-	while (pls->locked == 1) {
-		ecore_main_loop_iterate();
-	}
+	wait_mutex(&(pls->locked));
 }
 
 /* playlist_item */
@@ -275,7 +270,7 @@ playlist *playlist_get (xmmsc_connection_t *conn, playlist *pls, void *data) {
 	params->list = pls;
 	params->data = data;
 
-	pls->locked = 1;
+	up_mutex(&(pls->locked));
 
 	if ( playlist_is_fetched(pls) ) {
 		playlist_clear_items(pls);
@@ -330,6 +325,7 @@ int playlist_item_add(xmmsv_t *value, void *data) {
 	media_info *info;
 	struct pls_fetch_params *params = (struct pls_fetch_params*)data;
 
+	/* reset position counter */
 	if (data == NULL) {
 		pos = 0;
 		return 1;
@@ -374,7 +370,7 @@ int  playlist_is_ready (playlist *list) {
 
 void playlist_fetched(struct pls_fetch_params* data) {
 	DBG("PLS fetched");
-	((playlist*)(data->list))->locked = 0;
+	down_mutex(&(((playlist*)(data->list))->locked));
 	ui_upd_playlist((rockon_data*)(data->data), (playlist*)(data->list));
 	free(data);
 }
@@ -397,7 +393,12 @@ void playlist_change_item_del (playlist_list *pls_list, const char* name, int po
 		playlist_item_del((playlist_item*)eina_list_data_get(item));
 		pls->items = eina_list_remove_list(pls->items, item);
 		pls->num_items--;
+		if (pls->num_items == 0) {
+			DBG("Clear all itens");
+			playlist_clear_items(pls);
+		}
 	}
+
 }
 
 void playlist_change_item_add (void *rck_data, const char* name, int position, int id) {
@@ -406,14 +407,13 @@ void playlist_change_item_add (void *rck_data, const char* name, int position, i
 	playlist *pls;
 	rockon_data *rdata = (rockon_data*)rck_data;
 	pls = playlist_find(rdata->playlists, name);
-
-	if (pls && playlist_is_fetched(pls)) {
+	if (pls) {
 		params = (struct pls_changed_params*) malloc(sizeof(struct pls_changed_params));
 		if (params == NULL) {
 			EINA_LOG_CRIT("pls_changed_params malloc failed");
 			return;
 		}
-		pls->locked = 1;
+		up_mutex(&(pls->locked));
 		params->list = pls;
 		params->position = position;
 
@@ -457,8 +457,12 @@ int playlist_change_item_add_inner (xmmsv_t *value, void *data) {
 		} else {
 			params->list->items = eina_list_append(params->list->items, pi);
 		}
-		params->list->num_items++;
-		params->list->locked = 0;
+		if (params->list->num_items < 0) {
+			params->list->num_items = 1;
+		}else {
+			params->list->num_items++;
+		}
+		down_mutex(&(params->list->locked));
 		free(params);
 		return 1;
 	}
@@ -508,4 +512,18 @@ void playlist_change_item_moved (playlist_list *pls_list, const char* name, int 
 		}
 		pls->items = eina_list_remove_list(pls->items, item_on_oldpos);
 	}
+}
+
+int playlist_load_current_cb (xmmsv_t *value, void *data) {
+	rockon_data *rdata = (rockon_data*)data;
+	const char *pls_name;
+
+	if (! check_error(value, NULL)) {
+		xmmsv_get_string(value, &pls_name);
+
+		rdata->current_playlist = playlist_get_by_name(rdata->connection, pls_name, rdata);
+		playlist_wait(rdata->current_playlist);
+	}
+	down_mutex(&(rdata->mutex_playlist));
+	return 1;
 }

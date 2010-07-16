@@ -43,10 +43,12 @@ void ui_upd_playback_id (rockon_data *rdata) {
 void ui_upd_playback_status (rockon_data *rdata) {
 	Edje_Message_Int msg;
 	switch (rdata->playback_status) {
-		case 0:  INFO("Playback STATUS: Stopped"); break;
-		case 1:  INFO("Playback STATUS: Playing"); break;
-		case 2:  INFO("Playback STATUS: Paused"); break;
-		default: INFO("Playback STATUS: %d", rdata->playback_status);
+		case XMMS_PLAYBACK_STATUS_STOP:
+			INFO("Playback STATUS: Stopped"); break;
+		case XMMS_PLAYBACK_STATUS_PLAY:
+			INFO("Playback STATUS: Playing"); break;
+		case XMMS_PLAYBACK_STATUS_PAUSE:
+			INFO("Playback STATUS: Paused");
 	}
 	msg.val = rdata->playback_status;
 	edje_object_message_send(rdata->widgets.edje, EDJE_MESSAGE_INT, PLAYBACK_STATUS, &msg);
@@ -97,6 +99,8 @@ void ui_upd_playback_info (rockon_data *rdata) {
 	edje_object_message_send(rdata->widgets.edje, EDJE_MESSAGE_INT, PLAYBACK_ID, &msg_id);
 
 	elm_slider_min_max_set(rdata->widgets.seekbar, 0, rdata->playback_info->duration / 1000);
+	
+	ui_upd_playback_playtime(rdata);
 }
 
 void ui_upd_playback_volume (rockon_data *rdata) {
@@ -120,15 +124,20 @@ void ui_upd_playlist (rockon_data *rdata, playlist *pls) {
 	Edje_Message_String pls_name;
 	Edje_Message_Int pls_pos;
 	Edje_Message_Int pls_itens;
-
-	if (pls == NULL) return;
-	playlist_wait(pls);
-	INFO("--------- PLAYLIST ---------");
-	INFO("Name: %s Items: %d Pos: %d",pls->name,
-									  pls->num_items,
-									  pls->current_pos);
+	int num_items;
 
 	elm_list_clear(rdata->widgets.playlist);
+	if (pls == NULL) return;
+	playlist_wait(pls);
+
+	num_items = pls->num_items;
+	if (num_items < 0) num_items = 0;
+
+	INFO("--------- PLAYLIST ---------");
+	INFO("Name: %s Items: %d Pos: %d",pls->name,
+									  num_items,
+									  pls->current_pos);
+
 	EINA_LIST_FOREACH(pls->items, l, data) {
 		INFO("%02d %s",((playlist_item*)data)->pos, ((playlist_item*)data)->title);
 		elm_list_item_append(rdata->widgets.playlist, ((playlist_item*)data)->title, NULL, NULL,  NULL, data);
@@ -138,7 +147,7 @@ void ui_upd_playlist (rockon_data *rdata, playlist *pls) {
 
 	pls_name.str  = pls->name;
 	pls_pos.val   = pls->current_pos;
-	pls_itens.val = pls->num_items;
+	pls_itens.val = num_items;
 	edje_object_message_send (rdata->widgets.edje, EDJE_MESSAGE_STRING, PLAYLIST_NAME, &pls_name);
 	edje_object_message_send (rdata->widgets.edje, EDJE_MESSAGE_INT, PLAYLIST_POS, &pls_pos);
 	edje_object_message_send (rdata->widgets.edje, EDJE_MESSAGE_INT, PLAYLIST_ITENS, &pls_itens);
@@ -149,6 +158,7 @@ void ui_upd_playlist_list (rockon_data *rdata) {
 	Eina_List *l;
 	void *data;
 
+	elm_list_clear(rdata->widgets.playlists);
 	if (rdata->playlists == NULL) return;
 
 	INFO("------ PLAYLIST LIST -------");

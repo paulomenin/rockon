@@ -21,6 +21,7 @@
 #include "xmms_conn.h"
 #include "broadcasts.h"
 #include "ui_update.h"
+#include "util.h"
 
 #define DBG(...) EINA_LOG_DOM_DBG(conn_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(conn_log_dom, __VA_ARGS__)
@@ -87,6 +88,9 @@ int  xmms2_connect (rockon_data *rdata) {
 	XMMS_CALLBACK_SET (rdata->connection,
 					xmmsc_broadcast_playback_volume_changed,
 					broadcast_playback_volume_cb, rdata);
+	XMMS_CALLBACK_SET (rdata->connection,
+					xmmsc_broadcast_collection_changed,
+					broadcast_collection_changed_cb, rdata);
 
 	rdata->ecore_fdh = xmmsc_mainloop_ecore_init (rdata->connection);
 	DBG("Ecore_fdh: %p", rdata->ecore_fdh);
@@ -173,10 +177,12 @@ void xmms2_get_status (rockon_data *rdata) {
 	rdata->playlists = playlist_list_get(rdata->connection, rdata);
 	playlist_list_wait(rdata->playlists);
 
-	rdata->current_playlist = playlist_get_by_name(rdata->connection, "_active", rdata);
-	playlist_wait(rdata->current_playlist);
+	up_mutex(&(rdata->mutex_playlist));
+	XMMS_CALLBACK_SET (rdata->connection,
+					xmmsc_playlist_current_active,
+					playlist_load_current_cb, rdata);
+	wait_mutex(&(rdata->mutex_playlist));
 	res = xmmsc_playlist_current_pos(rdata->connection, rdata->current_playlist->name);
 	xmmsc_result_notifier_set_full(res, broadcast_playlist_pos_cb, rdata, NULL);
 	xmmsc_result_unref(res);
-
 }

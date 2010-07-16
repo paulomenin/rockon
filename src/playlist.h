@@ -78,4 +78,6 @@ void playlist_change_item_del (playlist_list *pls_list, const char* name, int po
 void playlist_change_item_add (void *rck_data, const char* name, int position, int id);
 void playlist_change_item_moved (playlist_list *pls_list, const char* name, int position, int newposition);
 
+int playlist_load_current_cb (xmmsv_t *value, void *data);
+
 #endif /* PLAYLIST_H */
