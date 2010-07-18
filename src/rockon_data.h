@@ -59,6 +59,8 @@ typedef struct {
 	playlist_list *playlists;
 	playlist *current_playlist;
 	int mutex_playlist;;
+	
+	collection_list *collections;
 
 	elm_widgets widgets;
 } rockon_data;

@@ -18,10 +18,32 @@
 #define COLLECTION_H
 
 #include <Eina.h>
+#include <xmmsclient/xmmsclient.h>
 
 typedef struct {
-	Eina_List *Playlists;
+	int locked;
 	Eina_List *Collections;
 } collection_list;
+
+typedef struct {
+	char *name;
+	xmmsv_coll_t *coll;
+} collection;
+
+struct coll_fetch_params {
+	xmmsc_connection_t *conn;
+	void *list;
+	void *data;
+};
+
+collection_list* coll_list_new();
+void coll_list_del(collection_list *list);
+void coll_list_wait(collection_list *list);
+collection_list* coll_list_get (xmmsc_connection_t *conn, void *data);
+int coll_list_fetch (xmmsv_t *value, void *params);
+void coll_list_item_add (xmmsv_t *value, void *list);
+
+collection* coll_new();
+void coll_del(collection* coll);
 
 #endif /* COLLECTION_H */

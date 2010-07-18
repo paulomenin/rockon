@@ -42,6 +42,8 @@ rockon_data* rockon_data_new() {
 	rdata->current_playlist = NULL;
 	rdata->mutex_playlist = 0;
 
+	rdata->collections = NULL;
+
 	return rdata;
 }
 
@@ -66,6 +68,9 @@ void rockon_data_clean(rockon_data *rdata) {
 	}
 	if (rdata->playlists != NULL) {
 		playlist_list_del(rdata->playlists);
+	}
+	if (rdata->collections != NULL) {
+		coll_list_del(rdata->collections);
 	}
 	if (rdata->volume != NULL) {
 		volume_del(rdata->volume);

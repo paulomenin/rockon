@@ -192,6 +192,19 @@ void ui_upd_playlist_pos (rockon_data *rdata) {
 	edje_object_message_send (rdata->widgets.edje, EDJE_MESSAGE_INT, PLAYLIST_ITENS, &pls_itens);
 }
 
+void ui_upd_coll_list (rockon_data *rdata) {
+	Eina_List *l;
+	void *data;
+
+	if (rdata->collections == NULL) return;
+
+	INFO("----- COLLECTION LIST ------");
+	EINA_LIST_FOREACH(rdata->collections->Collections, l, data) {
+		INFO("%s", ((collection*)data)->name);
+	}
+	INFO("----------------------------");
+}
+
 void ui_upd_mlib_reader_status(rockon_data *rdata, int files) {
 	switch (files) {
 		case -1:

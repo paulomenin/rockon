@@ -54,6 +54,7 @@ int  xmms2_connect (rockon_data *rdata) {
 		if (rdata->config->auto_reconnect == 1) {
 			xmms2_disconnect_cb((void*)rdata);
 		}
+		ui_upd_disconnect(rdata);
 		return 0;
 	}
 
@@ -170,6 +171,12 @@ void xmms2_get_status (rockon_data *rdata) {
 	XMMS_CALLBACK_SET (rdata->connection,
 					xmmsc_playback_volume_get,
 					broadcast_playback_volume_cb, rdata);
+
+	if (rdata->collections != NULL) {
+		coll_list_del(rdata->collections);
+	}
+	rdata->collections = coll_list_get(rdata->connection, rdata);
+	coll_list_wait(rdata->collections);
 
 	if (rdata->playlists != NULL) {
 		playlist_list_del(rdata->playlists);

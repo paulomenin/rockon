@@ -1,5 +1,5 @@
 export EINA_LOG_LEVEL=4
-export EINA_LOG_LEVELS=rck_config:0,rck_conn:4,rck_cmd:0,rck_pls:4,rck_UIupd:4,rck_bcast:4,rck_coll:0
+export EINA_LOG_LEVELS=rck_config:0,rck_conn:0,rck_cmd:0,rck_pls:4,rck_UIupd:4,rck_bcast:4,rck_coll:4
 export EINA_LOG_LEVELS_GLOB=eina_*:0,evas_*:0
 
 export EINA_LOG_ABORT=1
