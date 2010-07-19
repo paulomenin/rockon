@@ -53,28 +53,40 @@ void elm_cb_coll_load (void *data, Evas_Object *obj, void *event_info) {
 void seekbar_drag_start_cb(void *data, Evas_Object *obj, void *event_info) {
 	((rockon_data*)data)->widgets.seekbar_update = 0;
 }
+
 void seekbar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info) {
 	int seconds = (int)elm_slider_value_get(obj);
 	cmd_seek_ms((rockon_data*)data, seconds*1000);
 	((rockon_data*)data)->widgets.seekbar_update = 1;
 }
+
 void volumebar_drag_start_cb(void *data, Evas_Object *obj, void *event_info) {
 	((rockon_data*)data)->widgets.volumebar_update = 0;
 }
+
 void volumebar_drag_stop_cb(void *data, Evas_Object *obj, void *event_info) {
 	int volume = (int)elm_slider_value_get(obj);
 	cmd_volume_change_all((rockon_data*)data, volume);
 	((rockon_data*)data)->widgets.volumebar_update = 1;
 }
+
 void playlist_list_click_cb(void *data, Evas_Object *obj, void *event_info) {
 	Elm_List_Item *it = elm_list_selected_item_get(obj);
 	cmd_playlist_load((rockon_data*)data, elm_list_item_label_get(it));
 }
+
 void playlist_click_cb(void *data, Evas_Object *obj, void *event_info){
 	playlist_item *item;
 	Elm_List_Item *it = elm_list_selected_item_get(obj);
 	item = (playlist_item*) elm_list_item_data_get(it);
 	cmd_jump_and_play((rockon_data*)data, item->pos);
+}
+
+void coll_search_click_cb(void *data, Evas_Object *obj, void *event_info){
+	playlist_item *item;
+	Elm_List_Item *it = elm_list_selected_item_get(obj);
+	item = (playlist_item*) elm_list_item_data_get(it);
+	cmd_playlist_add((rockon_data*)data, item->id);
 }
 
 /* callbacks from edje objects */
@@ -113,5 +125,6 @@ void edje_cb_coll_save (void *data, Evas_Object *eo, const char *emission, const
 	}
 }
 void edje_cb_coll_add_to_playlist (void *data, Evas_Object *eo, const char *emission, const char *source) {
-	printf("call edje coll add\n");
+	rockon_data *rdata = (rockon_data*) data;
+	cmd_playlist_add_coll(rdata, rdata->coll);
 }

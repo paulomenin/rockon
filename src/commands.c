@@ -100,6 +100,29 @@ void cmd_playlist_load(rockon_data* rdata, const char *playlist) {
 	xmmsc_result_unref (result);
 }
 
+void cmd_playlist_add(rockon_data *rdata, unsigned int id) {
+	xmmsc_result_t *result;
+
+	assert(rdata);
+	XMMS_CONN_IS_VALID();
+
+	result = xmmsc_playlist_add_id(rdata->connection, rdata->current_playlist->name, id);
+	xmmsc_result_notifier_set(result, check_error, NULL);
+	xmmsc_result_unref (result);
+}
+
+void cmd_playlist_add_coll(rockon_data *rdata, xmmsv_coll_t *coll) {
+	Eina_List *l;
+	playlist_item* pi;
+
+	assert(rdata);
+	if (coll == NULL) return; 
+
+	EINA_LIST_FOREACH(rdata->coll_queried, l, pi) {
+		cmd_playlist_add(rdata, pi->id);
+	}
+}
+
 void cmd_jump_to (rockon_data *rdata, int pos) {
 	assert(rdata);
 	assert(pos >= 0);
@@ -184,18 +207,24 @@ void cmd_volume_change_all(rockon_data* rdata, int volume) {
 
 void cmd_coll_load (rockon_data* rdata, xmmsv_coll_t* coll) {
 	xmmsc_result_t* result;
-	xmmsv_t *title, *album, *artist, *id, *tracknr;
+	xmmsv_t *title, *album, *artist, *id, *tracknr, *disc;
 	xmmsv_t *order, *fetch, *group = NULL;
 	if (coll == NULL) return;
 
-	title = xmmsv_new_string("title");
 	album = xmmsv_new_string("album");
 	artist = xmmsv_new_string("artist");
+	title = xmmsv_new_string("title");
 	id = xmmsv_new_string("id");
 	tracknr = xmmsv_new_string("tracknr");
+	disc = xmmsv_new_string("disc");
 	order = xmmsv_new_list();
 	fetch = xmmsv_new_list();
-	xmmsv_list_append(order, title);
+
+	xmmsv_list_append(order, artist);
+	xmmsv_list_append(order, album);
+	xmmsv_list_append(order, disc);
+	xmmsv_list_append(order, tracknr);
+
 	xmmsv_list_append(fetch, title);
 	xmmsv_list_append(fetch, album);
 	xmmsv_list_append(fetch, artist);
@@ -206,7 +235,12 @@ void cmd_coll_load (rockon_data* rdata, xmmsv_coll_t* coll) {
 	xmmsc_result_notifier_set (result, cmd_coll_load_inner, rdata);
 	xmmsc_result_unref (result);
 
+	xmmsv_unref(artist);
+	xmmsv_unref(album);
+	xmmsv_unref(disc);
+	xmmsv_unref(tracknr);
 	xmmsv_unref(title);
+	xmmsv_unref(id);
 	xmmsv_unref(order);
 	xmmsv_unref(fetch);
 }

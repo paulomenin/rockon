@@ -271,16 +271,25 @@ int mlib_reader_unindexed_cb (xmmsv_t *value, void *data) {
 
 int  broadcast_collection_changed_cb(xmmsv_t *value, void *data) {
 	rockon_data* rdata = (rockon_data*)data;
-	DBG("Coll Changed");
+	xmmsv_t *namespacev = NULL;
+	const char *namespace = NULL;
+
 	dump_xmms_value(value);
 	//XMMS_COLLECTION_CHANGED_ADD
 	//XMMS_COLLECTION_CHANGED_UPDATE
 	//XMMS_COLLECTION_CHANGED_RENAME
 	//XMMS_COLLECTION_CHANGED_REMOVE
-	if (rdata->collections != NULL) {
-		coll_list_del(rdata->collections);
+	xmmsv_dict_get(value, "namespace", &namespacev);
+	xmmsv_get_string(namespacev, &namespace);
+	if (strcmp(namespace, XMMS_COLLECTION_NS_COLLECTIONS) == 0) {
+		if (rdata->collections != NULL) {
+			coll_list_del(rdata->collections);
+		}
+		rdata->collections = coll_list_get(rdata->connection, rdata);
+		coll_list_wait(rdata->collections);
+	} else {
+		// change on playlists
 	}
-	rdata->collections = coll_list_get(rdata->connection, rdata);
-	coll_list_wait(rdata->collections);
+
 	return 1; // keep broadcast alive
 }

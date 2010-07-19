@@ -42,16 +42,13 @@ collection_list* coll_list_new() {
 
 void coll_list_del(collection_list *list) {
 	void *data;
-	Eina_List *l;
 
 	if (!list) return;
 	assert(list);
 
-	EINA_LIST_FOREACH(list->Collections, l, data) {
+	EINA_LIST_FREE(list->Collections, data) {
 		coll_del((collection*)data);
 	}
-
-	free(list);
 	list = NULL;
 }
 

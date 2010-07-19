@@ -30,6 +30,7 @@ void volumebar_drag_start_cb(void *data, Evas_Object *obj, void *event_info);
 void volumebar_drag_stop_cb (void *data, Evas_Object *obj, void *event_info);
 void playlist_list_click_cb (void *data, Evas_Object *obj, void *event_info);
 void playlist_click_cb(void *data, Evas_Object *obj, void *event_info);
+void coll_search_click_cb(void *data, Evas_Object *obj, void *event_info);
 
 void edje_cb_play (void *data, Evas_Object *eo, const char *emission, const char *source);
 void edje_cb_pause(void *data, Evas_Object *eo, const char *emission, const char *source);

@@ -90,13 +90,13 @@ void gui_window_set(rockon_data *rdata) {
 	evas_object_show(coll_name);
 
 	coll_list = elm_list_add(win);
-	elm_layout_content_set(ly, "main:content:coll:coll_list", coll_list);
-	
+	elm_layout_content_set(ly, "main:content:coll:coll_list", coll_list);	
 	evas_object_smart_callback_add(coll_list, "clicked", elm_cb_coll_load, rdata);
 	evas_object_show(coll_list);
 	
 	coll_result = elm_list_add(win);
 	elm_layout_content_set(ly, "main:content:coll:list", coll_result);
+	evas_object_smart_callback_add(coll_result, "clicked", coll_search_click_cb, rdata);
 	evas_object_show(coll_result);
 
 	evas_object_show(win);
