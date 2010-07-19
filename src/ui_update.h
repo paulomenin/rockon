@@ -38,6 +38,7 @@ void ui_upd_playback_playtime (rockon_data *rdata);
 void ui_upd_playback_info     (rockon_data *rdata);
 void ui_upd_playback_volume   (rockon_data *rdata);
 void ui_upd_playlist          (rockon_data *rdata, playlist* pls);
+void ui_upd_playlist_edit     (rockon_data *rdata, playlist* pls);
 void ui_upd_playlist_pos      (rockon_data *rdata);
 void ui_upd_playlist_list     (rockon_data *rdata);
 void ui_upd_coll_list         (rockon_data *rdata);

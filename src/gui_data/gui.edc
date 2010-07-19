@@ -1064,12 +1064,221 @@ group { name: "playlist";
 group { name: "playlists";
 	parts {
 		part {
+			name: "clip";
+			type: RECT;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 0;
+				rel1 { relative: 0.0 0.0; }
+				rel2 { relative: 1.0 1.0; }
+			}
+		}
+		part {
+			name: "background2";
+			type: RECT;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 128;
+				rel1 { relative: 0.0 1.0; to: "clip"; offset: 0 -40;}
+				rel2 { relative: 1.0 1.0; to: "clip"; offset: 0 0;}
+			}
+		}
+		part {
+			name: "pls_list";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0; to: "clip";}
+				rel2 {relative: 0.0 0.0; to: "background2"; offset: 100 -1;}
+			}
+		}
+		part {
 			name: "list";
 			type: SWALLOW;
 			description {
 				state: "default" 0.0;
-				rel1 {relative: 0.0 0.0; }
-				rel2 {relative: 1.0 1.0; offset: -1 -1;}
+				rel1 {relative: 1.0 0.0; to: "pls_list";}
+				rel2 {relative: 1.0 0.0; to: "background2"; offset: -1 -1;}
+			}
+		}
+		part {
+			name: "msg2";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color2: 255 255 255 255;
+				color: 0 0 0 255;
+				color3: 100 100 100 255;
+				rel1 { relative: 0.00 0.00; to: "background2";}
+				rel2 { relative: 0.00 1.00; to: "background2"; offset: 50 0;}
+				text {
+					text: "Name: ";
+					font: "Vera";
+					size: 10;
+					align: 1.0 0.5;
+				}
+			}
+		}
+		part {
+			name: "name_entry";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 1.0 0; to: "msg2"; offset: 0 0 ;}
+				rel2 {relative: 1.0 1.0; to: "background2"; offset: -250 0;}
+			}
+		}
+		part {
+			name: "btn_new";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 50 50 50 200;
+				rel1 { relative: 1.00 0.00; to: "name_entry"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -200 -1;}
+			}
+		}
+		part {
+			name: "btn_new_text";
+			type: TEXT;
+			effect: GLOW;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 255;
+				color2: 255 0 0 255;
+				color3: 0 0 0 255;
+				rel1 { relative: 1.00 0.00; to: "name_entry"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -200 -1;}
+				text {
+					text: "New";
+					font: "Vera";
+					size: 10;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "btn_del";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 50 50 50 200;
+				rel1 { relative: 1.00 0.00; to: "btn_new"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -140 -1;}
+			}
+		}
+		part {
+			name: "btn_del_text";
+			type: TEXT;
+			effect: GLOW;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 255;
+				color2: 255 0 0 255;
+				color3: 0 0 0 255;
+				rel1 { relative: 1.00 0.00; to: "btn_new"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -140 -1;}
+				text {
+					text: "Del";
+					font: "Vera";
+					size: 10;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "btn_rm";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 50 50 50 200;
+				rel1 { relative: 1.00 0.00; to: "btn_del"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -70 -1;}
+			}
+		}
+		part {
+			name: "btn_rm_text";
+			type: TEXT;
+			effect: GLOW;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 255;
+				color2: 255 0 0 255;
+				color3: 0 0 0 255;
+				rel1 { relative: 1.00 0.00; to: "btn_del"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -70 -1;}
+				text {
+					text: "Rem";
+					font: "Vera";
+					size: 10;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "btn_load";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 50 50 50 200;
+				rel1 { relative: 1.00 0.00; to: "btn_rm"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -7 -1;}
+			}
+		}
+		part {
+			name: "btn_load_text";
+			type: TEXT;
+			effect: GLOW;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 255;
+				color2: 255 0 0 255;
+				color3: 0 0 0 255;
+				rel1 { relative: 1.00 0.00; to: "btn_rm"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -7 -1;}
+				text {
+					text: "Load";
+					font: "Vera";
+					size: 10;
+					align: 0.5 0.5;
+				}
+			}
+		}
+	}
+	programs {
+		program {
+			name: "new";
+			signal: "mouse,clicked,1";
+			source: "btn_new*";
+			script {
+				emit("cmd,pls,new","");
+			}
+		}
+		program {
+			name: "del";
+			signal: "mouse,clicked,1";
+			source: "btn_del*";
+			script {
+				emit("cmd,pls,delete","");
+			}
+		}
+		program {
+			name: "remove";
+			signal: "mouse,clicked,1";
+			source: "btn_rm*";
+			script {
+				emit("cmd,pls,remove_entry","");
+			}
+		}
+		program {
+			name: "load";
+			signal: "mouse,clicked,1";
+			source: "btn_load*";
+			script {
+				emit("cmd,pls,load","");
 			}
 		}
 	}

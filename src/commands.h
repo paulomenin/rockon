@@ -38,8 +38,11 @@ void cmd_jump_and_play  (rockon_data *rdata, int pos);
 void cmd_server_launch  (rockon_data *rdata);
 void cmd_server_shutdown(rockon_data *rdata);
 
+void cmd_playlist_create(rockon_data *rdata, const char* name);
+void cmd_playlist_delete(rockon_data *rdata, const char* name);
 void cmd_playlist_load  (rockon_data *rdata, const char *playlist);
 void cmd_playlist_add(rockon_data *rdata, unsigned int id);
+void cmd_playlist_remove_item(rockon_data *rdata, const char *playlist, int pos);
 void cmd_playlist_add_coll(rockon_data *rdata, xmmsv_coll_t *coll);
 
 void cmd_mlib_add_media (rockon_data *rdata, const char *path);

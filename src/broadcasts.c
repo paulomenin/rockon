@@ -230,9 +230,20 @@ int broadcast_playlist_changed_cb (xmmsv_t *value, void *data) {
 				case XMMS_PLAYLIST_CHANGED_CLEAR:
 					playlist_clear_items(pls);
 					break;
+				case XMMS_PLAYLIST_CHANGED_UPDATE:
+					if (playlist_is_fetched(pls)) {
+						Elm_List_Item *it;
+						const char *edit_name;
+						playlist_get(rdata->connection, pls, rdata);
+						it = elm_list_selected_item_get(rdata->widgets.playlists);
+						edit_name = elm_list_item_label_get(it);
+						if (strcmp(name,edit_name)==0) {
+							ui_upd_playlist_edit(rdata, pls);
+						}
+					}
+					break;
 				case XMMS_PLAYLIST_CHANGED_SHUFFLE:
 				case XMMS_PLAYLIST_CHANGED_SORT:
-				case XMMS_PLAYLIST_CHANGED_UPDATE:
 				default:
 					playlist_get_by_name(rdata->connection, name, rdata);
 			}
@@ -273,12 +284,13 @@ int  broadcast_collection_changed_cb(xmmsv_t *value, void *data) {
 	rockon_data* rdata = (rockon_data*)data;
 	xmmsv_t *namespacev = NULL;
 	const char *namespace = NULL;
-
+	/*
 	dump_xmms_value(value);
-	//XMMS_COLLECTION_CHANGED_ADD
-	//XMMS_COLLECTION_CHANGED_UPDATE
-	//XMMS_COLLECTION_CHANGED_RENAME
-	//XMMS_COLLECTION_CHANGED_REMOVE
+	XMMS_COLLECTION_CHANGED_ADD
+	XMMS_COLLECTION_CHANGED_UPDATE
+	XMMS_COLLECTION_CHANGED_RENAME
+	XMMS_COLLECTION_CHANGED_REMOVE
+	*/
 	xmmsv_dict_get(value, "namespace", &namespacev);
 	xmmsv_get_string(namespacev, &namespace);
 	if (strcmp(namespace, XMMS_COLLECTION_NS_COLLECTIONS) == 0) {
@@ -287,8 +299,12 @@ int  broadcast_collection_changed_cb(xmmsv_t *value, void *data) {
 		}
 		rdata->collections = coll_list_get(rdata->connection, rdata);
 		coll_list_wait(rdata->collections);
-	} else {
-		// change on playlists
+	} else if (strcmp(namespace, XMMS_COLLECTION_NS_PLAYLISTS) == 0) {
+		if (rdata->playlists != NULL) {
+			playlist_list_del(rdata->playlists);
+		}
+		rdata->playlists = playlist_list_get(rdata->connection, rdata);
+		playlist_list_wait(rdata->playlists);
 	}
 
 	return 1; // keep broadcast alive

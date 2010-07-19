@@ -90,6 +90,27 @@ void cmd_seek_ms (rockon_data *rdata, int miliseconds) {
 	xmmsc_result_unref (result);
 }
 
+void cmd_playlist_create(rockon_data *rdata, const char* name) {
+	xmmsc_result_t *result;
+	assert(rdata);
+	if (name == NULL) return;
+	XMMS_CONN_IS_VALID();
+	result = xmmsc_playlist_create(rdata->connection, name);
+	xmmsc_result_notifier_set (result, check_error, NULL);
+	xmmsc_result_unref (result);
+	DBG("pls created %s", name);
+}
+
+void cmd_playlist_delete(rockon_data *rdata, const char* name) {
+	xmmsc_result_t *result;
+	assert(rdata);
+	if (name == NULL) return;
+	XMMS_CONN_IS_VALID();
+	result = xmmsc_playlist_remove(rdata->connection, name);
+	xmmsc_result_notifier_set (result, check_error, NULL);
+	xmmsc_result_unref (result);
+}
+
 void cmd_playlist_load(rockon_data* rdata, const char *playlist) {
 	xmmsc_result_t *result;
 	assert(rdata);
@@ -121,6 +142,16 @@ void cmd_playlist_add_coll(rockon_data *rdata, xmmsv_coll_t *coll) {
 	EINA_LIST_FOREACH(rdata->coll_queried, l, pi) {
 		cmd_playlist_add(rdata, pi->id);
 	}
+}
+
+void cmd_playlist_remove_item(rockon_data *rdata, const char *playlist, int pos) {
+	xmmsc_result_t *result;
+	assert(rdata);
+	if (playlist == NULL) return;
+	XMMS_CONN_IS_VALID();
+	result = xmmsc_playlist_remove_entry(rdata->connection, playlist, pos);
+	xmmsc_result_notifier_set (result, check_error, NULL);
+	xmmsc_result_unref (result);
 }
 
 void cmd_jump_to (rockon_data *rdata, int pos) {
@@ -291,12 +322,12 @@ void cmd_coll_load_inner2(const char *key, xmmsv_t *value, void *data) {
 }
 
 void cmd_coll_search(rockon_data* rdata, const char *pattern) {
-	if (pattern) {
-		if (xmmsv_coll_parse(pattern, &(rdata->coll))) {
-			cmd_coll_load(rdata, rdata->coll);
-		} else {
-			INFO("Can't parse pattern: %s", pattern);
-		}
+	if (pattern == NULL) return;
+
+	if (xmmsv_coll_parse(pattern, &(rdata->coll))) {
+		cmd_coll_load(rdata, rdata->coll);
+	} else {
+		INFO("Can't parse pattern: %s", pattern);
 	}
 }
 

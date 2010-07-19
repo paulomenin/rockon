@@ -16,6 +16,7 @@
 
 #include "callbacks.h"
 #include "commands.h"
+#include "ui_update.h"
 
 /* callbacks from elementary widgets */
 
@@ -75,6 +76,24 @@ void playlist_list_click_cb(void *data, Evas_Object *obj, void *event_info) {
 	cmd_playlist_load((rockon_data*)data, elm_list_item_label_get(it));
 }
 
+void playlist_list_selected_cb (void *data, Evas_Object *obj, void *event_info) {
+	rockon_data* rdata = (rockon_data*)data;
+	Elm_List_Item *it = elm_list_selected_item_get(obj);
+	const char *name;
+	if (it == NULL) {
+		ui_upd_playlist_edit(rdata, NULL);
+	} else {
+		playlist *pls;
+		name = elm_list_item_label_get(it);
+		pls = playlist_find(rdata->playlists, name);
+		if (! playlist_is_fetched(pls)) {
+			playlist_get(rdata->connection, pls, rdata);
+			playlist_wait(pls);
+		}
+		ui_upd_playlist_edit(rdata, pls);
+	}
+}
+
 void playlist_click_cb(void *data, Evas_Object *obj, void *event_info){
 	playlist_item *item;
 	Elm_List_Item *it = elm_list_selected_item_get(obj);
@@ -111,16 +130,54 @@ void edje_cb_prev (void *data, Evas_Object *eo, const char *emission, const char
 	cmd_prev((rockon_data*)data);
 }
 
+void edje_cb_pls_new (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	rockon_data *rdata = (rockon_data*) data;
+	const char *name = elm_scrolled_entry_entry_get(rdata->widgets.playlist_name);
+	if (name[0] == '_') {
+		return;
+	}
+	cmd_playlist_create((rockon_data*)data, name);
+}
+
+void edje_cb_pls_delete (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	rockon_data* rdata = (rockon_data*)data;
+	Elm_List_Item *it = elm_list_selected_item_get(rdata->widgets.playlists);
+	const char *name;
+	if (it == NULL) return;
+	name = elm_list_item_label_get(it);
+	cmd_playlist_delete(rdata, name);
+}
+
+void edje_cb_pls_remove_entry(void *data, Evas_Object *eo, const char *emission, const char *source) {
+	rockon_data* rdata = (rockon_data*)data;
+	playlist_item *pi;
+	Elm_List_Item *it_list = elm_list_selected_item_get(rdata->widgets.playlists);
+	Elm_List_Item *it_edit = elm_list_selected_item_get(rdata->widgets.playlist_edit);
+	const char *name;
+	if ((it_list == NULL) || (it_edit == NULL)) return;
+	name = elm_list_item_label_get(it_list);
+	pi = (playlist_item*) elm_list_item_data_get(it_edit);
+	cmd_playlist_remove_item(rdata, name, pi->pos);
+}
+
+void edje_cb_pls_load (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	rockon_data* rdata = (rockon_data*)data;
+	Elm_List_Item *it = elm_list_selected_item_get(rdata->widgets.playlists);
+	const char *name;
+	if (it == NULL) return;
+	name = elm_list_item_label_get(it);
+	cmd_playlist_load(rdata, name);
+}
+
 void edje_cb_coll_search (void *data, Evas_Object *eo, const char *emission, const char *source){
 	rockon_data *rdata = (rockon_data*) data;
 	const char *pattern = elm_scrolled_entry_entry_get(rdata->widgets.coll_entry);
-	if (pattern)
-		cmd_coll_search(rdata, pattern);
+	cmd_coll_search(rdata, pattern);
 }
 void edje_cb_coll_save (void *data, Evas_Object *eo, const char *emission, const char *source){
 	rockon_data *rdata = (rockon_data*) data;
 	const char *name = elm_scrolled_entry_entry_get(rdata->widgets.coll_name);
-	if ((name)&&(rdata->coll)) {
+	if (rdata->coll) {
 		cmd_coll_save(rdata, rdata->coll, name);
 	}
 }

@@ -24,7 +24,7 @@ void app_exit(void *data, Evas_Object *obj, void *event_info) {
 void gui_window_set(rockon_data *rdata) {
 	Evas_Object *win, *ly, *edje_obj;
 	Evas_Object *pb, *seekbar, *volumebar;
-	Evas_Object *pls_lists, *pls_list;
+	Evas_Object *pls_lists, *pls_list, *pls_edit, *pls_name;
 	Evas_Object *coll_entry, *coll_list, *coll_result, *coll_name;
 
 	win = elm_win_add(NULL, "rockon", ELM_WIN_BASIC);
@@ -65,14 +65,28 @@ void gui_window_set(rockon_data *rdata) {
 	evas_object_show(volumebar);
 
 	pls_lists = elm_list_add(win);
-	elm_layout_content_set(ly, "main:content:plss:list", pls_lists);
+	elm_layout_content_set(ly, "main:content:plss:pls_list", pls_lists);
+	elm_list_multi_select_set(pls_lists, 0);
 	evas_object_smart_callback_add(pls_lists, "clicked", playlist_list_click_cb, rdata);
+	evas_object_smart_callback_add(pls_lists, "selected", playlist_list_selected_cb, rdata);
+	evas_object_smart_callback_add(pls_lists, "unselected", playlist_list_selected_cb, rdata);
 	evas_object_show(pls_lists);
 
 	pls_list = elm_list_add(win);
 	elm_layout_content_set(ly, "main:content:pls:list", pls_list);
 	evas_object_smart_callback_add(pls_list, "clicked", playlist_click_cb, rdata);
 	evas_object_show(pls_list);
+	
+	pls_edit = elm_list_add(win);
+	elm_layout_content_set(ly, "main:content:plss:list", pls_edit);
+	evas_object_show(pls_edit);
+
+	pls_name = elm_scrolled_entry_add(win);
+	elm_layout_content_set(ly, "main:content:plss:name_entry", pls_name);
+	elm_scrolled_entry_scrollbar_policy_set(pls_name, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+	elm_scrolled_entry_entry_set(pls_name, "");
+	elm_scrolled_entry_single_line_set(pls_name, 1);
+	evas_object_show(pls_name);
 
 	coll_entry = elm_scrolled_entry_add(win);
 	elm_layout_content_set(ly, "main:content:coll:search_entry", coll_entry);
@@ -110,6 +124,8 @@ void gui_window_set(rockon_data *rdata) {
 	rdata->widgets.volumebar_update = 1;
 	rdata->widgets.playlists = pls_lists;
 	rdata->widgets.playlist = pls_list;
+	rdata->widgets.playlist_edit = pls_edit;
+	rdata->widgets.playlist_name = pls_name;
 	rdata->widgets.coll_entry = coll_entry;
 	rdata->widgets.coll_list = coll_list;
 	rdata->widgets.coll_result = coll_result;
@@ -120,6 +136,10 @@ void gui_window_set(rockon_data *rdata) {
 	edje_object_signal_callback_add (edje_obj, "cmd,next", "*", edje_cb_next, (void*)rdata);
 	edje_object_signal_callback_add (edje_obj, "cmd,prev", "*", edje_cb_prev, (void*)rdata);
 	edje_object_signal_callback_add (edje_obj, "cmd,pause", "*",edje_cb_pause, (void*)rdata);
+	edje_object_signal_callback_add (edje_obj, "cmd,pls,new", "*",edje_cb_pls_new, (void*)rdata);
+	edje_object_signal_callback_add (edje_obj, "cmd,pls,delete", "*",edje_cb_pls_delete, (void*)rdata);
+	edje_object_signal_callback_add (edje_obj, "cmd,pls,remove_entry", "*",edje_cb_pls_remove_entry, (void*)rdata);
+	edje_object_signal_callback_add (edje_obj, "cmd,pls,load", "*",edje_cb_pls_load, (void*)rdata);
 	edje_object_signal_callback_add (edje_obj, "cmd,coll,search", "*",edje_cb_coll_search, (void*)rdata);
 	edje_object_signal_callback_add (edje_obj, "cmd,coll,save", "*",edje_cb_coll_save, (void*)rdata);
 	edje_object_signal_callback_add (edje_obj, "cmd,coll,add_to_pls", "*",edje_cb_coll_add_to_playlist, (void*)rdata);

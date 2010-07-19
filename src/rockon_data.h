@@ -35,8 +35,12 @@ typedef struct {
 	int seekbar_update;
 	Evas_Object *volumebar;
 	int volumebar_update;
+
 	Evas_Object *playlist;
 	Evas_Object *playlists;
+	Evas_Object *playlist_edit;
+	Evas_Object *playlist_name;
+
 	Evas_Object *coll_list;
 	Evas_Object *coll_result;
 	Evas_Object *coll_entry;
