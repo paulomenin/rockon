@@ -270,11 +270,17 @@ int mlib_reader_unindexed_cb (xmmsv_t *value, void *data) {
 }
 
 int  broadcast_collection_changed_cb(xmmsv_t *value, void *data) {
-	//DBG("Coll Changed");
-	//dump_xmms_value(value);
+	rockon_data* rdata = (rockon_data*)data;
+	DBG("Coll Changed");
+	dump_xmms_value(value);
 	//XMMS_COLLECTION_CHANGED_ADD
 	//XMMS_COLLECTION_CHANGED_UPDATE
 	//XMMS_COLLECTION_CHANGED_RENAME
 	//XMMS_COLLECTION_CHANGED_REMOVE
+	if (rdata->collections != NULL) {
+		coll_list_del(rdata->collections);
+	}
+	rdata->collections = coll_list_get(rdata->connection, rdata);
+	coll_list_wait(rdata->collections);
 	return 1; // keep broadcast alive
 }

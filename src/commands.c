@@ -256,3 +256,23 @@ void cmd_coll_load_inner2(const char *key, xmmsv_t *value, void *data) {
 	}
 }
 
+void cmd_coll_search(rockon_data* rdata, const char *pattern) {
+	if (pattern) {
+		if (xmmsv_coll_parse(pattern, &(rdata->coll))) {
+			cmd_coll_load(rdata, rdata->coll);
+		} else {
+			INFO("Can't parse pattern: %s", pattern);
+		}
+	}
+}
+
+void cmd_coll_save(rockon_data *rdata, xmmsv_coll_t *coll, const char *name) {
+	xmmsc_result_t *result;
+
+	if (name == NULL) return;
+
+	XMMS_CONN_IS_VALID();
+	result = xmmsc_coll_save  (rdata->connection, coll, name, XMMS_COLLECTION_NS_COLLECTIONS);
+	xmmsc_result_notifier_set (result, check_error, NULL);
+	xmmsc_result_unref (result);
+}

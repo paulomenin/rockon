@@ -65,6 +65,7 @@ typedef struct {
 	int mutex_playlist;;
 	
 	collection_list *collections;
+	xmmsv_coll_t *coll;
 	Eina_List *coll_queried;
 
 	elm_widgets widgets;
