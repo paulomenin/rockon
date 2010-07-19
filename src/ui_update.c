@@ -28,6 +28,8 @@ void ui_upd_disconnect (rockon_data *rdata) {
 
 	elm_list_clear(rdata->widgets.playlist);
 	elm_list_clear(rdata->widgets.playlists);
+	elm_list_clear(rdata->widgets.coll_list);
+	elm_list_clear(rdata->widgets.coll_result);
 	if (rdata->widgets.volumebar_update)
 		elm_slider_value_set(rdata->widgets.volumebar, 0);
 	if (rdata->widgets.seekbar_update)
@@ -196,14 +198,35 @@ void ui_upd_coll_list (rockon_data *rdata) {
 	Eina_List *l;
 	void *data;
 
+	elm_list_clear(rdata->widgets.coll_list);
+
 	if (rdata->collections == NULL) return;
 
 	INFO("----- COLLECTION LIST ------");
 	EINA_LIST_FOREACH(rdata->collections->Collections, l, data) {
 		INFO("%s", ((collection*)data)->name);
+		elm_list_item_append(rdata->widgets.coll_list, ((collection*)data)->name, NULL, NULL,  NULL, data);
 	}
 	INFO("----------------------------");
+	elm_list_go(rdata->widgets.coll_list);
 }
+
+void ui_upd_coll_queried (rockon_data *rdata) {
+	Eina_List *l;
+	void *data;
+
+	elm_list_clear(rdata->widgets.coll_result);
+
+	INFO("-------- COLL QUERY --------");
+
+	EINA_LIST_FOREACH(rdata->coll_queried, l, data) {
+		INFO("%s", ((playlist_item*)data)->title);
+		elm_list_item_append(rdata->widgets.coll_result, ((playlist_item*)data)->title, NULL, NULL,  NULL, data);
+	}
+	INFO("----------------------------");
+	elm_list_go(rdata->widgets.coll_result);
+}
+
 
 void ui_upd_mlib_reader_status(rockon_data *rdata, int files) {
 	switch (files) {

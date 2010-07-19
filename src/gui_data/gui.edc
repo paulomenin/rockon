@@ -224,6 +224,36 @@ group { name: "layout";
 			}
 		}
 		part {
+			name: "btn_coll";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 0;
+				rel1 {relative: 1 0; to: "btn_info"; offset:  8 0;}
+				rel2 {relative: 1 1; to: "btn_info"; offset: 50 0;}
+			}
+		}
+		part {
+			name: "btn_coll_text";
+			type: TEXT;
+			effect: OUTLINE;
+			description {
+				state: "default" 0.0;
+				color:  255 255 255 255;
+				color2: 0 0 0 255;
+				color3: 0 0 0 0;
+				rel1 {relative: 0.0 0.0; to: "btn_coll";}
+				rel2 {relative: 1.0 1.0; to: "btn_coll";}
+				text {
+					text: "Colls";
+					font: "Vera";
+					size: 14;
+					align: 0.5 0.5;
+
+				}
+			}
+		}
+		part {
 			name: "PlaybackPlaytime";
 			type: TEXT;
 			effect: OUTLINE;
@@ -339,6 +369,11 @@ group { name: "layout";
 				rel1 {relative: 0.0 1.0; to: "toolbar";     offset: -803 0;}
 				rel2 {relative: 1.0 0.0; to: "playback_bg"; offset: -803 0;}
 			}
+			description {
+				state: "coll" 0.0;
+				rel1 {relative: 0.0 1.0; to: "toolbar";     offset: -1203 0;}
+				rel2 {relative: 1.0 0.0; to: "playback_bg"; offset: -1203 0;}
+			}
 		}
 		part {
 			name: "playback_bg";
@@ -417,6 +452,14 @@ group { name: "layout";
 			transition: SINUSOIDAL 1.0;
 		}
 		program {
+			name: "show_coll";
+			signal: "mouse,clicked,1";
+			source: "btn_coll*";
+			action: STATE_SET "coll" 0.0;
+			target: "content";
+			transition: SINUSOIDAL 1.0;
+		}
+		program {
 			name: "disconnected";
 			signal: "disconnect";
 			source: "rockon";
@@ -468,6 +511,16 @@ group { name: "content";
 				state: "default" 0.0;
 				rel1 {relative: 1.0 0.0; to: "plss"; offset:   0 0;}
 				rel2 {relative: 1.0 1.0; to: "plss"; offset: 400 0;}
+			}
+		}
+		part {
+			name: "coll";
+			type: GROUP;
+			source: "browse_coll";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 1.0 0.0; to: "info"; offset:   0 0;}
+				rel2 {relative: 1.0 1.0; to: "info"; offset: 400 0;}
 			}
 		}
 	}
@@ -988,7 +1041,7 @@ group { name: "playlist";
 				rel1 { relative: 0.00 0.00; to: "background";}
 				rel2 { relative: 1.00 1.00; to: "background";}
 				text {
-					text: "Playlist: _tmp Pos(5/30)";
+					text: "--";
 					font: "Vera";
 					size: 11;
 					align: 0.01 0.5;
@@ -1017,6 +1070,231 @@ group { name: "playlists";
 				state: "default" 0.0;
 				rel1 {relative: 0.0 0.0; }
 				rel2 {relative: 1.0 1.0; offset: -1 -1;}
+			}
+		}
+	}
+}
+
+group { name: "browse_coll";
+	parts {
+		part {
+			name: "clip";
+			type: RECT;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 0;
+				rel1 { relative: 0.0 0.0; }
+				rel2 { relative: 1.0 1.0; }
+			}
+		}
+		part {
+			name: "background";
+			type: RECT;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 128;
+				rel1 { relative: 0.0 0.0; to: "clip";}
+				rel2 { relative: 1.0 0.0; to: "clip"; offset: 0 40; }
+			}
+		}
+		part {
+			name: "background2";
+			type: RECT;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 128;
+				rel1 { relative: 0.0 1.0; to: "clip"; offset: 0 -20;}
+				rel2 { relative: 1.0 1.0; to: "clip"; offset: 0 0;}
+			}
+		}
+		part {
+			name: "msg";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color2: 255 255 255 255;
+				color: 0 0 0 255;
+				color3: 100 100 100 255;
+				rel1 { relative: 0.00 0.00; to: "background";}
+				rel2 { relative: 0.00 1.00; to: "background"; offset: 50 0;}
+				text {
+					text: "Search: ";
+					font: "Vera";
+					size: 11;
+					align: 1.0 0.5;
+				}
+			}
+		}
+		part {
+			name: "search_entry";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 1.0 0; to: "msg"; offset: 0 0 ;}
+				rel2 {relative: 1.0 1.0; to: "background"; offset: -50 0;}
+			}
+		}
+		part {
+			name: "btn_go";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 50 50 50 200;
+				rel1 { relative: 1.00 0.00; to: "search_entry"; offset: 3 0;}
+				rel2 { relative: 1.00 1.00; to: "background"; offset: -6 0;}
+			}
+		}
+		part {
+			name: "btn_go_text";
+			type: TEXT;
+			effect: GLOW;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 255;
+				color2: 255 0 0 255;
+				color3: 0 0 0 255;
+				rel1 { relative: 1.00 0.00; to: "search_entry"; offset: 3 0;}
+				rel2 { relative: 1.00 1.00; to: "background"; offset: -6 0;}
+				text {
+					text: "GO";
+					font: "Vera";
+					size: 14;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "coll_list";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 1.0; to: "background";}
+				rel2 {relative: 0.0 0.0; to: "background2"; offset: 100 -1;}
+			}
+		}
+		part {
+			name: "list";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 1.0 0.0; to: "coll_list";}
+				rel2 {relative: 1.0 0.0; to: "background2"; offset: -1 -1;}
+			}
+		}
+		part {
+			name: "msg2";
+			type: TEXT;
+			effect: NONE;
+			description {
+				state: "default" 0.0;
+				color2: 255 255 255 255;
+				color: 0 0 0 255;
+				color3: 100 100 100 255;
+				rel1 { relative: 0.00 0.00; to: "background2";}
+				rel2 { relative: 0.00 1.00; to: "background2"; offset: 50 0;}
+				text {
+					text: "Name: ";
+					font: "Vera";
+					size: 10;
+					align: 1.0 0.3;
+				}
+			}
+		}
+		part {
+			name: "name_entry";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 1.0 0; to: "msg2"; offset: 0 0 ;}
+				rel2 {relative: 1.0 1.0; to: "background2"; offset: -170 0;}
+			}
+		}
+		part {
+			name: "btn_save";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 50 50 50 200;
+				rel1 { relative: 1.00 0.00; to: "name_entry"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -100 -1;}
+			}
+		}
+		part {
+			name: "btn_save_text";
+			type: TEXT;
+			effect: GLOW;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 255;
+				color2: 255 0 0 255;
+				color3: 0 0 0 255;
+				rel1 { relative: 1.00 0.00; to: "name_entry"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -100 -1;}
+				text {
+					text: "Save";
+					font: "Vera";
+					size: 10;
+					align: 0.5 0.3;
+				}
+			}
+		}
+		part {
+			name: "btn_add";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 50 50 50 200;
+				rel1 { relative: 1.00 0.00; to: "btn_save"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -7 -1;}
+			}
+		}
+		part {
+			name: "btn_add_text";
+			type: TEXT;
+			effect: GLOW;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 255;
+				color2: 255 0 0 255;
+				color3: 0 0 0 255;
+				rel1 { relative: 1.00 0.00; to: "btn_save"; offset: 5 0;}
+				rel2 { relative: 1.00 1.00; to: "background2"; offset: -7 -1;}
+				text {
+					text: "Add All to Playlist";
+					font: "Vera";
+					size: 10;
+					align: 0.5 0.3;
+				}
+			}
+		}
+	}
+	programs {
+		program {
+			name: "go";
+			signal: "mouse,clicked,1";
+			source: "btn_go*";
+			script {
+				emit("cmd,coll,search","");
+			}
+		}
+		program {
+			name: "save";
+			signal: "mouse,clicked,1";
+			source: "btn_save*";
+			script {
+				emit("cmd,coll,save","");
+			}
+		}
+		program {
+			name: "add";
+			signal: "mouse,clicked,1";
+			source: "btn_add*";
+			script {
+				emit("cmd,coll,add_to_pls","");
 			}
 		}
 	}

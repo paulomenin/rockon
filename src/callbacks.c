@@ -35,6 +35,17 @@ void elm_cb_next(void *data, Evas_Object *obj, void *event_info) {
 	cmd_next((rockon_data*)data);
 }
 
+void elm_cb_coll_search (void *data, Evas_Object *obj, void *event_info) {
+	printf("call elm coll search\n");
+}
+
+void elm_cb_coll_load (void *data, Evas_Object *obj, void *event_info) {
+	collection *coll;
+	Elm_List_Item *it = elm_list_selected_item_get(obj);
+	coll = (collection*) elm_list_item_data_get(it);
+	cmd_coll_load((rockon_data*)data, coll->coll);
+}
+
 void seekbar_drag_start_cb(void *data, Evas_Object *obj, void *event_info) {
 	((rockon_data*)data)->widgets.seekbar_update = 0;
 }
@@ -82,4 +93,14 @@ void edje_cb_next (void *data, Evas_Object *eo, const char *emission, const char
 
 void edje_cb_prev (void *data, Evas_Object *eo, const char *emission, const char *source) {
 	cmd_prev((rockon_data*)data);
+}
+
+void edje_cb_coll_search (void *data, Evas_Object *eo, const char *emission, const char *source){
+	printf("call edje coll search\n");
+}
+void edje_cb_coll_save (void *data, Evas_Object *eo, const char *emission, const char *source){
+	printf("call edje coll save\n");
+}
+void edje_cb_coll_add_to_playlist (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	printf("call edje coll add\n");
 }

@@ -22,6 +22,8 @@ void elm_cb_play (void *data, Evas_Object *obj, void *event_info);
 void elm_cb_pause(void *data, Evas_Object *obj, void *event_info);
 void elm_cb_stop (void *data, Evas_Object *obj, void *event_info);
 void elm_cb_next (void *data, Evas_Object *obj, void *event_info);
+void elm_cb_coll_search (void *data, Evas_Object *obj, void *event_info);
+void elm_cb_coll_load (void *data, Evas_Object *obj, void *event_info);
 void seekbar_drag_start_cb  (void *data, Evas_Object *obj, void *event_info);
 void seekbar_drag_stop_cb   (void *data, Evas_Object *obj, void *event_info);
 void volumebar_drag_start_cb(void *data, Evas_Object *obj, void *event_info);
@@ -34,3 +36,6 @@ void edje_cb_pause(void *data, Evas_Object *eo, const char *emission, const char
 void edje_cb_stop (void *data, Evas_Object *eo, const char *emission, const char *source);
 void edje_cb_next (void *data, Evas_Object *eo, const char *emission, const char *source);
 void edje_cb_prev (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_coll_search (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_coll_save (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_coll_add_to_playlist (void *data, Evas_Object *eo, const char *emission, const char *source);

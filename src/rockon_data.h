@@ -37,6 +37,10 @@ typedef struct {
 	int volumebar_update;
 	Evas_Object *playlist;
 	Evas_Object *playlists;
+	Evas_Object *coll_list;
+	Evas_Object *coll_result;
+	Evas_Object *coll_entry;
+	Evas_Object *coll_name;
 } elm_widgets;
 
 typedef struct {
@@ -61,6 +65,7 @@ typedef struct {
 	int mutex_playlist;;
 	
 	collection_list *collections;
+	Eina_List *coll_queried;
 
 	elm_widgets widgets;
 } rockon_data;
@@ -68,6 +73,7 @@ typedef struct {
 rockon_data* rockon_data_new();
 void rockon_data_del(rockon_data *rdata);
 void rockon_data_clean(rockon_data *rdata);
+void rockon_data_coll_queried_clean(rockon_data *rdata);
 
 volume_channel* volume_channel_new();
 void volume_channel_del(volume_channel* channel);

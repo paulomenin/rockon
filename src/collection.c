@@ -102,7 +102,7 @@ collection_list* coll_list_get (xmmsc_connection_t *conn, void *data) {
 	params->list = list;
 	params->data = data;
 	
-	res = xmmsc_coll_list(((rockon_data*)data)->connection, "Collections");
+	res = xmmsc_coll_list(((rockon_data*)data)->connection, XMMS_COLLECTION_NS_COLLECTIONS);
 	xmmsc_result_notifier_set_full(res, coll_list_fetch, params, NULL);
 	xmmsc_result_unref(res);
 
@@ -129,7 +129,7 @@ void coll_list_item_add (xmmsv_t *value, void *params) {
 	coll->name = strdup(name);
 	coll->coll = NULL;
 
-	result = xmmsc_coll_get(((struct coll_fetch_params*)params)->conn, name, "Collections");
+	result = xmmsc_coll_get(((struct coll_fetch_params*)params)->conn, name, XMMS_COLLECTION_NS_COLLECTIONS);
 	xmmsc_result_notifier_set(result, coll_list_item_add_inner, coll);
 	xmmsc_result_unref(result);
 
@@ -138,5 +138,6 @@ void coll_list_item_add (xmmsv_t *value, void *params) {
 
 int coll_list_item_add_inner (xmmsv_t *value, void *data) {
 	xmmsv_get_coll(value, &(((collection*)data)->coll));
+	xmmsv_coll_ref(((collection*)data)->coll);
 	return 1;
 }

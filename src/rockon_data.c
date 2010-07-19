@@ -75,8 +75,19 @@ void rockon_data_clean(rockon_data *rdata) {
 	if (rdata->volume != NULL) {
 		volume_del(rdata->volume);
 	}
-	
+	rockon_data_coll_queried_clean(rdata);
+
 	xmms2_shutdown(rdata);
+}
+
+void rockon_data_coll_queried_clean(rockon_data *rdata) {
+	playlist_item *item;
+
+	if (rdata->coll_queried == NULL) return;
+
+	EINA_LIST_FREE(rdata->coll_queried, item) {
+		playlist_item_del(item);
+	}
 }
 
 volume_channel* volume_channel_new() {
