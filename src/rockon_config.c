@@ -26,32 +26,49 @@
 extern int config_log_dom;
 
 char* get_config_filename(const char* filename);
+char* get_theme_filename(rockon_config* config);
 enum lcfg_status config_visitor_load(const char *key, void *data, size_t len, void *user_data);
 
 rockon_config* config_new() {
 	rockon_config *config = NULL;
+	char *home_theme_path;
 
 	config = (rockon_config*) malloc(sizeof(rockon_config));
 	if (config == NULL)
 		EINA_LOG_CRIT("Couldn't allocate memory for config.");
+	config->theme_path_list = NULL;
 
-	if (config_load (config) == 0)
+	home_theme_path = get_config_filename("themes");
+
+	config->theme_path_list = eina_list_append(config->theme_path_list, strdup("/usr/share/rockon/themes"));
+	config->theme_path_list = eina_list_append(config->theme_path_list, strdup("/usr/local/share/rockon/themes"));
+	config->theme_path_list = eina_list_append(config->theme_path_list, strdup(home_theme_path));
+
+	if (config_load(config) == 0)
 		INFO("Couldn't load config. Loaded default values.");
+	
+	config->edj_data_path = get_theme_filename(config);
 
-	// TODO get this path from config
-	config->edj_data_path = strdup("./build/default/src/gui_data/gui.edj");
-
+	free(home_theme_path);
 	return config;
 }
 
 void config_del(rockon_config *config) {
+	char *data;
 	assert(config);
 
 	free(config->config_filename);
 	free(config->ipc_path);
 	if (config->lcfg_obj) lcfg_delete(config->lcfg_obj);
 	if (config->edj_data_path) free(config->edj_data_path);
+	if (config->theme) free(config->theme);
+
+	EINA_LIST_FREE(config->theme_path_list, data) {
+		free(data);
+	}
+
 	free(config);
+	config = NULL;
 }
 
 int config_load (rockon_config *config) {
@@ -64,6 +81,7 @@ int config_load (rockon_config *config) {
 	config->launch_server = 0;
 	config->auto_reconnect = 0;
 	config->reconnect_interval = 3;
+	config->theme = strdup("default.edj");
 
 	username = getenv("USER");
 	ipc_path_lenght = strlen(username) + 22;
@@ -88,6 +106,9 @@ int config_load (rockon_config *config) {
 int config_save (rockon_config *config) {
 	FILE *fd;
 	char *dir;
+	int count = 0;
+	Eina_List *l;
+	char *path;
 
 	if (config == NULL)  return 0;
 	if (config->config_filename == NULL)  return 0;
@@ -108,6 +129,15 @@ int config_save (rockon_config *config) {
 		fprintf(fd,"auto_reconnect = \"%d\"\n", config->auto_reconnect);
 		fprintf(fd,"reconnect_interval = \"%d\"\n", config->reconnect_interval);
 		fprintf(fd,"ipc_path = \"%s\"\n", config->ipc_path);
+		fprintf(fd,"theme = \"%s\"\n", config->theme);
+
+		EINA_LIST_FOREACH(config->theme_path_list, l, path) {
+			if (count > 2) {
+				fprintf(fd,"additional_theme_path = \"%s\"\n", path);
+			}
+			count++;
+		}
+
 		fclose(fd);
 		return 1;
 	}
@@ -136,6 +166,29 @@ char* get_config_filename(const char* filename) {
 	return NULL;
 }
 
+char* get_theme_filename(rockon_config *config) {
+	Eina_List *l;
+	char *path;
+	char *theme = NULL;
+	int filename_len, dir_len;
+
+	assert(config);
+
+	filename_len = strlen(config->theme);
+	EINA_LIST_FOREACH(config->theme_path_list, l, path) {
+		free(theme);
+		dir_len = strlen(path);
+		theme = (char*) malloc(sizeof(char*)*(dir_len+filename_len+2));
+		snprintf(theme,(dir_len+filename_len+2),"%s/%s", path, config->theme);
+		DBG("possible theme: %s", theme);
+		if ((ecore_file_exists(theme)) && (!ecore_file_is_dir(theme))) {
+			return theme;
+		}
+	}
+	free(theme);
+	return NULL;
+}
+
 enum lcfg_status config_visitor_load(const char *key, void *data, size_t len, void *user_data) {
 	rockon_config *config = (rockon_config*) user_data;
 
@@ -155,6 +208,13 @@ enum lcfg_status config_visitor_load(const char *key, void *data, size_t len, vo
 		if (config->ipc_path) free(config->ipc_path);
 		config->ipc_path = strdup((const char*)data);
 		DBG("LOADED: ipc_path %s", config->ipc_path);
+	} else if (strcmp(key, "theme") == 0) {
+		if (config->theme) free(config->theme);
+		config->theme = strdup((const char*)data);
+		DBG("LOADED: theme %s", config->theme);
+	} else if (strcmp(key, "additional_theme_path") == 0) {
+		config->theme_path_list = eina_list_append(config->theme_path_list, strdup((const char*)data));
+		DBG("LOADED: additional_theme_path %s", (const char*)data);
 	}
 
 	return lcfg_status_ok;

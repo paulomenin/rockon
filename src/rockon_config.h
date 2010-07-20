@@ -22,6 +22,7 @@
 typedef struct {
 	char *config_filename;
 	struct lcfg *lcfg_obj;
+	Eina_List *theme_path_list;
 
 	int launch_server;
 	int terminate_server;
@@ -29,6 +30,7 @@ typedef struct {
 	int reconnect_interval;
 	char *ipc_path;
 	char *edj_data_path;
+	char *theme;
 } rockon_config;
 
 rockon_config* config_new();

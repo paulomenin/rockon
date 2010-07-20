@@ -43,6 +43,14 @@ EAPI int elm_main (int argc, char** argv) {
 
 	rdata = rockon_data_new();
 
+	if (rdata->config->edj_data_path == NULL) {
+		printf("Critical Error: theme: %s not found.\n", rdata->config->theme);
+		rockon_data_del(rdata);
+		log_shutdown();
+		elm_shutdown();
+		return 1;
+	}
+
 	gui_window_set(rdata);
 
 	xmms2_connect(rdata);

@@ -49,10 +49,3 @@ def build(bld):
 		install_path = None,
 		uselib       = libs.upper().split()
 	)
-	bld.new_task_gen(
-		features     = 'edje',
-		source       = 'gui_data/gui.edc',
-		target       = 'gui.edj',
-		cwd          = bld.path.abspath() + '/gui_data',
-		install_path = None
-	)
