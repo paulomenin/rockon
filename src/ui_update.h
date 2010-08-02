@@ -44,6 +44,7 @@ void ui_upd_playlist_list     (rockon_data *rdata);
 void ui_upd_coll_list         (rockon_data *rdata);
 void ui_upd_coll_queried      (rockon_data *rdata);
 void ui_upd_mlib_reader_status(rockon_data *rdata, int files);
+void ui_upd_connect           (rockon_data* rdata);
 void ui_upd_disconnect        (rockon_data* rdata);
 
 #endif /* UI_UPDATE_H */

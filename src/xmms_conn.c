@@ -97,6 +97,7 @@ int  xmms2_connect (rockon_data *rdata) {
 	DBG("Ecore_fdh: %p", rdata->ecore_fdh);
 	DBG("XMMS2 Connected %p", rdata->connection);
 	xmms2_get_status(rdata);
+	ui_upd_connect(rdata);
 	return 1;
 }
 

@@ -1,0 +1,947 @@
+ 
+images {
+	image: "background.jpg" COMP;
+	image: "icon.png" COMP;
+	image: "bt_base.png" COMP;
+	image: "bt_hilight.png" COMP;
+	image: "bt_shine.png" COMP;
+	image: "bt_glow.png" COMP;
+	image: "prev.png" COMP;
+	image: "play.png" COMP;
+	image: "pause.png" COMP;
+	image: "next.png" COMP;
+	image: "stop.png" COMP;
+}
+
+color_classes {
+	color_class {
+		name:  "font_title";
+		color:  220 220 220 255;
+		color2: 0 0 0 64;
+		color3: 0 0 0 64;
+	}
+} 
+
+collections {
+
+#include "buttons.edc"
+#include "playback_control.edc"
+
+group { name: "rockon";
+	#include "script_rockon.edc"
+	parts {
+		part {
+			name: "background";
+			type: IMAGE;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				min: 800 600;
+				rel1{relative: 0.0 0.0;}
+				rel2{relative: 1.0 1.0;}
+				image {
+					normal: "background.jpg";
+				} 
+			}
+		}
+		part {
+			name: "background_over";
+			type: RECT;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 110;
+				rel1{relative: 0.0 0.0;}
+				rel2{relative: 1.0 1.0;}
+			}
+		} 
+		part {
+			name: "topbar";
+			type: GROUP;
+			source: "panel";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0; }
+				rel2 {relative: 1.0 0.0; offset: 0 120;}
+			}
+		}
+		part {
+			name: "playback_buttons";
+			type: GROUP;
+			source: "playback_control";
+			description {
+				state: "default" 0.0;
+				rel1{relative: 0.0 0.0; to: "topbar"; offset: 10 10;}
+				rel2{relative: 0.0 0.0; to: "topbar"; offset: 150 110;}
+			}
+		}
+		part {
+			name: "cover_clip";
+			type: RECT;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 1.0 0.0; to: "topbar"; offset: -110 10;}
+				rel2{relative: 1.0 0.0; to: "topbar"; offset: -10 110;}
+			}
+		}
+		part {
+			name: "cover_img";
+			type: IMAGE;
+			mouse_events: 1;
+			description {
+				state: "default" 0.0;
+				rel1{relative: 0.0 0.0; to: "cover_clip";}
+				rel2{relative: 1.0 1.0; to: "cover_clip";}
+				image {
+					normal: "icon.png";
+				}
+			}
+		}
+		part {
+			name: "text_title";
+			type: TEXT;
+			effect: SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {
+					relative: 1.0 0.0;
+					to: "playback_buttons";
+					offset: 10 0;
+				}
+				rel2 {
+					relative: 0.0 0.0;
+					to: "cover_clip";
+					offset: -10 40;
+				}
+				text {
+					text: "Rockon";
+					font: "Sans Serif:style=Bold";
+					size: 20;
+					align: 0.0 0.5;
+				}
+			}
+		}
+		part {
+			name: "text_artist";
+			type: TEXT;
+			effect: SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {
+					relative: 0.0 1.0;
+					to: "text_title";
+					offset: 0 0;
+				}
+				rel2 {
+					relative: 1.0 1.0;
+					to: "text_title";
+					offset: -1 25;
+				}
+				text {
+					text: "[default theme]";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.0 0.5;
+				}
+
+			}
+		}
+		part {
+			name: "text_time";
+			type: TEXT;
+			effect: SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {
+					relative: 0.0 1.0;
+					to: "text_artist";
+					offset: 0 0;
+				}
+				rel2 {
+					relative: 0.0 1.0;
+					to: "text_artist";
+					offset: 53 30;
+				}
+				text {
+					text: "000:00";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.0 0.5;
+				}
+			}
+		}
+		part {
+			name: "text_time_rem";
+			type: TEXT;
+			effect: SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {
+					relative: 1.0 1.0;
+					to: "text_artist";
+					offset: -60 0;
+				}
+				rel2 {
+					relative: 1.0 1.0;
+					to: "text_artist";
+					offset: 0 30;
+				}
+				text {
+					text: "-000:00";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 1.0 0.5;
+				}
+			}
+		} 
+		part {
+			name: "seekbar_clip";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1 {
+					relative: 1.0 0.0;
+					to: "text_time";
+					offset: 0 0;
+				}
+				rel2 {
+					relative: 0.0 1.0;
+					to: "text_time_rem";
+					offset: 0 0;
+				}
+			}
+		}
+		part {
+			name: "seekbar";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {
+					relative: 0.0 0.0;
+					to: "seekbar_clip";
+					offset: 0 0;
+				}
+				rel2 {
+					relative: 1.0 1.0;
+					to: "seekbar_clip";
+					offset: 0 0;
+				}
+			}
+		}
+		part {
+			name: "playlist";
+			type: GROUP;
+			source: "panel";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 1.0 1.0; to:"topbar"; offset: -300 0;}
+				rel2 {relative: 1.0 1.0; offset: -1 -1;}
+			}
+		}
+		part {
+			name: "playlist_name";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {relative: 0.0 0.0; to:"playlist";offset: 5 5;}
+				rel2 {relative: 1.0 0.0; to:"playlist";offset: -5 30;}
+				text {
+					text: "Default";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "playlist_widget";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 1.0; to:"playlist_name";}
+				rel2 {relative: 1.0 1.0; to:"playlist";offset: -5 -7;}
+			}
+		}
+		part {
+			name: "middlebar";
+			type: GROUP;
+			source: "tool_bar";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 1.0; to: "topbar"; }
+				rel2 {relative: 0.0 0.0; to: "playlist"; offset: 0 40;}
+			}
+		}
+		part {
+			name: "info_clipper";
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1 {relative: 0.0 1.0; to:"middlebar";}
+				rel2 {relative: 0.0 1.0; to:"playlist";}
+			}
+			description {
+				state: "show" 0.0;
+				inherit: "default" 0.0;
+				color: 255 255 255 255;
+			}
+			description {
+				state: "disabled" 0.0;
+				inherit: "default" 0.0;
+				color: 255 255 255 0;
+				visible: 0;
+			}
+		}
+		part { 
+			name: "info";
+			type: GROUP;
+			source: "info_panel";
+			clip_to: "info_clipper";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 1.0; to:"middlebar";}
+				rel2 {relative: 0.0 1.0; to:"playlist";}
+			}
+		}
+		part {
+			name: "pls_clipper";
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1 {relative: 0.0 1.0; to:"middlebar";}
+				rel2 {relative: 0.0 1.0; to:"playlist";}
+			}
+			description {
+				state: "show" 0.0;
+				inherit: "default" 0.0;
+				color: 255 255 255 255;
+			}
+			description {
+				state: "disabled" 0.0;
+				inherit: "default" 0.0;
+				color: 255 255 255 0;
+				visible: 0;
+			}
+		}
+		part { 
+			name: "pls";
+			type: GROUP;
+			source: "pls_panel";
+			clip_to: "pls_clipper";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 1.0; to:"middlebar";}
+				rel2 {relative: 0.0 1.0; to:"playlist";}
+			}
+		}
+		part {
+			name: "coll_clipper";
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1 {relative: 0.0 1.0; to:"middlebar";}
+				rel2 {relative: 0.0 1.0; to:"playlist";}
+			}
+			description {
+				state: "show" 0.0;
+				inherit: "default" 0.0;
+				color: 255 255 255 255;
+			}
+			description {
+				state: "disabled" 0.0;
+				inherit: "default" 0.0;
+				color: 255 255 255 0;
+				visible: 0;
+			}
+		}
+		part { 
+			name: "coll";
+			type: GROUP;
+			source: "coll_panel";
+			clip_to: "coll_clipper";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 1.0; to:"middlebar";}
+				rel2 {relative: 0.0 1.0; to:"playlist";}
+			}
+		}
+
+		part {
+			name: "disconnectpanel_clipper";
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0;};
+				rel2{relative: 1.0 1.0;};
+			}
+			description {
+				state: "not_conn" 0.0;
+				inherit: "default" 0.0;
+				color: 255 255 255 255;
+			}
+		}
+		part {
+			name: "disconnectpanel";
+			type: GROUP;
+			source: "panel_disconnected";
+			clip_to: "disconnectpanel_clipper";
+			description {
+				state: "default" 0.0;
+				visible: 0;
+				rel1{relative: 0.0 0.0;};
+				rel2{relative: 1.0 1.0;};
+			}
+			description {
+				state: "not_conn" 0.0;
+				inherit: "default" 0.0;
+				visible: 1;
+			}
+		}
+	}
+	programs {
+		program {
+			name: "on_load";
+			signal: "load";
+			source: "";
+			script {
+				run_program(PROGRAM:"info_hide");
+				run_program(PROGRAM:"pls_hide");
+				run_program(PROGRAM:"coll_hide");
+				emit("middlebar:mouse,clicked,1","bt_info_event");
+			}
+		}
+		program {
+			name: "hide_all_panels";
+			script {
+				new panel;
+				panel = get_int(active_panel);
+				if (panel == 1 ) {
+					run_program(PROGRAM:"info_hide");
+				} else
+				if (panel == 2 ) {
+					run_program(PROGRAM:"pls_hide");
+				} else
+				if (panel == 3 ) {
+					run_program(PROGRAM:"coll_hide");
+				}
+			}
+		}
+		program {
+			name: "info_click";
+			signal: "mouse,clicked,1";
+			source: "middlebar:bt_info_event";
+			script {
+				if (get_int(active_panel) != 1) {
+					run_program(PROGRAM:"hide_all_panels");
+					set_int(active_panel, 1);
+					run_program(PROGRAM:"info_show");
+				}
+			}
+		}
+		program {
+			name: "info_show";
+			action: STATE_SET "show" 0.0;
+			target: "info_clipper";
+			transition: LINEAR 1.0;
+			in: 0.5 0.0;
+		}
+		program {
+			name: "info_hide";
+			action: STATE_SET "default" 0.0;
+			target: "info_clipper";
+			transition: LINEAR 1.0;
+			after: "info_disable";
+		}
+		program {
+			name: "info_disable";
+			action: STATE_SET "disabled" 0.0;
+			target: "info_clipper";
+		}
+		program {
+			name: "pls_click";
+			signal: "mouse,clicked,1";
+			source: "middlebar:bt_pls_event";
+			script {
+				if (get_int(active_panel) != 2) {
+					run_program(PROGRAM:"hide_all_panels");
+					set_int(active_panel, 2);
+					run_program(PROGRAM:"pls_show");
+				}
+			}
+		}
+		program {
+			name: "pls_show";
+			action: STATE_SET "show" 0.0;
+			target: "pls_clipper";
+			transition: LINEAR 1.0;
+			in: 0.5 0.0;
+		}
+		program {
+			name: "pls_hide";
+			action: STATE_SET "default" 0.0;
+			target: "pls_clipper";
+			transition: LINEAR 1.0;
+			after: "pls_disable";
+		}
+		program {
+			name: "pls_disable";
+			action: STATE_SET "disabled" 0.0;
+			target: "pls_clipper";
+		}
+		program {
+			name: "coll_click";
+			signal: "mouse,clicked,1";
+			source: "middlebar:bt_coll_event";
+			script {
+				if (get_int(active_panel) != 3) {
+					run_program(PROGRAM:"hide_all_panels");
+					set_int(active_panel, 3);
+					run_program(PROGRAM:"coll_show");
+				}
+			}
+		}
+		program {
+			name: "coll_show";
+			action: STATE_SET "show" 0.0;
+			target: "coll_clipper";
+			transition: LINEAR 1.0;
+			in: 0.5 0.0;
+		}
+		program {
+			name: "coll_hide";
+			action: STATE_SET "default" 0.0;
+			target: "coll_clipper";
+			transition: LINEAR 1.0;
+			after: "coll_disable";
+		}
+		program {
+			name: "coll_disable";
+			action: STATE_SET "disabled" 0.0;
+			target: "coll_clipper";
+		}
+
+		program {
+			name: "connect";
+			signal: "connected";
+			source: "rockon";
+			action: STATE_SET "default" 0.0;
+			target: "disconnectpanel_clipper";
+			transition: LINEAR 1.0;
+			after: "connect2";
+		}
+		program {
+			name: "connect2";
+			action: STATE_SET "default" 0.0;
+			target: "disconnectpanel";
+		}
+		program {
+			name: "disconnect";
+			signal: "disconnected";
+			source: "rockon";
+			action: STATE_SET "not_conn" 0.0;
+			target: "disconnectpanel";
+			after: "disconnect2";
+		}
+		program {
+			name: "disconnect2";
+			action: STATE_SET "not_conn" 0.0;
+			target: "disconnectpanel_clipper";
+			transition: LINEAR 1.0;
+		}
+	}
+}
+
+#include "panel_info.edc"
+#include "panel_playlist.edc"
+#include "panel_collections.edc"
+/*
+group {name:"coll_panel";
+	parts{part{name:"bg";type:RECT;
+	mouse_events: 0;
+	description{state: "default" 0.0; color: 0 255 0 255; rel1 {relative: 0.0 0.0;}rel2{relative:1.0 1.0;}}}}
+}*/
+
+group {name: "panel_disconnected";
+	parts{
+		part {
+			name:"bg";
+			type: RECT;
+			mouse_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 30 30 30 190;
+				rel1{relative: 0.0 0.0;}
+				rel2{relative: 1.0 1.0;}
+			}
+		}
+		part {
+			name: "bg_panel";
+			type: GROUP;
+			source: "panel";
+			description {
+				state: "default" 0.0;
+				max: 400 400;
+				rel1{relative: 0.0 0.0;}
+				rel2{relative: 1.0 1.0;}
+			}
+		}
+		part {
+			name: "msgbg";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 0 0 0 255;
+				rel1{relative: 0.0 0.0; to: "bg_panel"; offset: 100 50 ;}
+				rel2{relative: 1.0 0.0; to: "bg_panel"; offset:-100 100 ;}
+			}
+		}
+		part {
+			name: "msg";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.2; to: "bg_panel"; offset: 50 50 ;}
+				rel2{relative: 1.0 0.2; to: "bg_panel"; offset:-50 100 ;}
+				text {
+					text: "Not connected to XMMS2";
+					font: "Sans Serif:style=Bold";
+					size: 16;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_conn";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 0.0 1.0; to:"msg"; offset: 100 10;}
+				rel2{relative: 1.0 1.0; to:"msg"; offset: -100 50;}
+			}
+		}
+		part {
+			name: "conn_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_conn"; offset: 0 0;}
+				rel2{relative: 1.0 1.0; to:"bt_conn"; offset: 0 0;}
+				text {
+					text: "Connect";
+					font: "Sans Serif:style=Bold";
+					size: 14;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "conn_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_conn";}
+				rel2{relative: 1.0 1.0; to:"bt_conn";}
+			}
+		}
+	}
+	programs {
+		program {
+			name: "bt_conn_click";
+			signal: "mouse,clicked,1";
+			source: "conn_event";
+			script {
+				emit("cmd,server,connect","gui");
+			}
+		}
+	}
+}
+
+group { name:"tool_bar";
+	parts {
+		part {
+			name: "bg";
+			type: GROUP;
+			source: "panel";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0;}
+				rel2 {relative: 1.0 1.0;}
+			}
+		}
+		part {
+			name: "text_middlebar";
+			type: TEXT;
+			effect: SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {
+					relative: 0.0 0.0;
+					to: "bg";
+					offset: 10 0;
+				}
+				rel2 {
+					relative: 1.0 1.0;
+					to: "bg";
+					offset: -10 0;
+				}
+				text {
+					text: "Playlist Editor";
+					font: "Sans Serif:style=Bold";
+					size: 16;
+					align: 0.0 0.5;
+				}
+			}
+		}
+
+		part {
+			name: "bt_info";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 1.0 0.0; to:"bg"; offset: -70  5;}
+				rel2{relative: 1.0 1.0; to:"bg"; offset:  -5 -5;}
+			}
+		}
+		part {
+			name: "bt_info_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_info";}
+				rel2{relative: 1.0 1.0; to:"bt_info";}
+				text {
+					text: "Info";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_info_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_info";}
+				rel2{relative: 1.0 1.0; to:"bt_info";}
+			}
+		}
+
+		part {
+			name: "bt_pls";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 0.0 0.0; to:"bt_info"; offset: -100 0;}
+				rel2{relative: 0.0 1.0; to:"bt_info"; offset:   0 0;}
+			}
+		}
+		part {
+			name: "bt_pls_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_pls";}
+				rel2{relative: 1.0 1.0; to:"bt_pls";}
+				text {
+					text: "Playlists";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_pls_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_pls";}
+				rel2{relative: 1.0 1.0; to:"bt_pls";}
+			}
+		}
+
+		part {
+			name: "bt_coll";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 0.0 0.0; to:"bt_pls"; offset: -100 0;}
+				rel2{relative: 0.0 1.0; to:"bt_pls"; offset:    0 0;}
+			}
+		}
+		part {
+			name: "bt_coll_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_coll";}
+				rel2{relative: 1.0 1.0; to:"bt_coll";}
+				text {
+					text: "Collections";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_coll_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_coll";}
+				rel2{relative: 1.0 1.0; to:"bt_coll";}
+			}
+		}
+	}
+	programs {
+		program {
+			name: "info_click";
+			signal: "mouse,clicked,1";
+			source: "bt_info_event";
+			script {
+				set_text(PART:"text_middlebar", "Media Info");
+			}
+		}
+		program {
+			name: "pls_click";
+			signal: "mouse,clicked,1";
+			source: "bt_pls_event";
+			script {
+				set_text(PART:"text_middlebar", "Playlist Editor");
+			}
+		}
+		program {
+			name: "coll_click";
+			signal: "mouse,clicked,1";
+			source: "bt_coll_event";
+			script {
+				set_text(PART:"text_middlebar", "Collections");
+			}
+		}
+	}
+}
+
+group { name: "panel_hl";
+	parts {
+		part {
+			name: "bg";
+			type: IMAGE;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0; offset: 0 0;}
+				rel2 {relative: 1.0 1.0; offset: -1 -1;}
+				image {
+					normal: "bt_base.png";
+					border: 7 7 7 7;
+				}
+			}
+		}
+		part {
+			name: "over1";
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0; to: "bg";}
+				rel2 {relative: 1.0 0.5; to: "bg";}
+				image{
+					normal: "bt_hilight.png";
+					border: 7 7 7 0;
+				}
+			}
+		}
+		part {
+			name: "over2";
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				rel1{relative: 0.0 0.0; to: "bg";}
+				rel2{relative: 1.0 1.0; to: "bg";}
+				image {
+					normal: "bt_shine.png";
+					border: 7 7 7 7;
+				}
+			}
+		}
+	}
+}
+group { name: "panel";
+	parts {
+		part {
+			name: "bg";
+			type: IMAGE;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0; offset: 0 0;}
+				rel2 {relative: 1.0 1.0; offset: -1 -1;}
+				image {
+					normal: "bt_base.png";
+					border: 7 7 7 7;
+				}
+			}
+		}
+		part {
+			name: "over2";
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				rel1{relative: 0.0 0.0; to: "bg";}
+				rel2{relative: 1.0 1.0; to: "bg";}
+				image {
+					normal: "bt_shine.png";
+					border: 7 7 7 7;
+				}
+			}
+		}
+	}
+}
+
+}

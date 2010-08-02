@@ -33,6 +33,7 @@ int collection_log_dom = -1;
 
 Eina_Bool log_init(void);
 void log_shutdown(void);
+void clean_resources(rockon_data* rdata);
 
 EAPI int elm_main (int argc, char** argv) {
 	rockon_data *rdata;
@@ -45,13 +46,15 @@ EAPI int elm_main (int argc, char** argv) {
 
 	if (rdata->config->edj_data_path == NULL) {
 		printf("Critical Error: theme: %s not found.\n", rdata->config->theme);
-		rockon_data_del(rdata);
-		log_shutdown();
-		elm_shutdown();
+		clean_resources(rdata);
 		return 1;
 	}
 
-	gui_window_set(rdata);
+	if (!gui_window_set(rdata)) {
+		printf("Critical Error: %s is a bad theme.\n", rdata->config->theme);
+		clean_resources(rdata);
+		return 2;
+	}
 
 	xmms2_connect(rdata);
 	if (rdata->connection == NULL) {
@@ -62,13 +65,17 @@ EAPI int elm_main (int argc, char** argv) {
 	elm_run();
 	EINA_LOG_DBG("MainLoop End");
 
-	rockon_data_del(rdata);
-	log_shutdown();
-	elm_shutdown();
+	clean_resources(rdata);
 
 	return 0;
 }
 ELM_MAIN()
+
+void clean_resources(rockon_data* rdata) {
+	rockon_data_del(rdata);
+	log_shutdown();
+	elm_shutdown();
+}
 
 Eina_Bool log_init(void) {
 	if (config_log_dom < 0) {

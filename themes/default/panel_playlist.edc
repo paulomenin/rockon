@@ -1,0 +1,504 @@
+group {name:"pls_panel";
+	parts{
+		part {
+			name: "pls_list";
+			type: GROUP;
+			source: "panel";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0; offset:   0  0;}
+				rel2 {relative: 0.0 1.0; offset: 200 -1;}
+			}
+		}
+		part {
+			name: "playlist_label";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {relative: 0.0 0.0; to:"pls_list";offset:  5 5;}
+				rel2 {relative: 1.0 0.0; to:"pls_list";offset: -5 30;}
+				text {
+					text: "Playlists Saved";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "pls_bt_bar";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1 {relative: 0.0 1.0; to: "pls_list"; offset: 5 -35 ;}
+				rel2 {relative: 1.0 1.0; to: "pls_list"; offset: -6 -5 ;}
+			}
+		}
+
+		part {
+			name: "bt_new";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 0.0 0.0; to:"pls_bt_bar"; offset: 0  0;}
+				rel2{relative: 0.0 1.0; to:"pls_bt_bar"; offset: 50 0;}
+			}
+		}
+		part {
+			name: "bt_new_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_new";}
+				rel2{relative: 1.0 1.0; to:"bt_new";}
+				text {
+					text: "New";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_new_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_new";}
+				rel2{relative: 1.0 1.0; to:"bt_new";}
+			}
+		}
+		part {
+			name: "bt_del";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 1.0 0.0; to:"bt_new"; offset: 0  0;}
+				rel2{relative: 1.0 1.0; to:"bt_new"; offset: 69 0;}
+			}
+		}
+		part {
+			name: "bt_del_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_del";}
+				rel2{relative: 1.0 1.0; to:"bt_del";}
+				text {
+					text: "Delete";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_del_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_del";}
+				rel2{relative: 1.0 1.0; to:"bt_del";}
+			}
+		}
+		part {
+			name: "bt_load";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 1.0 0.0; to:"bt_del"; offset: 0  0;}
+				rel2{relative: 1.0 1.0; to:"bt_del"; offset: 69 0;}
+			}
+		}
+		part {
+			name: "bt_load_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_load";}
+				rel2{relative: 1.0 1.0; to:"bt_load";}
+				text {
+					text: "Load";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_load_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_load";}
+				rel2{relative: 1.0 1.0; to:"bt_load";}
+			}
+		}
+		part {
+			name: "playlist_list_widget";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 1.0; to:"playlist_label";}
+				rel2 {relative: 1.0 0.0; to:"pls_bt_bar";offset: -2 -2;}
+			}
+		}
+
+		part {
+			name: "pls_items";
+			type: GROUP;
+			source: "panel";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 1.0 0.0; to:"pls_list"; offset:   0  0;}
+				rel2 {relative: 1.0 1.0; offset: -1 -1;}
+			}
+		}
+		part {
+			name: "playlist_it_label";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {relative: 0.0 0.0; to:"pls_items";offset:  5 5;}
+				rel2 {relative: 1.0 0.0; to:"pls_items";offset: -5 30;}
+				text {
+					text: "Playlist Content";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "pls_it_bt_bar";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1 {relative: 0.0 1.0; to: "pls_items"; offset: 5 -35 ;}
+				rel2 {relative: 1.0 1.0; to: "pls_items"; offset: -6 -5 ;}
+			}
+		}
+
+		part {
+			name: "bt_rem";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 0.0 0.0; to:"pls_it_bt_bar"; offset: 0  0;}
+				rel2{relative: 0.5 1.0; to:"pls_it_bt_bar"; offset: 0  0;}
+			}
+		}
+		part {
+			name: "bt_rem_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_rem";}
+				rel2{relative: 1.0 1.0; to:"bt_rem";}
+				text {
+					text: "Remove Entry";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_rem_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_rem";}
+				rel2{relative: 1.0 1.0; to:"bt_rem";}
+			}
+		}
+		part {
+			name: "bt_clear";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 1.0 0.0; to:"bt_rem"; offset: 0  0;}
+				rel2{relative: 1.0 1.0; to:"pls_it_bt_bar"; offset: 0 0;}
+			}
+		}
+		part {
+			name: "bt_clear_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_clear";}
+				rel2{relative: 1.0 1.0; to:"bt_clear";}
+				text {
+					text: "Clear";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_clear_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_clear";}
+				rel2{relative: 1.0 1.0; to:"bt_clear";}
+			}
+		}
+		part {
+			name: "playlist_widget";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 1.0; to:"playlist_it_label";}
+				rel2 {relative: 1.0 0.0; to:"pls_it_bt_bar";offset: 0 -2;}
+			}
+		}
+		part {
+			name: "pls_entry_name";
+			type: GROUP;
+			source: "pls_entry_panel";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0; to:"pls_bt_bar"; offset: -200 -110;}
+				rel2 {relative: 0.0 0.0; to:"pls_bt_bar"; offset:  -30 -10;}
+			}
+			description {
+				state: "show" 0.0;
+				rel1 {relative: 0.0 0.0; to:"pls_bt_bar"; offset:  10 -110;}
+				rel2 {relative: 0.0 0.0; to:"pls_bt_bar"; offset: 180 -10;}
+			}
+		}
+	}
+	programs {
+		program {
+			name: "pls_new";
+			signal: "mouse,clicked,1";
+			source: "bt_new_event";
+			action: STATE_SET "show" 0.0;
+			transition: LINEAR 1.0;
+			target: "pls_entry_name";
+		}
+		program {
+			name: "pls_new_cancel";
+			signal: "*pls_save_cancel";
+			source: "*pls_name_panel";
+			action: STATE_SET "default" 0.0;
+			transition: LINEAR 1.0;
+			target: "pls_entry_name";
+		}
+		program {
+			name: "pls_del";
+			signal: "mouse,clicked,1";
+			source: "bt_del_event";
+			action: SIGNAL_EMIT "cmd,pls,delete" "gui";
+		}
+		program {
+			name: "pls_load";
+			signal: "mouse,clicked,1";
+			source: "bt_load_event";
+			action: SIGNAL_EMIT "cmd,pls,load" "gui";
+		}
+		program {
+			name: "pls_remove";
+			signal: "mouse,clicked,1";
+			source: "bt_rem_event";
+			action: SIGNAL_EMIT "cmd,pls,remove_entry" "gui";
+		}
+		program {
+			name: "pls_clear";
+			signal: "mouse,clicked,1";
+			source: "bt_clear_event";
+			action: SIGNAL_EMIT "cmd,pls,clear" "gui";
+		}
+	}
+}
+
+group { name:"pls_entry_panel";
+	parts {
+		part { 
+			name: "bg";
+			type: GROUP;
+			source: "panel";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0;}
+				rel2 {relative: 1.0 1.0;}
+			}
+		}
+		part {
+			name: "label";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {relative: 0.0 0.0; to: "bg"; offset: 10 5;}
+				rel2 {relative: 1.0 0.0; to: "bg"; offset: -10 25;}
+				text {
+					text: "Enter playlist name:";
+					font: "Sans Serif:style=Bold";
+					size: 10;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part { 
+			name: "widget_bg";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 200 200 200 255;
+				rel1 {relative: 0.0 1.0; to: "label"; offset: 0 0;}
+				rel2 {relative: 1.0 1.0; to: "label"; offset: 0 40;}
+			}
+		}
+		part { 
+			name: "widget";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0; to: "widget_bg";}
+				rel2 {relative: 1.0 1.0; to: "widget_bg";}
+			}
+		}
+		part {
+			name: "bt_cancel";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 0.0 1.0; to:"widget"; offset: 0 4;}
+				rel2{relative: 0.5 1.0; to:"bg"; offset: 0 -5;}
+			}
+		}
+		part {
+			name: "bt_cancel_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_cancel";}
+				rel2{relative: 1.0 1.0; to:"bt_cancel";}
+				text {
+					text: "Cancel";
+					font: "Sans Serif:style=Bold";
+					size: 10;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_cancel_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_cancel";}
+				rel2{relative: 1.0 1.0; to:"bt_cancel";}
+			}
+		}
+		part {
+			name: "bt_save";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 1.0 0.0; to:"bt_cancel"; offset: 0 0;}
+				rel2{relative: 1.0 1.0; to:"bg"; offset: -10 -5;}
+			}
+		}
+		part {
+			name: "bt_save_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_save";}
+				rel2{relative: 1.0 1.0; to:"bt_save";}
+				text {
+					text: "Save";
+					font: "Sans Serif:style=Bold";
+					size: 10;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_save_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_save";}
+				rel2{relative: 1.0 1.0; to:"bt_save";}
+			}
+		}
+	}
+	programs {
+		program {
+			name: "cancel";
+			signal: "mouse,clicked,1";
+			source: "bt_cancel_event";
+			action: SIGNAL_EMIT "pls_save_cancel" "pls_name_panel";
+		}
+		program {
+			name: "save";
+			signal: "mouse,clicked,1";
+			source: "bt_save_event";
+			action: SIGNAL_EMIT "cmd,pls,new" "gui";
+			after: "cancel";
+		}
+	}
+}
+

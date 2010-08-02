@@ -15,6 +15,7 @@
  */
 
 #include "callbacks.h"
+#include "xmms_conn.h"
 #include "commands.h"
 #include "ui_update.h"
 
@@ -109,7 +110,13 @@ void coll_search_click_cb(void *data, Evas_Object *obj, void *event_info){
 }
 
 /* callbacks from edje objects */
-
+void edje_cb_connect (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	rockon_data* rdata = (rockon_data*)data;
+	xmms2_connect(rdata);
+	if (rdata->connection == NULL) {
+		cmd_server_launch(rdata);
+	}
+}
 void edje_cb_play  (void *data, Evas_Object *eo, const char *emission, const char *source) {
 	cmd_play((rockon_data*)data);
 }
@@ -167,6 +174,15 @@ void edje_cb_pls_load (void *data, Evas_Object *eo, const char *emission, const 
 	if (it == NULL) return;
 	name = elm_list_item_label_get(it);
 	cmd_playlist_load(rdata, name);
+}
+
+void edje_cb_pls_clear (void *data, Evas_Object *eo, const char *emission, const char *source) {
+	rockon_data* rdata = (rockon_data*)data;
+	Elm_List_Item *it = elm_list_selected_item_get(rdata->widgets.playlists);
+	const char *name;
+	if (it == NULL) return;
+	name = elm_list_item_label_get(it);
+	cmd_playlist_clear(rdata, name);
 }
 
 void edje_cb_coll_search (void *data, Evas_Object *eo, const char *emission, const char *source){

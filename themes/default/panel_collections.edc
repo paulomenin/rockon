@@ -1,0 +1,507 @@
+group {name:"coll_panel";
+	parts{
+		part {
+			name: "search_bar";
+			type: GROUP;
+			source: "panel";
+			description {
+				state: "default" 0.0;
+				color: 0 255 0 255;
+				rel1 {relative: 0.0 0.0;}
+				rel2 {relative: 1.0 0.0; offset: -1 50;}
+			}
+		}
+		part {
+			name: "search_label";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {relative: 0.0 0.0; to:"search_bar";offset:  5 0;}
+				rel2 {relative: 0.0 1.0; to:"search_bar";offset: 65 0;}
+				text {
+					text: "Search:";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_search";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 1.0 0.0; to:"search_bar"; offset: -70 5;}
+				rel2{relative: 1.0 1.0; to:"search_bar"; offset: -5 -5;}
+			}
+		}
+		part {
+			name: "bt_search_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_search";}
+				rel2{relative: 1.0 1.0; to:"bt_search";}
+				text {
+					text: "Search";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_search_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_search";}
+				rel2{relative: 1.0 1.0; to:"bt_search";}
+			}
+		}
+
+		part { 
+			name: "search_entry_widget_bg";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 200 200 200 255;
+				rel1 {relative: 1.0 0.0; to:"search_label";offset: 0 5 ;}
+				rel2 {relative: 0.0 1.0; to:"bt_search";offset: -5 0;}
+			}
+		}
+		part {
+			name: "search_entry_widget";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0; to:"search_entry_widget_bg";}
+				rel2 {relative: 1.0 1.0; to:"search_entry_widget_bg";}
+			}
+		}
+
+		part {
+			name: "coll_list";
+			type: GROUP;
+			source: "panel";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 1.0; to: "search_bar"; offset: 0 0;}
+				rel2 {relative: 0.0 1.0; offset: 200 -1;}
+			}
+		}
+		part {
+			name: "coll_label";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {relative: 0.0 0.0; to:"coll_list";offset:  5 5;}
+				rel2 {relative: 1.0 0.0; to:"coll_list";offset: -5 30;}
+				text {
+					text: "Collections Saved";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "coll_bt_bar";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1 {relative: 0.0 1.0; to: "coll_list"; offset: 5 -35 ;}
+				rel2 {relative: 1.0 1.0; to: "coll_list"; offset: -6 -5 ;}
+			}
+		}
+
+		part {
+			name: "bt_new";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 0.0 0.0; to:"coll_bt_bar"; offset: 0 0;}
+				rel2{relative: 0.5 1.0; to:"coll_bt_bar"; offset: 0 0;}
+			}
+		}
+		part {
+			name: "bt_new_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_new";}
+				rel2{relative: 1.0 1.0; to:"bt_new";}
+				text {
+					text: "Save";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_new_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_new";}
+				rel2{relative: 1.0 1.0; to:"bt_new";}
+			}
+		}
+		part {
+			name: "bt_del";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 1.0 0.0; to:"bt_new"; offset: 0 0;}
+				rel2{relative: 1.0 1.0; to:"coll_bt_bar"; offset: 0 0;}
+			}
+		}
+		part {
+			name: "bt_del_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_del";}
+				rel2{relative: 1.0 1.0; to:"bt_del";}
+				text {
+					text: "Delete";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_del_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_del";}
+				rel2{relative: 1.0 1.0; to:"bt_del";}
+			}
+		}
+		part {
+			name: "coll_list_widget";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 1.0; to:"coll_label";}
+				rel2 {relative: 1.0 0.0; to:"coll_bt_bar";offset: -2 -2;}
+			}
+		}
+
+		part {
+			name: "coll_items";
+			type: GROUP;
+			source: "panel";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 1.0 0.0; to:"coll_list"; offset:   0  0;}
+				rel2 {relative: 1.0 1.0; offset: -1 -1;}
+			}
+		}
+		part {
+			name: "coll_it_label";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {relative: 0.0 0.0; to:"coll_items";offset:  5 5;}
+				rel2 {relative: 1.0 0.0; to:"coll_items";offset: -5 30;}
+				text {
+					text: "Collection Content";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "coll_it_bt_bar";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1 {relative: 0.0 1.0; to: "coll_items"; offset: 5 -35 ;}
+				rel2 {relative: 1.0 1.0; to: "coll_items"; offset: -6 -5 ;}
+			}
+		}
+
+		part {
+			name: "bt_addall";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 0.0 0.0; to:"coll_it_bt_bar"; offset: 0 0;}
+				rel2{relative: 1.0 1.0; to:"coll_it_bt_bar"; offset: 0 0;}
+			}
+		}
+		part {
+			name: "bt_addall_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_addall";}
+				rel2{relative: 1.0 1.0; to:"bt_addall";}
+				text {
+					text: "Add All to playlist";
+					font: "Sans Serif:style=Bold";
+					size: 12;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_addall_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_addall";}
+				rel2{relative: 1.0 1.0; to:"bt_addall";}
+			}
+		}
+		part {
+			name: "coll_widget";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 1.0; to:"coll_it_label";}
+				rel2 {relative: 1.0 0.0; to:"coll_it_bt_bar";offset: 0 -2;}
+			}
+		}
+		part {
+			name: "coll_entry_name";
+			type: GROUP;
+			source: "coll_entry_panel";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0; to:"coll_bt_bar"; offset: -200 -110;}
+				rel2 {relative: 0.0 0.0; to:"coll_bt_bar"; offset:  -30 -10;}
+			}
+			description {
+				state: "show" 0.0;
+				rel1 {relative: 0.0 0.0; to:"coll_bt_bar"; offset:  10 -110;}
+				rel2 {relative: 0.0 0.0; to:"coll_bt_bar"; offset: 180 -10;}
+			}
+		}
+	}
+	programs {
+		program {
+			name: "coll_search";
+			signal: "mouse,clicked,1";
+			source: "bt_search_event";
+			action: SIGNAL_EMIT "cmd,coll,search" "gui";
+		}
+		program {
+			name: "coll_new";
+			signal: "mouse,clicked,1";
+			source: "bt_new_event";
+			action: STATE_SET "show" 0.0;
+			transition: LINEAR 1.0;
+			target: "coll_entry_name";
+		}
+		program {
+			name: "coll_new_cancel";
+			signal: "*coll_save_cancel";
+			source: "*coll_name_panel";
+			action: STATE_SET "default" 0.0;
+			transition: LINEAR 1.0;
+			target: "coll_entry_name";
+		}
+		program {
+			name: "coll_del";
+			signal: "mouse,clicked,1";
+			source: "bt_del_event";
+			action: SIGNAL_EMIT "cmd,coll,delete" "gui";
+		}
+		program {
+			name: "coll_addall";
+			signal: "mouse,clicked,1";
+			source: "bt_clear_event";
+			action: SIGNAL_EMIT "cmd,coll,add_all_to_pls" "gui";
+		}
+	}
+}
+
+group { name:"coll_entry_panel";
+	parts {
+		part { 
+			name: "bg";
+			type: GROUP;
+			source: "panel";
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0;}
+				rel2 {relative: 1.0 1.0;}
+			}
+		}
+		part {
+			name: "label";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1 {relative: 0.0 0.0; to: "bg"; offset: 10 5;}
+				rel2 {relative: 1.0 0.0; to: "bg"; offset: -10 25;}
+				text {
+					text: "Enter collection name:";
+					font: "Sans Serif:style=Bold";
+					size: 10;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part { 
+			name: "widget_bg";
+			type: RECT;
+			description {
+				state: "default" 0.0;
+				color: 200 200 200 255;
+				rel1 {relative: 0.0 1.0; to: "label"; offset: 0 0;}
+				rel2 {relative: 1.0 1.0; to: "label"; offset: 0 40;}
+			}
+		}
+		part { 
+			name: "widget";
+			type: SWALLOW;
+			description {
+				state: "default" 0.0;
+				rel1 {relative: 0.0 0.0; to: "widget_bg";}
+				rel2 {relative: 1.0 1.0; to: "widget_bg";}
+			}
+		}
+		part {
+			name: "bt_cancel";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 0.0 1.0; to:"widget"; offset: 0 4;}
+				rel2{relative: 0.5 1.0; to:"bg"; offset: 0 -5;}
+			}
+		}
+		part {
+			name: "bt_cancel_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_cancel";}
+				rel2{relative: 1.0 1.0; to:"bt_cancel";}
+				text {
+					text: "Cancel";
+					font: "Sans Serif:style=Bold";
+					size: 10;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_cancel_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_cancel";}
+				rel2{relative: 1.0 1.0; to:"bt_cancel";}
+			}
+		}
+		part {
+			name: "bt_save";
+			type: GROUP;
+			source: "button";
+			description {
+				state: "default" 0.0;
+				color: 255 0 0 50;
+				rel1{relative: 1.0 0.0; to:"bt_cancel"; offset: 0 0;}
+				rel2{relative: 1.0 1.0; to:"bg"; offset: -10 -5;}
+			}
+		}
+		part {
+			name: "bt_save_text";
+			type: TEXT;
+			effect: SOFT_SHADOW;
+			mouse_events: 0;
+			description {
+				state: "default" 0.0;
+				color_class: "font_title";
+				rel1{relative: 0.0 0.0; to:"bt_save";}
+				rel2{relative: 1.0 1.0; to:"bt_save";}
+				text {
+					text: "Save";
+					font: "Sans Serif:style=Bold";
+					size: 10;
+					align: 0.5 0.5;
+				}
+			}
+		}
+		part {
+			name: "bt_save_event";
+			type: RECT;
+			repeat_events: 1;
+			description {
+				state: "default" 0.0;
+				color: 255 255 255 0;
+				rel1{relative: 0.0 0.0; to:"bt_save";}
+				rel2{relative: 1.0 1.0; to:"bt_save";}
+			}
+		}
+	}
+	programs {
+		program {
+			name: "cancel";
+			signal: "mouse,clicked,1";
+			source: "bt_cancel_event";
+			action: SIGNAL_EMIT "coll_save_cancel" "coll_name_panel";
+		}
+		program {
+			name: "save";
+			signal: "mouse,clicked,1";
+			source: "bt_save_event";
+			action: SIGNAL_EMIT "cmd,coll,save" "gui";
+			after: "cancel";
+		}
+	}
+}
+

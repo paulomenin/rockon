@@ -121,6 +121,16 @@ void cmd_playlist_load(rockon_data* rdata, const char *playlist) {
 	xmmsc_result_unref (result);
 }
 
+void cmd_playlist_clear(rockon_data* rdata, const char *playlist) {
+	xmmsc_result_t *result;
+	assert(rdata);
+	if (playlist == NULL) return;
+	XMMS_CONN_IS_VALID();
+	result = xmmsc_playlist_clear(rdata->connection, playlist);
+	xmmsc_result_notifier_set (result, check_error, NULL);
+	xmmsc_result_unref (result);
+}
+
 void cmd_playlist_add(rockon_data *rdata, unsigned int id) {
 	xmmsc_result_t *result;
 

@@ -16,7 +16,7 @@
 
 #include "rockon_data.h"
 
-void gui_window_set(rockon_data *rdata);
+int gui_window_set(rockon_data *rdata);
 void app_exit(void *data, Evas_Object *obj, void *event_info);
 
 Evas_Object* gui_playback_buttons_set(Evas_Object* parent, rockon_data *rdata);

@@ -33,6 +33,7 @@ void playlist_list_selected_cb (void *data, Evas_Object *obj, void *event_info);
 void playlist_click_cb(void *data, Evas_Object *obj, void *event_info);
 void coll_search_click_cb(void *data, Evas_Object *obj, void *event_info);
 
+void edje_cb_connect (void *data, Evas_Object *eo, const char *emission, const char *source);
 void edje_cb_play (void *data, Evas_Object *eo, const char *emission, const char *source);
 void edje_cb_pause(void *data, Evas_Object *eo, const char *emission, const char *source);
 void edje_cb_stop (void *data, Evas_Object *eo, const char *emission, const char *source);
@@ -42,6 +43,7 @@ void edje_cb_pls_new (void *data, Evas_Object *eo, const char *emission, const c
 void edje_cb_pls_delete (void *data, Evas_Object *eo, const char *emission, const char *source);
 void edje_cb_pls_remove_entry(void *data, Evas_Object *eo, const char *emission, const char *source);
 void edje_cb_pls_load (void *data, Evas_Object *eo, const char *emission, const char *source);
+void edje_cb_pls_clear (void *data, Evas_Object *eo, const char *emission, const char *source);
 void edje_cb_coll_search (void *data, Evas_Object *eo, const char *emission, const char *source);
 void edje_cb_coll_save (void *data, Evas_Object *eo, const char *emission, const char *source);
 void edje_cb_coll_add_to_playlist (void *data, Evas_Object *eo, const char *emission, const char *source);

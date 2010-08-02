@@ -1,0 +1,229 @@
+group { name: "playback_control";
+parts{
+	part {
+		name: "clip";
+		type: RECT;
+		mouse_events: 0;
+		description {
+			state: "default" 0.0;
+			color: 255 255 255 0;
+			rel1{relative: 0.0 0.0;}
+			rel2{relative: 1.0 1.0;}
+		}
+	}
+	part {
+		name: "prev";
+		type: GROUP;
+		source: "button";
+		description {
+			state: "default" 0.0;
+			color: 255 0 0 50;
+			rel1{relative: 0.0 0.0; offset: 0 0;}
+			rel2{relative: 0.0 0.0; offset: 30 65;}
+		}
+	}
+	part {
+		name: "prev_img";
+		type: IMAGE;
+		repeat_events: 1;
+		description {
+			state: "default" 0.0;
+			rel1{relative: 0.0 0.0; to:"prev"; offset: 2 10;}
+			rel2{relative: 1.0 1.0; to:"prev"; offset: -2 -10;}
+			image { normal: "prev.png";}
+		}
+	}
+	part {
+		name: "prev_event";
+		type: RECT;
+		repeat_events: 1;
+		description {
+			state: "default" 0.0;
+			color: 255 255 255 0;
+			rel1{relative: 0.0 0.0; to:"prev";}
+			rel2{relative: 1.0 1.0; to:"prev";}
+		}
+	}
+	part {
+		name: "next";
+		type: GROUP;
+		source: "button";
+		description {
+			state: "default" 0.0;
+			color: 0 255 0 50;
+			rel1{relative: 1.0 0.0; offset: -31 0;}
+			rel2{relative: 1.0 0.0; offset:  -1 65;}
+		}
+	}
+	part {
+		name: "next_img";
+		type: IMAGE;
+		repeat_events: 1;
+		description {
+			state: "default" 0.0;
+			rel1{relative: 0.0 0.0; to:"next"; offset: 2 10;}
+			rel2{relative: 1.0 1.0; to:"next"; offset: -2 -10;}
+			image { normal: "next.png";}
+		}
+	}
+	part {
+		name: "next_event";
+		type: RECT;
+		repeat_events: 1;
+		description {
+			state: "default" 0.0;
+			color: 255 255 255 0;
+			rel1{relative: 0.0 0.0; to:"next";}
+			rel2{relative: 1.0 1.0; to:"next";}
+		}
+	}
+	part {
+		name: "play";
+		type: GROUP;
+		source: "button";
+		description {
+			state: "default" 0.0;
+			rel1{relative: 1.0 0.0; to:"prev";}
+			rel2{relative: 0.0 1.0; to:"next";}
+		}
+	}
+	part {
+		name: "play_img";
+		type: IMAGE;
+		repeat_events: 1;
+		description {
+			state: "default" 0.0;
+			rel1{relative: 0.0 0.0; to:"play"; offset: 10 10;}
+			rel2{relative: 1.0 1.0; to:"play"; offset: -10 -10;}
+			image { normal: "play.png";}
+		}
+		description {
+			state: "pause" 0.0;
+			inherit: "default" 0.0;
+			image { normal: "pause.png";}
+		}
+	}
+	part {
+		name: "play_event";
+		type: RECT;
+		repeat_events: 1;
+		description {
+			state: "default" 0.0;
+			color: 255 255 255 0;
+			rel1{relative: 0.0 0.0; to:"play";}
+			rel2{relative: 1.0 1.0; to:"play";}
+		}
+	}
+	part {
+		name: "stop";
+		type: GROUP;
+		source: "button";
+		description {
+			state: "default" 0.0;
+			color: 0 255 255 50;
+			rel1{relative: 0.0 1.0;to:"prev";}
+			rel2{relative: 1.0 1.0;to:"clip"; offset: -1 -1;}
+		}
+	}
+	part {
+		name: "stop_img";
+		type: IMAGE;
+		repeat_events: 1;
+		description {
+			state: "default" 0.0;
+			rel1{relative: 0.0 0.0; to:"stop"; offset: 55 2;}
+			rel2{relative: 1.0 1.0; to:"stop"; offset: -55 -2;}
+			image { normal: "stop.png";}
+		}
+	}
+	part {
+		name: "stop_event";
+		type: RECT;
+		repeat_events: 1;
+		description {
+			state: "default" 0.0;
+			color: 255 255 255 0;
+			rel1{relative: 0.0 0.0; to:"stop";}
+			rel2{relative: 1.0 1.0; to:"stop";}
+		}
+	}
+}
+script {
+	public playback_status;
+}
+programs {
+	program {
+		name: "cmd_play";
+		signal: "mouse,clicked,1";
+		source: "play_event";
+		script {
+			if (get_int(playback_status) == 1) {
+				emit("cmd,pause","");
+			} else {
+				emit("cmd,play","");
+			}
+		}
+	}
+	program {
+		name: "cmd_next";
+		signal: "mouse,clicked,1";
+		source: "next_event";
+		script {
+			emit("cmd,next","");
+		}
+	}
+	program {
+		name: "cmd_prev";
+		signal: "mouse,clicked,1";
+		source: "prev_event";
+		script {
+			emit("cmd,prev","");
+		}
+	}
+	program {
+		name: "cmd_stop";
+		signal: "mouse,clicked,1";
+		source: "stop_event";
+		script {
+			emit("cmd,stop","");
+		}
+	}
+	program {
+		name: "stat_play";
+		signal: "status,play";
+		source: "*";
+		script {
+			set_int(playback_status,1);
+		}
+		after: "stat_play2";
+	}
+	program {
+		name: "stat_pause";
+		signal: "status,pause";
+		source: "*";
+		script {
+			set_int(playback_status,2);
+		}
+		after: "stat_pause2";
+	}
+	program {
+		name: "stat_stop";
+		signal: "status,stop";
+		source: "*";
+		script {
+			set_int(playback_status,0);
+		}
+		after: "stat_pause2"; 
+	}
+	program {
+		name: "stat_play2";
+		action: STATE_SET "pause" 0.0;
+		target: "play_img";
+	}
+	program {
+		name: "stat_pause2";
+		action: STATE_SET "default" 0.0;
+		target: "play_img";
+	}
+}
+}

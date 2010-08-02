@@ -1,0 +1,73 @@
+script {
+	public global_media_duration;
+	public pls_name, pls_pos, pls_itens;
+	public active_panel;
+
+	public update_playlist_name() {
+		new str[100];
+		new name[100];
+		get_str(pls_name, name, 100);
+		snprintf(str, 100,"Playlist: %s [%d/%d]", name, get_int(pls_pos), get_int(pls_itens));
+		set_text(PART:"playlist_name", str);
+	}
+
+	public message(Msg_Type:type, id, ...) {
+		if (id == 1) {
+			new str[100];
+			new rem[10];
+			new min, sec, rem_media_dur, rmin, rsec;//, porc;
+			min = getarg(2 )/60000;
+			sec = (getarg(2)%60000)/1000;
+			rem_media_dur = get_int(global_media_duration) - getarg(2);
+			rmin = rem_media_dur/60000;
+			rsec = (rem_media_dur%60000)/1000;
+			if (rsec < 10) {
+				snprintf(rem, 10, "-%d:0%d", rmin, rsec);
+			} else {
+				snprintf(rem, 10, "-%d:%d", rmin, rsec);
+			}
+			if (sec < 10) {
+				snprintf(str, 100, "%d:0%d", min, sec);
+			} else {
+				snprintf(str, 100, "%d:%d", min, sec);
+			}
+			set_text(PART:"text_time", str);
+			if (rmin >= 0) {
+				set_text(PART:"text_time_rem", rem);
+			}
+		} else if (id == 4) {
+			set_int(global_media_duration, getarg(2));
+		} else if (id == 3) {
+			new str_title[100];
+			new str_album[100];
+			new str_artist[100];
+			getsarg(2, str_artist, 100);
+			getsarg(3, str_album, 100);
+			getsarg(4, str_title, 100);
+			new str[100];
+			snprintf(str, 100, "by %s from %s", str_artist, str_album);
+			set_text(PART:"text_artist", str);
+			set_text(PART:"text_title", str_title);
+		} else if (id == 2) {
+			new stat;
+			stat = getarg(2);
+			if (stat == 0) {
+				emit("playback_buttons:status,stop","");
+			} else if (stat == 1) {
+				emit("playback_buttons:status,play","");
+			} else {
+				emit("playback_buttons:status,pause","");
+			}
+		} else if (id == 7) {
+			new msg[100];
+			snprintf(msg, 100, "%s", getarg(2));
+			set_str(pls_name, msg);
+		} else if (id == 8) {
+			set_int(pls_pos, getarg(2)+1);
+		} else if (id == 9) {
+			set_int(pls_itens, getarg(2));
+		}
+		update_playlist_name();
+	}
+} // end script
+

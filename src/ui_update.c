@@ -23,6 +23,10 @@
 
 extern int ui_upd_log_dom;
 
+void ui_upd_connect (rockon_data *rdata) {
+	edje_object_signal_emit(rdata->widgets.edje, "connected", "rockon");
+}
+
 void ui_upd_disconnect (rockon_data *rdata) {
 	INFO("xmms2 connection lost.");
 
@@ -35,7 +39,7 @@ void ui_upd_disconnect (rockon_data *rdata) {
 	if (rdata->widgets.seekbar_update)
 		elm_slider_value_set(rdata->widgets.seekbar, 0);
 
-	edje_object_signal_emit(rdata->widgets.edje, "main:disconnect", "rockon");
+	edje_object_signal_emit(rdata->widgets.edje, "disconnected", "rockon");
 }
 
 void ui_upd_playback_id (rockon_data *rdata) {
@@ -192,6 +196,10 @@ void ui_upd_playlist_list (rockon_data *rdata) {
 }
 
 void ui_upd_playlist_pos (rockon_data *rdata) {
+	const Eina_List *list_items = NULL;
+	Eina_List *l;
+	Elm_List_Item *li;
+	int count = 0;
 	Edje_Message_String pls_name;
 	Edje_Message_Int pls_pos;
 	Edje_Message_Int pls_itens;
@@ -207,6 +215,16 @@ void ui_upd_playlist_pos (rockon_data *rdata) {
 	edje_object_message_send (rdata->widgets.edje, EDJE_MESSAGE_STRING, PLAYLIST_NAME, &pls_name);
 	edje_object_message_send (rdata->widgets.edje, EDJE_MESSAGE_INT, PLAYLIST_POS, &pls_pos);
 	edje_object_message_send (rdata->widgets.edje, EDJE_MESSAGE_INT, PLAYLIST_ITENS, &pls_itens);
+
+	list_items = elm_list_items_get(rdata->widgets.playlist);
+	EINA_LIST_FOREACH(list_items, l, li) {
+		if (count == rdata->current_playlist->current_pos) {
+			elm_list_item_selected_set(li, 1);
+			break;
+		}
+		count++;
+	}
+
 }
 
 void ui_upd_coll_list (rockon_data *rdata) {
